@@ -6,6 +6,7 @@ import AdvHomePage from './pages/AdvHomePage'
 import GuideSignup from './pages/GuideSignup'
 import Home from './pages/Home'
 import TouristSignup from './pages/TouristSignup'
+import AdvActivityform from './pages/AdvActivityform'
 
 
 
@@ -20,6 +21,7 @@ const App = () => {
                 <Route path="/tourist-homepage" element={<TouristHomePage />} />
                 <Route path="/guide-homepage" element={<GuideHomePage />} />
                 <Route path="/adv-homepage" element={<AdvHomePage />} />
+                <Route path="/adv-activityform" element={<AdvActivityform />} />
             </Routes>
         </Router>
     );
