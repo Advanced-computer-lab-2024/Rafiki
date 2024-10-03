@@ -7,6 +7,8 @@ import GuideSignup from './pages/GuideSignup'
 import Home from './pages/Home'
 import TouristSignup from './pages/TouristSignup'
 import AdvActivityform from './pages/AdvActivityform'
+import AdvActivityform from './pages/TourismManagerMuseum'
+import TourismManagerMuseum from './pages/TourismManagerMuseum';
 
 
 
@@ -22,6 +24,8 @@ const App = () => {
                 <Route path="/guide-homepage" element={<GuideHomePage />} />
                 <Route path="/adv-homepage" element={<AdvHomePage />} />
                 <Route path="/adv-activityform" element={<AdvActivityform />} />
+                <Route path="/adv-tourismManagerMuseum" element={<TourismManagerMuseum />} />
+
             </Routes>
         </Router>
     );
