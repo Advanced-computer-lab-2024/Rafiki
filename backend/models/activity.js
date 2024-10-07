@@ -17,12 +17,13 @@ const activitySchema = new mongoose.Schema({
         type: Number, // You can add min/max values if needed
         required: true
     },
-    category: {
-        type: String,
-        required: true
-    },
+   
     tags: {
         type: String
+    }, category: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to Category
+        ref: 'Category', // Name of the Category model
+        required: true
     },
     specialDiscounts: {
         type: String

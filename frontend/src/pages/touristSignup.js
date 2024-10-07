@@ -3,7 +3,7 @@ import ItineraryDetails from "../components/itineraryDetails";
 import ActivityDetails from "../components/ActivityDetails"; 
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
-
+import ProductDetails from "../components/ProductDetails";
 // components
 
 const TouristSignup = () => {
@@ -13,8 +13,8 @@ const TouristSignup = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isVisible2, setIsVisible2] = useState(false);
     const [isVisible3, setIsVisible3] = useState(false);
-    
-    // Filter states
+    [products, setProducts] = useState([]);
+    const [isProductVisible, setIsProductVisible] = useState(false);
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
     const [category, setCategory] = useState('');
@@ -100,6 +100,21 @@ const TouristSignup = () => {
         fetchItineraries();
     }, []);
 
+    const fetchProducts = async () => {
+      const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
+      const json = await response.json();
+      if (response.ok) {
+        setProducts(json); // Set the state with the fetched products
+      } else {
+        console.error('Error fetching products:', json); // Log errors
+      }
+    };
+ 
+    useEffect(() => {
+     
+      fetchProducts(); 
+    }, []);
+
     const handleClick = () => {
         setIsVisible(!isVisible);
     };
@@ -110,6 +125,9 @@ const TouristSignup = () => {
     
     const handleClick3 = () => {
         setIsVisible3(!isVisible3);
+    };
+    const handleProductClick = () => {
+      setIsProductVisible(!isProductVisible);
     };
 
     return (
@@ -211,7 +229,24 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
-             <TouristForm />
+<button onClick={handleProductClick}>
+        {isProductVisible ? 'Hide' : 'Show'} Product Details
+      </button>
+      {isProductVisible && (
+        <div className="products">
+          {products.length > 0 ? (
+            products.map(product => (
+              <ProductDetails product={product} key={product._id} />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
+      )}
+      
+
+            {/* Tourist Signup Form */}
+            <TouristForm />
         </div>
     );
 };
