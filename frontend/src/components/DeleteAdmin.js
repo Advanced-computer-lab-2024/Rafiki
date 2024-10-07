@@ -5,6 +5,7 @@ const DeleteAdmin = () => {
     const [adminId, setAdminId] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [isVisible, setIsVisible] = useState(false);
 
     const handleDelete = async (e) => {
         e.preventDefault();
@@ -27,10 +28,17 @@ const DeleteAdmin = () => {
             setAdminId('');
         }
     };
+    const handleClick = () => {
+        setIsVisible(!isVisible);
+      };
 
     return (
         <div>
-            <h3>Delete Admin Account</h3>
+            <button onClick={handleClick}>
+         Delete account
+      </button>
+      {isVisible && (
+        
             <form onSubmit={handleDelete}>
                 <label>Admin ID:</label>
                 <input
@@ -40,8 +48,10 @@ const DeleteAdmin = () => {
                 />
                 <button type="submit">Delete Admin</button>
             </form>
+      )}
             {message && <div className="success">{message}</div>}
             {error && <div className="error">{error}</div>}
+      
         </div>
     );
 };

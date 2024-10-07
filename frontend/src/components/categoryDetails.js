@@ -1,14 +1,9 @@
-const CatogeryDetails = ({ category }) => {
-
+const CategoryDetails = ({ category }) => { // Correct prop name
     return (
-      <div className="workout-details">
-            <p><strong>Catogery: </strong>{category}</p>
-      
-      
-    
-    
-      </div>
-    )
-  }
-  
-  export default CatogeryDetails
+        <div className="category-details">
+            <p><strong>Category: </strong>{category.name}</p>
+        </div>
+    );
+};
+
+export default CategoryDetails;
