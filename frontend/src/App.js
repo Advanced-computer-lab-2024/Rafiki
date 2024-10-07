@@ -9,6 +9,7 @@ import AdvertiserSignUp from './pages/advertiserSignup'
 import TourguideSignup from './pages/tourguideSignup'
 import AdminDashboard from './pages/adminDashboard'
 import SellerSignup from './pages/sellerSignup'
+import GovernorDashboard from './pages/GovernorDashboard'
 function App() {
 
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/tourguide-signup" element={<TourguideSignup/>} />
             <Route path="/adminDashboard" element={<AdminDashboard/>} />
             <Route path="/seller-signup" element={<SellerSignup/>} />
+            <Route path="/GovernorDashboard" element={<GovernorDashboard/>} />
           </Routes>
         </div>
       </BrowserRouter>

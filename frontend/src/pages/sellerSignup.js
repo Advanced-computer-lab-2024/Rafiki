@@ -6,11 +6,11 @@ import SellerDetails from "../components/sellerDetails"; // Import seller detail
 
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]); // Initialize sellers
-  // const [products, setProducts] = useState([]); // Initialize products
+  
   const [isSellerVisible, setIsSellerVisible] = useState(false);
-  // const [isProductVisible, setIsProductVisible] = useState(false);
+ 
 
-  // Fetch sellers from the backend
+  
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
     const json = await response.json();
@@ -21,20 +21,11 @@ const SellerSignup = () => {
     }
   };
 
-  // Fetch products from the backend
-  // const fetchProducts = async () => {
-  //   const response = await fetch('/api/productsRoute/getProducts');
-  //   const json = await response.json();
-  //   if (response.ok) {
-  //     setProducts(json); // Set the state with the fetched products
-  //   } else {
-  //     console.error('Error fetching products:', json); // Log errors
-  //   }
-  // };
+  
 
   useEffect(() => {
     fetchSellers(); // Fetch sellers when the component mounts
-    // fetchProducts(); // Fetch products when the component mounts
+    
   }, []);
 
   // Toggle seller details visibility
@@ -42,11 +33,7 @@ const SellerSignup = () => {
     setIsSellerVisible(!isSellerVisible);
   };
 
-  // // Toggle product details visibility
-  // const handleProductClick = () => {
-  //   setIsProductVisible(!isProductVisible);
-  // };
-
+  
   return (
     <div>
       <h2>Seller Dashboard</h2>

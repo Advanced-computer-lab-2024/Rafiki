@@ -46,6 +46,9 @@ const Home = () => {
                 </Link></div>
                 <Link to="/seller-signup">
           Register as a Seller<span className="arrow">→</span>
+        </Link> <br/>
+        <Link to="/GovernorDashboard">
+          GovernorDashboard<span className="arrow">→</span>
         </Link>
     </div>
     
