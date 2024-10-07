@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import MuseumForm from '../components/museumForm';
 import MuseumDetails from '../components/museumDetails';
+import TagForm from '../components/TagForm'
+import ActivityDetails from "../components/ActivityDetails"; 
 //import museum from '../backend/models/museum'
 
 const TourismGovernorDashboard = () => {
@@ -8,7 +10,8 @@ const TourismGovernorDashboard = () => {
     const [museums, setMuseums] = useState(''); // Initialize museums as an array
 
     const [isSellerVisible, setIsSellerVisible] = useState(false);
-   
+    const [activity, setActivity] = useState(null)
+    const [isVisible2, setIsVisible2] = useState(false);
   
     
     const fetchmuseum = async () => {
@@ -27,10 +30,25 @@ const TourismGovernorDashboard = () => {
       fetchmuseum(); // Fetch museum when the component mounts
       
     }, []);
+    useEffect(() => {
+      const fetchActivities = async () => {
+        const response = await fetch('/api/ActivityRoute')
+        const json = await response.json()
+  
+        if (response.ok) {
+          setActivity(json)
+        }
+      }
+  
+      fetchActivities()
+    }, [])
   
     // Toggle seller details visibility
     const handleSellerClick = () => {
       setIsSellerVisible(!isSellerVisible);
+    };
+    const handleClick2 = () => {
+      setIsVisible2(!isVisible2);
     };
 
     return (
@@ -52,9 +70,20 @@ const TourismGovernorDashboard = () => {
           </div>
         )}
         
-        
+        <TagForm/>
+        <button onClick={handleClick2}>
+        {isVisible2 ? 'Hide' : 'Show'}  Activities
+      </button>
+
+      {isVisible2 && (
+    <div className="workouts">
+        {activity && activity.map(activity => (
+          <ActivityDetails activity={activity} key={activity._id} />
+        ))}
+      </div>
+      )}
         <MuseumForm/></div>
-           
+         
     );
 };
 
