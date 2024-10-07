@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ItineraryDetails from "../components/itineraryDetails"; // Ensure the path is correct
-import ActivityDetails from "../components/ActivityDetails"; // Ensure the path is correct
+import ItineraryDetails from "../components/itineraryDetails"; 
+import ActivityDetails from "../components/ActivityDetails"; 
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 
@@ -8,11 +8,25 @@ import TouristDetails from "../components/TouristDetails";
 
 const TouristSignup = () => {
     const [tourists, setTourists] = useState(null);
-    const [itineraries, setItineraries] = useState(null); // Renamed for clarity
-    const [activities, setActivities] = useState(null); // Renamed for clarity
+    const [itineraries, setItineraries] = useState(null); 
+    const [activities, setActivities] = useState(null); 
     const [isVisible, setIsVisible] = useState(false);
     const [isVisible2, setIsVisible2] = useState(false);
     const [isVisible3, setIsVisible3] = useState(false);
+    
+    // Filter states
+    const [budget, setBudget] = useState('');
+    const [date, setDate] = useState('');
+    const [category, setCategory] = useState('');
+
+    const [budget1, setBudget1] = useState('');
+    const [date1, setDate1] = useState('');
+    const [category1, setCategory1] = useState('');
+    const [language, setLanguage] = useState('');
+
+    const [searchTermActivities, setSearchTermActivities] = useState('');
+    const [searchTermItineraries, setSearchTermItineraries] = useState('');
+
 
     // Fetch tourists
     useEffect(() => {
@@ -28,10 +42,16 @@ const TouristSignup = () => {
         fetchTourists();
     }, []);
 
-    // Fetch activities
+    // Fetch activities with filters
     useEffect(() => {
         const fetchActivities = async () => {
-            const response = await fetch('/api/ActivityRoute');
+            const queryParams = new URLSearchParams();
+            if (budget) queryParams.append('budget', budget);
+            if (date) queryParams.append('date', date);
+            if (category) queryParams.append('category', category);
+            if (searchTermActivities) queryParams.append('tags', searchTermActivities); // Add search term
+
+            const response = await fetch(`/api/ActivityRoute?${queryParams.toString()}`);
             const json = await response.json();
 
             if (response.ok) {
@@ -40,7 +60,31 @@ const TouristSignup = () => {
         };
 
         fetchActivities();
-    }, []);
+    }, [budget, date, category, searchTermActivities]); 
+
+    // Fetch activities with filters
+    useEffect(() => {
+        const fetchItineraries = async () => {
+            const queryParams = new URLSearchParams();
+            if (budget1) queryParams.append('budget', budget1);
+            if (date1) queryParams.append('date', date1);
+            if (category1) queryParams.append('category', category1);
+            if (language) queryParams.append('language', language);
+            if (searchTermItineraries) queryParams.append('name', searchTermItineraries); // Add search term
+
+
+
+
+            const response = await fetch(`/api/itineraryRoute?${queryParams.toString()}`);
+            const json = await response.json();
+
+            if (response.ok) {
+                setItineraries(json);
+            }
+        };
+
+        fetchItineraries();
+    }, [budget1, date1, category1, language, searchTermItineraries]);
 
     // Fetch itineraries
     useEffect(() => {
@@ -81,16 +125,77 @@ const TouristSignup = () => {
                 {isVisible3 ? 'Hide' : 'View'} Activities
             </button>
 
-            {/* Tourist Details */}
+            {/* Filter Inputs */}
+            <div className="filters">
+                <input 
+                    type="number" 
+                    placeholder="Budget" 
+                    value={budget} 
+                    onChange={(e) => setBudget(e.target.value)} 
+                />
+                <input 
+                    type="date" 
+                    value={date} 
+                    onChange={(e) => setDate(e.target.value)} 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Category" 
+                    value={category} 
+                    onChange={(e) => setCategory(e.target.value)} 
+                />
+                 <input 
+                    type="text" 
+                    placeholder="Search Activities" 
+                    value={searchTermActivities} 
+                    onChange={(e) => setSearchTermActivities(e.target.value)} 
+                />
+                
+                <button onClick={() => { setBudget(''); setDate(''); setCategory(''); setSearchTermActivities(''); 
+                     }}>Clear Filters</button>
+            </div>
+
+            <div className="itineraryFilters">
+                <input 
+                    type="number" 
+                    placeholder="Budget" 
+                    value={budget1} 
+                    onChange={(e) => setBudget1(e.target.value)} 
+                />
+                <input 
+                    type="date" 
+                    value={date1} 
+                    onChange={(e) => setDate1(e.target.value)} 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Category" 
+                    value={category1} 
+                    onChange={(e) => setCategory1(e.target.value)} 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Language" 
+                    value={language} 
+                    onChange={(e) => setLanguage(e.target.value)} 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Search Itineraries" 
+                    value={searchTermItineraries} 
+                    onChange={(e) => setSearchTermItineraries(e.target.value)} 
+                />
+                <button onClick={() => { setBudget1(''); setDate1(''); setCategory1(''); setLanguage(''); setSearchTermItineraries('');}}>Clear Filters</button>
+            </div>
+
             {isVisible && (
-                <div className="workouts">
+                <div className="tourist-details">
                     {tourists && tourists.map(tourist => (
                         <TouristDetails tourist={tourist} key={tourist._id} />
                     ))}
                 </div>
             )}
 
-            {/* Itineraries */}
             {isVisible2 && (
                 <div className="itineraries">
                     {itineraries && itineraries.map(itinerary => (
@@ -99,7 +204,6 @@ const TouristSignup = () => {
                 </div>
             )}
 
-            {/* Activities */}
             {isVisible3 && (
                 <div className="activities">
                     {activities && activities.map(activity => (
@@ -107,11 +211,9 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
-
-            {/* Tourist Signup Form */}
-            <TouristForm />
+             <TouristForm />
         </div>
     );
-}
+};
 
 export default TouristSignup;
