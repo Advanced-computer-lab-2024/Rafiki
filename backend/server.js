@@ -10,6 +10,7 @@ const tourGuideRoutes = require('./routes/tourguideRoutes')
 const adminRoutes = require('./routes/adminRoute')
 const sellerRoutes = require('./routes/sellerRoute')
 const itineraryRoutes = require('./routes/itineraryRoutes')
+const categoryRoutes = require('./routes/categeryRoute'); // Adjust the path as necessary
 
 // express app
 const app = express()
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 })
 
 // routes
+app.use('/api/categoryRoutes', categoryRoutes);
 app.use('/api/workouts', workoutRoutes)
 app.use('/api/TouristRoute',touristRoutes )
 app.use('/api/AdvertiserRoute',advertiserRoutes )
