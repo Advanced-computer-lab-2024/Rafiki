@@ -13,7 +13,7 @@ const TouristSignup = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isVisible2, setIsVisible2] = useState(false);
     const [isVisible3, setIsVisible3] = useState(false);
-    [products, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
     const [isProductVisible, setIsProductVisible] = useState(false);
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
