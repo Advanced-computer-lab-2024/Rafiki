@@ -10,7 +10,9 @@ const tourGuideRoutes = require('./routes/tourguideRoutes')
 const adminRoutes = require('./routes/adminRoute')
 const sellerRoutes = require('./routes/sellerRoute')
 const itineraryRoutes = require('./routes/itineraryRoutes')
-const categoryRoutes = require('./routes/categeryRoute') // Adjust the path as necessary
+const categoryRoutes = require('./routes/categeryRoute'); // Adjust the path as necessary
+const TagRoute=require('./routes/TagRoute')
+// const categoryRoutes = require('./routes/categeryRoute') // Adjust the path as necessary
 const museumRoutes = require('./routes/museumRoute')
 const productRoutes = require('./routes/productsRoute');
 // express app
@@ -33,7 +35,9 @@ app.use('/api/ActivityRoute',activityRoutes )
 app.use('/api/tourguideRoute',tourGuideRoutes )
 app.use('/api/adminRoute',adminRoutes )
 app.use('/api/sellerRoute',sellerRoutes )
-app.use('/api/itineraryRoute', itineraryRoutes)
+app.use('/api/itineraryRoute', itineraryRoutes);
+app.use('/api/TagRoute',TagRoute)
+
 app.use('/api/museumRoute', museumRoutes)
 app.use('/api/productsRoute', productRoutes)
 
