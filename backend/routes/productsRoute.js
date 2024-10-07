@@ -10,7 +10,7 @@ router.get('/filterProducts', filterProducts);
 router.get("/sortProducts", sortProducts);
 
 router.put('/updateProduct/:Name', updateProduct)
-router.get("/getProducts", getProducts);
+router.get("/", getProducts);
 
 
 module.exports = router;

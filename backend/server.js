@@ -12,7 +12,7 @@ const sellerRoutes = require('./routes/sellerRoute')
 const itineraryRoutes = require('./routes/itineraryRoutes')
 const categoryRoutes = require('./routes/categeryRoute'); // Adjust the path as necessary
 const TagRoute=require('./routes/TagRoute')
-const categoryRoutes = require('./routes/categeryRoute') // Adjust the path as necessary
+// const categoryRoutes = require('./routes/categeryRoute') // Adjust the path as necessary
 const museumRoutes = require('./routes/museumRoute')
 const productRoutes = require('./routes/productsRoute');
 // express app

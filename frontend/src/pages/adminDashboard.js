@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import CategoryDetails from "../components/categoryDetails";
 import TagDetails from '../components/TagDetails';
 import TagForm from '../components/TagForm';
+import ProductDetails from "../components/ProductDetails";
 
 const AdminSignup = () => {
     const [categories, setCategories] = useState([]); // Initialize as an empty array
     const [isVisible, setIsVisible] = useState(false);
     const [isVisible2, setIsVisible2] = useState(false);
     const [tag, setTag] = useState([]);
+    const [products, setProducts] = useState([]);
+  const [isProductVisible, setIsProductVisible] = useState(false);
     useEffect(() => {
         const fetchCategories = async () => {
             const response = await fetch('/api/categoryRoutes');
@@ -41,13 +44,33 @@ const AdminSignup = () => {
 
       fetchTag();
   }, []);
+  const fetchProducts = async () => {
+    const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
+    const json = await response.json();
+    if (response.ok) {
+      setProducts(json); // Set the state with the fetched products
+    } else {
+      console.error('Error fetching products:', json); // Log errors
+    }
+  };
+ 
 
+  useEffect(() => {
+    
+    fetchProducts(); 
+  }, []);
   const handleClick2 = () => {
     setIsVisible2(!isVisible2);
 };
 
+const handleProductClick = () => {
+  setIsProductVisible(!isProductVisible);
+};
+
     return (
+      
         <div>
+          <h2>Admin Dashboard</h2>
             <button onClick={handleClick}>
                 {isVisible ? 'Hide' : 'Show'} Tags
             </button>
@@ -78,6 +101,21 @@ const AdminSignup = () => {
                     )}
                 </div>
             )}
+
+<button onClick={handleProductClick}>
+        {isProductVisible ? 'Hide' : 'Show'} Product Details
+      </button>
+      {isProductVisible && (
+        <div className="products">
+          {products.length > 0 ? (
+            products.map(product => (
+              <ProductDetails product={product} key={product._id} />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
+      )}
             <AdminForm />
             <br />
             <GovernerForm />
