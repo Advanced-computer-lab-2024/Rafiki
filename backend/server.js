@@ -11,7 +11,7 @@ const adminRoutes = require('./routes/adminRoute')
 const sellerRoutes = require('./routes/sellerRoute')
 const itineraryRoutes = require('./routes/itineraryRoutes')
 const categoryRoutes = require('./routes/categeryRoute'); // Adjust the path as necessary
-
+const TagRoute=require('./routes/TagRoute')
 // express app
 const app = express()
 
@@ -33,6 +33,7 @@ app.use('/api/tourguideRoute',tourGuideRoutes )
 app.use('/api/adminRoute',adminRoutes )
 app.use('/api/sellerRoute',sellerRoutes )
 app.use('/api/itineraryRoute', itineraryRoutes);
+app.use('/api/TagRoute',TagRoute)
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
