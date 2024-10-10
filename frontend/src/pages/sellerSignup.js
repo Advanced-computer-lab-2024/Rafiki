@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import SellerForm from "../components/sellerForm"; // Import the seller form
 import SellerDetails from "../components/sellerDetails"; // Import seller details
 import ProductDetails from "../components/ProductDetails";
-
+import UpdateSeller from "../components/UpdateSeller"
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]); // Initialize sellers
   const [isSellerVisible, setIsSellerVisible] = useState(false);
   const [products, setProducts] = useState([]);
   const [isProductVisible, setIsProductVisible] = useState(false);
+  const [selectedTourguide, setSelectedTourguide] = useState(null);
   // Fetch sellers from the backend
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
@@ -18,6 +19,9 @@ const SellerSignup = () => {
       console.error('Error fetching sellers:', json); // Log errors
     }
   };
+  const handleUpdate = (tourguide) => {
+    setSelectedTourguide(tourguide);
+};
   
   const fetchProducts = async () => {
     const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
@@ -50,7 +54,7 @@ const SellerSignup = () => {
       <button onClick={handleSellerClick}>
         {isSellerVisible ? 'Hide' : 'Show'} Seller Details
       </button>
-      {isSellerVisible && (
+      {/* {isSellerVisible && (
         <div className="sellers">
           {sellers.length > 0 ? (
             sellers.map(seller => (
@@ -60,7 +64,19 @@ const SellerSignup = () => {
             <p>No sellers found.</p>
           )}
         </div>
-      )}
+      )} */}
+      {isSellerVisible && (
+                <div className="workouts">
+                    {sellers && sellers.map(seller => (
+                        <div key={seller._id}>
+                            <SellerDetails seller={seller} />
+                            <button onClick={() => handleUpdate(seller)}>Update</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+<UpdateSeller existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
 
 <button onClick={handleProductClick}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details

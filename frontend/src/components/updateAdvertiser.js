@@ -70,7 +70,7 @@ const UpdateAdvertiser= ({ existingTourguide, onUpdate }) => {
     return (
         <div>
             <button onClick={handleClick}>
-                {isVisible ? 'Hide' : 'Show'} {existingTourguide ? 'Update' : 'Sign up'}
+                {isVisible ? 'Hide' : 'Show'} {existingTourguide ? 'Update' : 'update'}
             </button>
             {isVisible && (
                 <form className="create" onSubmit={handleSubmit}>
@@ -91,7 +91,7 @@ const UpdateAdvertiser= ({ existingTourguide, onUpdate }) => {
                     />
 
 
-                    <button>{existingTourguide ? 'Update' : 'Signup'}</button>
+                    <button>{existingTourguide ? 'Update' : 'update'}</button>
                     {error && <div className="error">{error}</div>}
                 </form>
             )}

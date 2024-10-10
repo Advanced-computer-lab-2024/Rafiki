@@ -27,21 +27,25 @@ const getSeller = async (req, res) => {
   };
 
   const updateSeller = async (req, res) => {
-    const { id } = req.params; // Get the ID from the request parameters
-    const { Username, Email, Password, Name, Description } = req.body; // Get the updated information from the request body
+    const { id } = req.params;
+    const { Username, Email, Password} = req.body;
+
     try {
-      const seller = await sellerModel.findByIdAndUpdate(
-        id,
-        { Username, Email, Password, Name, Description },
-        { new: true, runValidators: true } // Return the updated document and run validators
-      );
- 
-      if (!seller) {
-        return res.status(404).json({ message: "Seller not found." });
-      }
-      res.status(200).json(seller); // Return the updated advertiser
+        let updatedData = { Username, Email };
+        
+        // Hash new password if provided
+        if (Password) {
+            updatedData.Password = await bcrypt.hash(Password, 10);
+        }
+
+        const tourguide = await sellerModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+        if (!tourguide) {
+            return res.status(404).json({ message: "Tour guide not found." });
+        }
+        res.status(200).json(tourguide);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
   };
   const getAllSellers = async (req, res) => {
