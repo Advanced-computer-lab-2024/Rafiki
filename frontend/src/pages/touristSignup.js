@@ -4,6 +4,7 @@ import ActivityDetails from "../components/ActivityDetails";
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
+import  UpdateTourist  from "../components/UpdateTourist";
 // components
 
 const TouristSignup = () => {
@@ -27,6 +28,8 @@ const TouristSignup = () => {
     const [searchTermActivities, setSearchTermActivities] = useState('');
     const [searchTermItineraries, setSearchTermItineraries] = useState('');
 
+    const [selectedTourguide, setSelectedTourguide] = useState(null);
+
 
     // Fetch tourists
     useEffect(() => {
@@ -41,6 +44,10 @@ const TouristSignup = () => {
 
         fetchTourists();
     }, []);
+
+    const handleUpdate = (tourguide) => {
+        setSelectedTourguide(tourguide);
+    };
 
     // Fetch activities with filters
     useEffect(() => {
@@ -206,10 +213,21 @@ const TouristSignup = () => {
                 <button onClick={() => { setBudget1(''); setDate1(''); setCategory1(''); setLanguage(''); setSearchTermItineraries('');}}>Clear Filters</button>
             </div>
 
-            {isVisible && (
+            {/* {isVisible && (
                 <div className="tourist-details">
                     {tourists && tourists.map(tourist => (
                         <TouristDetails tourist={tourist} key={tourist._id} />
+                    ))}
+                </div>
+            )} */}
+
+{isVisible && (
+                <div className="workouts">
+                    {tourists && tourists.map(tourist => (
+                        <div key={tourist._id}>
+                            < TouristDetails tourist={tourist} />
+                            <button onClick={() => handleUpdate(tourist)}>Update</button>
+                        </div>
                     ))}
                 </div>
             )}
@@ -247,6 +265,7 @@ const TouristSignup = () => {
 
             {/* Tourist Signup Form */}
             <TouristForm />
+            <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
         </div>
     );
 };
