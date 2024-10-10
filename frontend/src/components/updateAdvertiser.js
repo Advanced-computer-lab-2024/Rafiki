@@ -90,8 +90,6 @@ const UpdateAdvertiser= ({ existingTourguide, onUpdate }) => {
                         value={Email}
                     />
 
-                    
-                   
 
                     <button>{existingTourguide ? 'Update' : 'Signup'}</button>
                     {error && <div className="error">{error}</div>}
