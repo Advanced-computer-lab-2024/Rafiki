@@ -5,12 +5,13 @@ import AdvertiserForm from "../components/advertiserForm"
 import AdvertiserDetails from "../components/AdvertiserDetails"
 import ActivityDetails from "../components/ActivityDetails"
 import ActivityForm from "../components/activityForm"
+import UpdateAdvertiser from "../components/updateAdvertiser"
 const AdvertiserSignup= () => {
-    const [advertisers, setAdvertiser] = useState(null)
+    const [advertiser, setAdvertiser] = useState(null)
     const [isVisible, setIsVisible] = useState(false);
     const [activity, setActivity] = useState(null)
     const [isVisible2, setIsVisible2] = useState(false);
-
+    const [selectedTourguide, setSelectedTourguide] = useState(null);
  
 
   useEffect(() => {
@@ -46,6 +47,9 @@ const AdvertiserSignup= () => {
   const handleClick2 = () => {
     setIsVisible2(!isVisible2);
   };
+  const handleUpdate = (tourguide) => {
+    setSelectedTourguide(tourguide);
+};
 
   return (
    
@@ -55,15 +59,29 @@ const AdvertiserSignup= () => {
         <button onClick={handleClick}>
         {isVisible ? 'Hide' : 'Show'}  Advertiser Details
       </button>
-
       {isVisible && (
+                <div className="workouts">
+                    {advertiser && advertiser.map(advertiser => (
+                        <div key={advertiser._id}>
+                            <AdvertiserDetails advertiser={advertiser} />
+                            <button onClick={() => handleUpdate(advertiser)}>Update</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+      {/* {isVisible && (
         <div className="workouts">
-        {advertisers && advertisers.map(advertiser => (
-          <AdvertiserDetails advertiser={advertiser} key={advertiser._id} />
+        {advertiser && advertiser.map(advertiser => (
+          <div key={advertiser._id}>
+          <AdvertiserDetails advertiser={advertiser}  />
+          <button onClick={() => handleUpdate(advertiser)}>Update</button>
+          <div/>
         ))}
       </div>
-      )}
-      
+      )} */}
+      {/* <TourguideForm existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} /> */}
+      <UpdateAdvertiser existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
     <AdvertiserForm />
     <button onClick={handleClick2}>
         {isVisible2 ? 'Hide' : 'Show'}  Activities

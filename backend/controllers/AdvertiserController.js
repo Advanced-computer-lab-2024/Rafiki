@@ -41,23 +41,27 @@ const getAdvertiser = async (req, res) => {
   
 
 
-const updateAdvertiser = async (req, res) => {
-    const { id } = req.params; // Get the ID from the request parameters
-    const { Username, Email, MobileNumber, Nationality, DOB, Job, Website, Hotline, CompanyProfile } = req.body; // Get the updated information from the request body
+  const updateAdvertiser = async (req, res) => {
+    const { id } = req.params;
+    const { Username, Email, Password} = req.body;
+
     try {
-      const advertiser = await AdvertiserModel.findByIdAndUpdate(
-        id,
-        { Username, Email, MobileNumber, Nationality, DOB, Job, Website, Hotline, CompanyProfile },
-        { new: true, runValidators: true } // Return the updated document and run validators
-      );
-  
-      if (!advertiser) {
-        return res.status(404).json({ message: "Advertiser not found." });
-      }
-      res.status(200).json(advertiser); // Return the updated advertiser
+        let updatedData = { Username, Email };
+        
+        // Hash new password if provided
+        if (Password) {
+            updatedData.Password = await bcrypt.hash(Password, 10);
+        }
+
+        const tourguide = await AdvertiserModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+        if (!tourguide) {
+            return res.status(404).json({ message: "Tour guide not found." });
+        }
+        res.status(200).json(tourguide);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
-  };
+};
 
 module.exports = { createAdvertiser, getAdvertiser, getAdvertisers, updateAdvertiser };

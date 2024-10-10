@@ -4,7 +4,7 @@ import TourguideDetails from "../components/tourguideDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails"; 
-
+import CreateTourguide from "../components/createTourguide"
 const TourguideSignup = () => {
     const [tourguide, setTourguide] = useState(null);
     const [selectedTourguide, setSelectedTourguide] = useState(null);
@@ -111,6 +111,7 @@ const TourguideSignup = () => {
       </div>
       )}
             <ItineraryForm />
+            <CreateTourguide/>
         </div>
     );
 }
