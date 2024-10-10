@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { deleteAccount, addTourismGovernor, addAdmin } = require('../controllers/adminController');
+const { deleteAccount, addTourismGovernor, addAdmin,getAdmin } = require('../controllers/adminController');
 
 // Route to delete an account by ID
 router.delete('/deleteAccount/:id', deleteAccount);
@@ -10,5 +10,6 @@ router.post('/addTourismGovernor', addTourismGovernor);
 
 // Route to add another admin
 router.post('/addAdmin', addAdmin);
+router.get('/',getAdmin);
 
 module.exports = router;
