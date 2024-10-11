@@ -10,6 +10,9 @@ import TourguideSignup from './pages/tourguideSignup'
 import AdminDashboard from './pages/adminDashboard'
 import SellerSignup from './pages/sellerSignup'
 import GovernorDashboard from './pages/GovernorDashboard'
+import GuestDashboard from './pages/guestDashboard'
+
+
 function App() {
 
   return (
@@ -29,6 +32,7 @@ function App() {
             <Route path="/adminDashboard" element={<AdminDashboard/>} />
             <Route path="/seller-signup" element={<SellerSignup/>} />
             <Route path="/GovernorDashboard" element={<GovernorDashboard/>} />
+            <Route path="/guestDashboard" element={<GuestDashboard/>} />
           </Routes>
         </div>
       </BrowserRouter>

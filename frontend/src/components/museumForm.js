@@ -73,7 +73,7 @@ const MuseumForm = () => {
       </button>
     {isVisible && (
     <form className="create" onSubmit={handleSubmit}> 
-      <h3>Create Activity</h3>
+      <h3>Create Museum</h3>
 
 <label>Name:</label>
       <input 
@@ -120,7 +120,7 @@ const MuseumForm = () => {
           {tags.map(tag => (
             <option key={tag._id} value={tag._name}>{tag.name}</option>
           ))}
-        </select>
+        </select><br/>
 
       <button>  Create Museum</button>
       {error && <div className="error">{error}</div>}

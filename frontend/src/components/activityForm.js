@@ -1,117 +1,114 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 const ActivityForm = () => {
-   
   const [isVisible, setIsVisible] = useState(false);
-  const [Date, setDate] = useState('')
-  const [Time, setTime] = useState('')
-  const [Price, setPrice] = useState('')
-  const [Category, setCategory] = useState('')
-  const [Tags, setTags] = useState('')
-  const [specialDiscounts, setspecialDiscounts] = useState('')
-//   const [Job, setJob] = useState('')
-  const [error, setError] = useState(null)
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
+  const [specialDiscounts, setSpecialDiscounts] = useState('');
+  const [location, setLocation] = useState('');
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const advertiser = {Date, Time, Price,Category,Tags,specialDiscounts}
-    
+    // Match field names with the backend expectation
+    const activity = { date, time, price, location, category, tags, specialDiscounts };
+
     const response = await fetch('/api/ActivityRoute', {
       method: 'POST',
-      body: JSON.stringify(advertiser),
+      body: JSON.stringify(activity),
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    const json = await response.json()
+        'Content-Type': 'application/json',
+      },
+    });
+    const json = await response.json();
 
     if (!response.ok) {
-      setError(json.error)
+      setError(json.error);
     }
     if (response.ok) {
-      setError(null)
-      setDate('')
-      setTime('')
-      setPrice('')
-    //   setJob('')
-      setspecialDiscounts('')
-      setTags('')
-      setCategory('')
-    
-      console.log('new tourist added:', json)
-      
-    }
+      setError(null);
+      setDate('');
+      setTime('');
+      setPrice('');
+      setSpecialDiscounts('');
+      setTags('');
+      setCategory('');
+      setLocation('');
 
-  }
+      console.log('New activity added:', json);
+    }
+  };
+
   const handleClick = () => {
     setIsVisible(!isVisible);
   };
 
   return (
     <div>
-    <button onClick={handleClick}>
-     Create Activity
-      </button>
-    {isVisible && (
-    <form className="create" onSubmit={handleSubmit}> 
-      <h3>Create Activity</h3>
+      <button onClick={handleClick}>Create Activity</button>
+      {isVisible && (
+        <form className="create" onSubmit={handleSubmit}>
+          <h3>Create Activity</h3>
 
-      <label> Date:</label>
-      <input 
-        type="date" 
-        onChange={(e) => setDate(e.target.value)} 
-        value={Date}
-      />
+          <label>Date:</label>
+          <input
+            type="date"
+            onChange={(e) => setDate(e.target.value)}
+            value={date}
+          />
 
-      <label>Time :</label>
-      <input 
-        type="text" 
-        onChange={(e) => setTime(e.target.value)} 
-        value={Time}
-      />
+          <label>Time:</label>
+          <input
+            type="text"
+            onChange={(e) => setTime(e.target.value)}
+            value={time}
+          />
 
-      <label>Price:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setPrice(e.target.value)} 
-        value={Price} 
-      />
+          <label>Price:</label>
+          <input
+            type="text"
+            onChange={(e) => setPrice(e.target.value)}
+            value={price}
+          />
 
-{/* <label>Mobile Number:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setCategory(e.target.value)} 
-        value={Category} 
-      /> */}
+          <label>Location:</label>
+          <input
+            type="text"
+            onChange={(e) => setLocation(e.target.value)}
+            value={location}
+          />
 
-{/* <label>Job:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setJob(e.target.value)} 
-        value={Job} 
-      /> */}
+          <label>Category:</label>
+          <input
+            type="text"
+            onChange={(e) => setCategory(e.target.value)}
+            value={category}
+          />
 
-<label>Tags:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setTags(e.target.value)} 
-        value={Tags} 
-      />
-       <label>specialDiscounts:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setspecialDiscounts(e.target.value)} 
-        value={specialDiscounts} 
-      />
+          <label>Tags:</label>
+          <input
+            type="text"
+            onChange={(e) => setTags(e.target.value)}
+            value={tags}
+          />
 
-      <button>  Create</button>
-      {error && <div className="error">{error}</div>}
-    </form>
-    )}
+          <label>Special Discounts:</label>
+          <input
+            type="text"
+            onChange={(e) => setSpecialDiscounts(e.target.value)}
+            value={specialDiscounts}
+          />
+
+          <button>Create</button>
+          {error && <div className="error">{error}</div>}
+        </form>
+      )}
     </div>
-  )
+  );
+};
 
-}
-
-export default ActivityForm
+export default ActivityForm;

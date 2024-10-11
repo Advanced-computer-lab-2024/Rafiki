@@ -10,7 +10,6 @@ const ActivityDetails = ({ activity }) => {
       <p><strong>Category: </strong>{activity.category}</p>
       <p><strong>Tags: </strong>{activity.tags}</p>
       <p><strong>Special Discounts: </strong>{activity.specialDiscounts}</p>
-      <p><strong>Id: </strong>{activity.id}</p>
       <p><strong>Booking Open: </strong>{activity.isBookingOpen ? 'Yes' : 'No'}</p>
     
     
