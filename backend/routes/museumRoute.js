@@ -1,5 +1,5 @@
 const express = require('express');
-const { createMuseum, getMuseum, getMuseums, updateMuseum, deleteMuseum } = require('../controllers/museumController');
+const { createMuseum, getMuseum, getMuseums, updateMuseum, deleteMuseum,searchMuseumbyName,searchMuseumbyTag } = require('../controllers/museumController');
 const router = express.Router();
 
 // Create a new museum
@@ -16,5 +16,9 @@ router.put('/:id', updateMuseum);
 
 // Delete a museum by ID
 router.delete('/:id', deleteMuseum);
+
+
+router.get('/search/:name', searchMuseumbyName);
+router.get('/searchT/:tag', searchMuseumbyTag);
 
 module.exports = router;

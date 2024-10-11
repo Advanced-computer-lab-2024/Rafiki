@@ -83,4 +83,32 @@ const deleteMuseum = async (req, res) => {
   }
 };
 
-module.exports = { createMuseum, getMuseum, getMuseums, updateMuseum, deleteMuseum };
+const searchMuseumbyName = async (req, res) => {
+  const { name } = req.params; // Get the name from the request parameters
+  try {
+      const museums = await Museum.find({ name: { $regex: name, $options: 'i' } }); // Case-insensitive search
+      if (museums.length === 0) {
+          return res.status(404).json({ message: "No museums found with that name." });
+      }
+      res.status(200).json(museums);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+const searchMuseumbyTag = async (req, res) => {
+  const { tag } = req.params; // Get the name from the request parameters
+  try {
+      const museums = await Museum.find({ tag: { $regex: tag, $options: 'i' } }); // Case-insensitive search
+      if (museums.length === 0) {
+          return res.status(404).json({ message: "No museums found with that tag." });
+      }
+      res.status(200).json(museums);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+module.exports = { createMuseum, getMuseum, getMuseums, updateMuseum, deleteMuseum ,searchMuseumbyName,searchMuseumbyTag};
