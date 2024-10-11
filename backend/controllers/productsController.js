@@ -87,14 +87,14 @@ const sortProducts = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const { name } = req.params; // Get the product name from the request parameters
+  const {name} = req.params; // Get the product name from the request parameters
   const { Description, Price } = req.body; // Get the fields to update from the request body
 
   try {
     const product = await productsModel.findOneAndUpdate(
-      { Name: name }, // Search for the product by name
-      { Description, Price }, // Update the specified fields
-      { new: true, runValidators: true } // Return the updated document and run validators
+      {Name:name}, // Search for the product by name
+      {Description, Price}, // Update the specified fields
+      {new: true, runValidators: true} // Return the updated document and run validators
     );
 
     if (!product) {
