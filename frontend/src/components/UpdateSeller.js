@@ -74,7 +74,7 @@ const UpdateSeller= ({ existingTourguide, onUpdate }) => {
             </button>
             {isVisible && (
                 <form className="create" onSubmit={handleSubmit}>
-                    <h3>{existingTourguide ? 'Update Tourguide' : 'Tourguide Signup'}</h3>
+                    <h3>{existingTourguide ? 'Update seller' : 'update seller'}</h3>
 
                     <label>Username:</label>
                     <input
