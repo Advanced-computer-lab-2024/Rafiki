@@ -51,6 +51,7 @@ const getItinerary = async (req, res) => {
     }
 };
 
+
 // Update Itinerary
 const updateItinerary = async (req, res) => {
     const { id } = req.params;
@@ -71,7 +72,7 @@ const updateItinerary = async (req, res) => {
     }
 };
 
-// Delete Itinerary
+
 const deleteItinerary = async (req, res) => {
     const { id } = req.params;
     const { tourGuideUsername } = req.body;
@@ -97,6 +98,7 @@ const deleteItinerary = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
 const getAllItinerary = async (req, res) => {
     const { budget, date, preferences, accessibility, sort, language, name } = req.query; // Extract query params
 

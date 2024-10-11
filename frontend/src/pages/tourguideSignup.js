@@ -4,116 +4,136 @@ import TourguideDetails from "../components/tourguideDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails"; 
-import CreateTourguide from "../components/createTourguide"
+import CreateTourguide from "../components/createTourguide";
+
 const TourguideSignup = () => {
-    const [tourguide, setTourguide] = useState(null);
-    const [selectedTourguide, setSelectedTourguide] = useState(null);
-    const [isVisible, setIsVisible] = useState(false);
-    const [itinerary, setItinerary] = useState(null);
-    const [isVisible2, setIsVisible2] = useState(false);
-    const [activity, setActivity] = useState(null)
-    const [isVisible3, setIsVisible3] = useState(false)
-    useEffect(() => {
-        const fetchTourguides = async () => {
-            const response = await fetch('/api/tourguideRoute');
-            const json = await response.json();
+  const [tourguides, setTourguides] = useState(null);
+  const [selectedTourguide, setSelectedTourguide] = useState(null);
+  const [itineraries, setItineraries] = useState(null);
+  const [activities, setActivities] = useState(null);
+  const [visibleSections, setVisibleSections] = useState({
+    tourguides: false,
+    itineraries: false,
+    activities: false
+  });
+  const [selectedItinerary, setSelectedItinerary] = useState(null);
 
-            if (response.ok) {
-                setTourguide(json);
-            }
-        };
-
-        fetchTourguides();
-    }, []);
-
-    useEffect(() => {
-        const fetchItineraries = async () => {
-            const response = await fetch('/api/itineraryRoute');
-            const json = await response.json();
-
-            if (response.ok) {
-                setItinerary(json);
-            }
-        };
-
-        fetchItineraries();
-    }, []);
-    useEffect(() => {
-        const fetchActivities = async () => {
-          const response = await fetch('/api/ActivityRoute')
-          const json = await response.json()
-    
-          if (response.ok) {
-            setActivity(json)
-          }
-        }
-    
-        fetchActivities()
-      }, [])
-    
-    const handleClick = () => {
-        setIsVisible(!isVisible);
+  useEffect(() => {
+    const fetchTourguides = async () => {
+      const response = await fetch('/api/tourguideRoute');
+      const json = await response.json();
+      if (response.ok) setTourguides(json);
     };
+    fetchTourguides();
+  }, []);
 
-    const handleClick2 = () => {
-        setIsVisible2(!isVisible2);
+  useEffect(() => {
+    const fetchItineraries = async () => {
+      const response = await fetch('/api/itineraryRoute');
+      const json = await response.json();
+      if (response.ok) setItineraries(json);
     };
+    fetchItineraries();
+  }, []);
 
-    const handleClick3 = () => {
-        setIsVisible3(!isVisible3);
-      };
-
-    const handleUpdate = (tourguide) => {
-        setSelectedTourguide(tourguide);
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const response = await fetch('/api/ActivityRoute');
+      const json = await response.json();
+      if (response.ok) setActivities(json);
     };
+    fetchActivities();
+  }, []);
 
-    return (
-        <div>
-            <h2>Tourguide Dashboard</h2>
-            <button onClick={handleClick}>
-                {isVisible ? 'Hide' : 'Show'} Tourguide Details
-            </button>
+  const toggleVisibility = (section) => {
+    setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
-            <button onClick={handleClick2}>
-                {isVisible2 ? 'Hide' : 'Show'} Itinerary Details
-            </button>
+  const handleTourguideUpdate = (tourguide) => {
+    setSelectedTourguide(tourguide);
+  };
 
-            {isVisible && (
-                <div className="workouts">
-                    {tourguide && tourguide.map(tourguide => (
-                        <div key={tourguide._id}>
-                            <TourguideDetails tourguide={tourguide} />
-                            <button onClick={() => handleUpdate(tourguide)}>Update</button>
-                        </div>
-                    ))}
-                </div>
-            )}
+  const handleItineraryUpdate = (itinerary) => {
+    setSelectedItinerary(itinerary);
+  };
 
-            {isVisible2 && (
-                <div className="workouts">
-                    {itinerary && itinerary.map(itinerary => (
-                        <ItineraryDetails itinerary={itinerary} key={itinerary._id} />
-                    ))}
-                </div>
-            )}
+  const handleItineraryDelete = (deletedItinerary) => {
+    if (itineraries) {
+      setItineraries(prev => prev.filter(itinerary => itinerary._id !== deletedItinerary._id));
+    }
+  };
 
-            {/* Show the form with pre-filled data for updating or empty for creating a new tour guide */}
-            <TourguideForm existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
-            <button onClick={handleClick3}>
-        {isVisible3 ? 'Hide' : 'Show'}  Activities
+  const handleTourguideCreated = () => {
+    setSelectedTourguide(null);
+  };
+
+  const handleItineraryCreated = () => {
+    setSelectedItinerary(null);
+  };
+
+  return (
+    <div>
+      <h2>Tourguide Dashboard</h2>
+
+      {/* Toggle Buttons */}
+      <button onClick={() => toggleVisibility('tourguides')}>
+        {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
+      </button>
+      <button onClick={() => toggleVisibility('itineraries')}>
+        {visibleSections.itineraries ? 'Hide' : 'Show'} Itinerary Details
+      </button>
+      <button onClick={() => toggleVisibility('activities')}>
+        {visibleSections.activities ? 'Hide' : 'Show'} Activities
       </button>
 
-      {isVisible3 && (
-    <div className="workouts">
-        {activity && activity.map(activity => (
-          <ActivityDetails activity={activity} key={activity._id} />
-        ))}
-      </div>
-      )}
-            <ItineraryForm />
-            <CreateTourguide/>
+      {/* Tourguides Section */}
+      {visibleSections.tourguides && (
+        <div className="tourguides">
+          {tourguides && tourguides.map(tourguide => (
+            <div key={tourguide._id}>
+              <TourguideDetails tourguide={tourguide} />
+              <button onClick={() => handleTourguideUpdate(tourguide)}>Update</button>
+            </div>
+          ))}
         </div>
-    );
-}
+      )}
+
+      {/* Itineraries Section */}
+      {visibleSections.itineraries && (
+        <div className="itineraries">
+          {itineraries && itineraries.map(itinerary => (
+            <div key={itinerary._id}>
+              <ItineraryDetails itinerary={itinerary} />
+              <button onClick={() => handleItineraryUpdate(itinerary)}>Update</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Activities Section */}
+      {visibleSections.activities && (
+        <div className="activities">
+          {activities && activities.map(activity => (
+            <ActivityDetails activity={activity} key={activity._id} />
+          ))}
+        </div>
+      )}
+
+      {/* Forms */}
+      <TourguideForm 
+        existingTourguide={selectedTourguide} 
+        onCreated={handleTourguideCreated} 
+      />
+      
+      <ItineraryForm 
+        existingItinerary={selectedItinerary} 
+        onCreated={handleItineraryCreated} 
+        onDeleted={handleItineraryDelete} 
+      />
+      
+      <CreateTourguide />
+    </div>
+  );
+};
 
 export default TourguideSignup;
