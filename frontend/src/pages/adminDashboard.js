@@ -4,9 +4,10 @@ import DeleteAdmin from '../components/DeleteAdmin';
 import CategoryForm from '../components/categoryForm';
 import { useEffect, useState } from "react";
 import CategoryDetails from "../components/categoryDetails";
-import TagDetails from '../components/TagDetails';
-import TagForm from '../components/TagForm';
 import ProductDetails from "../components/ProductDetails";
+import AdminTagDetails from '../components/AdminTagDetails';
+import AdminTagForm from '../components/AdminTagForm';
+
 
 const AdminSignup = () => {
     const [categories, setCategories] = useState([]); // Initialize as an empty array
@@ -27,6 +28,100 @@ const AdminSignup = () => {
 
         fetchCategories();
     }, []);
+
+    const updateCategory = async (id, newName) => {
+
+      console.log('Updating category with ID:', id, 'and new name:', newName); // Debug log
+
+      const response = await fetch(`/api/categoryRoutes/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ name: newName }),
+          headers: { 'Content-Type': 'application/json' },
+      });
+      
+      const json = await response.json();
+
+      console.log('Update response:', json); // Debug log
+
+      if (response.ok) {
+          setCategories(categories.map(category =>
+              category._id === id ? { ...category, name: newName } : category
+          ));
+      } else {
+          console.error('Failed to update category:', json.error);
+      }
+  };
+
+
+
+  const deleteCategory = async (id) => {
+   
+    console.log('Attempting to delete category with ID:', id); // Debug log
+   
+    const response = await fetch(`/api/categoryRoutes/${id}`, {
+        method: 'DELETE',
+    });
+
+    const json = await response.json();
+    console.log('Delete response:', json); // Debug log the response
+
+    if (response.ok) {
+        setCategories(categories.filter(category => category._id !== id));
+    } else {
+        const json = await response.json();
+        console.error('Failed to delete category:', json.error);
+    }
+};
+
+
+const updateTag = async (id, newName) => {
+
+  console.log('Updating tag with ID:', id, 'and new name:', newName); // Debug log
+
+  const response = await fetch(`/api/TagRoute/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ name: newName }),
+      headers: { 'Content-Type': 'application/json' },
+  });
+
+  
+  const json = await response.json();
+
+  console.log('Update response:', json); // Debug log
+
+  if (response.ok) {
+      setTag(tag.map(tag =>
+          tag._id === id ? { ...tag, name: newName } : tag
+      ));
+  } else {
+      console.error('Failed to update tag:', json.error);
+  }
+};
+
+const deleteTag = async (id) => {
+   
+  console.log('Attempting to delete tag. with ID:', id); // Debug log
+ 
+  const response = await fetch(`/api/TagRoute/${id}`, {
+      method: 'DELETE',
+  });
+
+  const json = await response.json();
+  console.log('Delete response:', json); // Debug log the response
+
+  if (response.ok) {
+      setTag(tag.filter(tag => tag._id !== id));
+  } else {
+      const json = await response.json();
+      console.error('Failed to delete tag:', json.error);
+  }
+};
+
+
+
+
+
+
 
     const handleClick = () => {
         setIsVisible(!isVisible);
@@ -75,10 +170,16 @@ const handleProductClick = () => {
                 {isVisible ? 'Hide' : 'Show'} Tags
             </button>
             {isVisible && (
-                <div className="categories">
+                <div className="tag">
                     {tag.length > 0 ? (
                         tag.map(tags => (
-                            <TagDetails Tag={tags} key={tags._id} /> // Use category prop
+                            <AdminTagDetails 
+                            Tag={tags}
+                             key={tags._id} 
+                            onUpdate={updateTag} 
+                            onDelete={deleteTag} /> // Use category prop /> // Use category prop
+                            
+                            
                         ))
                     ) : (
                         <p>No Tags found.</p>
@@ -94,7 +195,12 @@ const handleProductClick = () => {
                 <div className="categories">
                     {categories.length > 0 ? (
                         categories.map(category => (
-                            <CategoryDetails category={category} key={category._id} /> // Use category prop
+                            <CategoryDetails category={category} key={category._id} 
+                            
+                            keyy={category._id} 
+                            categoryy={category} 
+                            onUpdate={updateCategory} 
+                            onDelete={deleteCategory} /> // Use category prop
                         ))
                     ) : (
                         <p>No categories found.</p>
@@ -124,7 +230,7 @@ const handleProductClick = () => {
             <br />
             <CategoryForm />
             <br/>
-            <TagForm/>
+            <AdminTagForm/>
         </div>
     );
 };

@@ -1,28 +1,34 @@
 import { useState } from 'react';
 
-const CategoryDetails = ({ category, onUpdate, onDelete }) => {
+const AdminTagDetails = ({ Tag, onUpdate, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [newName, setNewName] = useState(category.name);
+    const [newName, setNewName] = useState(Tag.name);
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
     const handleSaveClick = () => {
-        onUpdate(category._id, newName);
+        onUpdate(Tag._id, newName);
         setIsEditing(false);
     };
 
+
+
+
+
+
+
     return (
-        <div className="category-details">
-            {isEditing ? (
+        <div className="tag-details">
+             {isEditing ? (
                 <input 
                     type="text" 
                     value={newName} 
                     onChange={(e) => setNewName(e.target.value)} 
                 />
             ) : (
-                <p><strong>Category: </strong>{category.name}</p>
+             <p><strong>Tag: </strong>{Tag.name}</p>
             )}
 
             {isEditing ? (
@@ -30,9 +36,15 @@ const CategoryDetails = ({ category, onUpdate, onDelete }) => {
             ) : (
                 <button onClick={handleEditClick}>Edit</button>
             )}
-            <button onClick={() => onDelete(category._id)}>Delete</button>
+            <button onClick={() => onDelete(Tag._id)}>Delete</button>
         </div>
+            
+            
+        
+
+
     );
 };
 
-export default CategoryDetails;
+export default AdminTagDetails;
+

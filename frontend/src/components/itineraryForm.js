@@ -95,7 +95,7 @@ const ItineraryForm = ({ existingItinerary, onCreated, onDeleted }) => {
     if (!window.confirm('Are you sure you want to delete this itinerary?')) return;
 
     const itineraryId = existingItinerary._id; 
-    const url = '/api/itineraryRoute/itinerary/${itineraryId}'; 
+    const url = ` /api/itineraryRoute/itinerary/${itineraryId}` ; 
 
     try {
         const response = await fetch(url, {
