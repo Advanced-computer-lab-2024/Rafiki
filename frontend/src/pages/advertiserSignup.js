@@ -5,12 +5,16 @@ import AdvertiserForm from "../components/advertiserForm"
 import AdvertiserDetails from "../components/AdvertiserDetails"
 import ActivityDetails from "../components/ActivityDetails"
 import ActivityForm from "../components/activityForm"
+import UpdateAdvertiser from "../components/updateAdvertiser"
+import DeleteActivity from "../components/DeleteActivity"
+import UpdateActivity from "../components/UpdateActivity"
 const AdvertiserSignup= () => {
-    const [advertisers, setAdvertiser] = useState(null)
+    const [advertiser, setAdvertiser] = useState(null)
     const [isVisible, setIsVisible] = useState(false);
     const [activity, setActivity] = useState(null)
     const [isVisible2, setIsVisible2] = useState(false);
-
+    const [selectedTourguide, setSelectedTourguide] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
  
 
   useEffect(() => {
@@ -46,6 +50,12 @@ const AdvertiserSignup= () => {
   const handleClick2 = () => {
     setIsVisible2(!isVisible2);
   };
+  const handleUpdate = (tourguide) => {
+    setSelectedTourguide(tourguide);
+};
+const handleUpdate2 = (tourguide) => {
+  setSelectedActivity(tourguide);
+};
 
   return (
    
@@ -55,28 +65,54 @@ const AdvertiserSignup= () => {
         <button onClick={handleClick}>
         {isVisible ? 'Hide' : 'Show'}  Advertiser Details
       </button>
-
       {isVisible && (
+                <div className="workouts">
+                    {advertiser && advertiser.map(advertiser => (
+                        <div key={advertiser._id}>
+                            <AdvertiserDetails advertiser={advertiser} />
+                            <button onClick={() => handleUpdate(advertiser)}>Update</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+      {/* {isVisible && (
         <div className="workouts">
-        {advertisers && advertisers.map(advertiser => (
-          <AdvertiserDetails advertiser={advertiser} key={advertiser._id} />
+        {advertiser && advertiser.map(advertiser => (
+          <div key={advertiser._id}>
+          <AdvertiserDetails advertiser={advertiser}  />
+          <button onClick={() => handleUpdate(advertiser)}>Update</button>
+          <div/>
         ))}
       </div>
-      )}
-      
+      )} */}
+      {/* <TourguideForm existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} /> */}
+      <UpdateAdvertiser existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
     <AdvertiserForm />
     <button onClick={handleClick2}>
         {isVisible2 ? 'Hide' : 'Show'}  Activities
       </button>
 
-      {isVisible2 && (
+      {/* {isVisible2 && (
     <div className="workouts">
         {activity && activity.map(activity => (
           <ActivityDetails activity={activity} key={activity._id} />
         ))}
       </div>
-      )}
+      )} */}
+       {isVisible2 && (
+                <div className="workouts">
+                    {activity && activity.map(activity => (
+                        <div key={activity._id}>
+                            <ActivityDetails activity={activity} />
+                            <button onClick={() => handleUpdate2(activity)}>Update</button>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <UpdateActivity existingTourguide={selectedActivity} onUpdate={() => setSelectedActivity(null)} />
 <ActivityForm/>
+<DeleteActivity/>
     
     </div>
 

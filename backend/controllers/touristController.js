@@ -68,21 +68,25 @@ const getTourists = async (req, res) => {
 
 // Update Tourist
 const updateTourist = async (req, res) => {
-  const { id } = req.params; // Get the ID from the request parameters
-  const { Email, MobileNumber, Nationality, Job } = req.body; // Only allow updating these fields
-  try {
-    const tourist = await TouristModel.findByIdAndUpdate(
-      id,
-      { Email, MobileNumber, Nationality, Job }, // Exclude Username and DOB
-      { new: true, runValidators: true } // Return the updated document and run validators
-    );
+  const { id } = req.params;
+  const { Username, Email, Password,Nationalty,Wallet,Job} = req.body;
 
-    if (!tourist) {
-      return res.status(404).json({ message: "Tourist not found." });
-    }
-    res.status(200).json(tourist); // Return the updated tourist
+  try {
+      let updatedData = { Username, Email,Nationalty,Wallet,Job };
+      
+      // Hash new password if provided
+      if (Password) {
+          updatedData.Password = await bcrypt.hash(Password, 10);
+      }
+
+      const tourguide = await TouristModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+      if (!tourguide) {
+          return res.status(404).json({ message: "Tour guide not found." });
+      }
+      res.status(200).json(tourguide);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message });
   }
 };
 

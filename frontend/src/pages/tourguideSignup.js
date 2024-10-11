@@ -3,14 +3,16 @@ import TourguideForm from "../components/tourguideForm";
 import TourguideDetails from "../components/tourguideDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
-
+import ActivityDetails from "../components/ActivityDetails"; 
+import CreateTourguide from "../components/createTourguide"
 const TourguideSignup = () => {
     const [tourguide, setTourguide] = useState(null);
     const [selectedTourguide, setSelectedTourguide] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [itinerary, setItinerary] = useState(null);
     const [isVisible2, setIsVisible2] = useState(false);
-
+    const [activity, setActivity] = useState(null)
+    const [isVisible3, setIsVisible3] = useState(false)
     useEffect(() => {
         const fetchTourguides = async () => {
             const response = await fetch('/api/tourguideRoute');
@@ -36,7 +38,19 @@ const TourguideSignup = () => {
 
         fetchItineraries();
     }, []);
-
+    useEffect(() => {
+        const fetchActivities = async () => {
+          const response = await fetch('/api/ActivityRoute')
+          const json = await response.json()
+    
+          if (response.ok) {
+            setActivity(json)
+          }
+        }
+    
+        fetchActivities()
+      }, [])
+    
     const handleClick = () => {
         setIsVisible(!isVisible);
     };
@@ -44,6 +58,10 @@ const TourguideSignup = () => {
     const handleClick2 = () => {
         setIsVisible2(!isVisible2);
     };
+
+    const handleClick3 = () => {
+        setIsVisible3(!isVisible3);
+      };
 
     const handleUpdate = (tourguide) => {
         setSelectedTourguide(tourguide);
@@ -81,7 +99,19 @@ const TourguideSignup = () => {
 
             {/* Show the form with pre-filled data for updating or empty for creating a new tour guide */}
             <TourguideForm existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
+            <button onClick={handleClick3}>
+        {isVisible3 ? 'Hide' : 'Show'}  Activities
+      </button>
+
+      {isVisible3 && (
+    <div className="workouts">
+        {activity && activity.map(activity => (
+          <ActivityDetails activity={activity} key={activity._id} />
+        ))}
+      </div>
+      )}
             <ItineraryForm />
+            <CreateTourguide/>
         </div>
     );
 }

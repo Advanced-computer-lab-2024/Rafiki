@@ -8,6 +8,21 @@ const TourismGovernor = require('../models/TourismGovernor');   // Assuming gues
 const { admin } = require('mongodb');
 
 // Admin: Delete Account
+const getAdmin = async (req, res) => {
+    try {
+      // Fetch all Admin from the database and sort them by creation date
+      const Admin = await adminModel.find({}).sort({ createdAt: -1 });
+  
+      // If no Admin found, you can return an empty array or a message
+      if (!Admin.length) {
+        return res.status(404).json({ message: "No Admin found." });
+      }
+  
+      res.status(200).json(Admin); // Return the list of Admin
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 const deleteAccount = async (req, res) => {
     const { id } = req.params; // Get the user or seller ID from the reques t
     try {
@@ -55,6 +70,6 @@ const addAdmin = async (req, res) => {
 };
 
 
-module.exports = { addTourismGovernor,deleteAccount,addAdmin };
+module.exports = { addTourismGovernor,deleteAccount,addAdmin,getAdmin };
 
 
