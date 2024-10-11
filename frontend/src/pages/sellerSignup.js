@@ -64,6 +64,17 @@ const SellerSignup = () => {
     setFilteredProducts(filtered);
   };
 
+
+  const sortProducts = async (order) => {
+    const response = await fetch(`/api/productsRoute/sortProducts?order=${order}`);
+    const json = await response.json();
+    if (response.ok) {
+      setProducts(json); // Update the products state with sorted products
+    } else {
+      console.error('Error sorting products:', json.error);
+    }
+  };
+
   const handleUpdateProduct = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
@@ -154,6 +165,8 @@ const SellerSignup = () => {
       </button>
       {isProductVisible && (
         <div className="products">
+           <button onClick={() => sortProducts('asc')}>Sort Ascending</button>
+           <button onClick={() => sortProducts('desc')}>Sort Descending</button>
           {products.length > 0 ? (
             products.map(product => (
               <div key={product._id}>
