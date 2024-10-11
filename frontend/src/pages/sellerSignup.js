@@ -35,7 +35,7 @@ const SellerSignup = () => {
     setSelectedTourguide(tourguide);
 };
   
-  };
+  
 
   const fetchProducts = async () => {
     const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
