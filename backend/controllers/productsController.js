@@ -74,10 +74,13 @@ const filterProducts = async (req, res) => {
 
 const sortProducts = async (req, res) => {
   try {
-    const products = await productsModel.find().sort({ Ratings: -1 }); // -1 for descending order
+    // Get sort order from query parameters; default to descending if not provided
+    const sortOrder = req.query.order === 'asc' ? 1 : -1; // 1 for ascending, -1 for descending
+
+    const products = await productsModel.find().sort({ Ratings: sortOrder });
 
     if (products.length === 0) {
-      return res.status(404).json({ message: "No products found." });
+      return res.status(200).json({ message: "No products found.", products: [] });
     }
 
     res.status(200).json(products);

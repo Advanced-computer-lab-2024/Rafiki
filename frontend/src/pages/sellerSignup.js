@@ -3,8 +3,8 @@ import SellerForm from "../components/sellerForm"; // Import the seller form
 import SellerDetails from "../components/sellerDetails"; // Import seller details
 import ProductDetails from "../components/ProductDetails";
 import ProductForm from "../components/productForm";
+import UpdateSeller from "../components/UpdateSeller";
 
-import UpdateSeller from "../components/UpdateSeller"
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]); // Initialize sellers
   const [isSellerVisible, setIsSellerVisible] = useState(false);
@@ -12,15 +12,15 @@ const SellerSignup = () => {
   const [isProductVisible, setIsProductVisible] = useState(false);
   const [minPrice, setMinPrice] = useState(""); // State for minimum price
   const [maxPrice, setMaxPrice] = useState(""); // State for maximum price
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]); // State for filtered products
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [isUpdateVisible, setIsUpdateVisible] = useState(false);
-
   const [selectedTourguide, setSelectedTourguide] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
   // Fetch sellers from the backend
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
@@ -31,17 +31,17 @@ const SellerSignup = () => {
       console.error('Error fetching sellers:', json); // Log errors
     }
   };
+
   const handleUpdate = (tourguide) => {
     setSelectedTourguide(tourguide);
-};
-  
-  
+  };
 
   const fetchProducts = async () => {
     const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
     const json = await response.json();
     if (response.ok) {
       setProducts(json); // Set the state with the fetched products
+      setFilteredProducts(json); // Initialize filtered products with all products
     } else {
       console.error('Error fetching products:', json); // Log errors
     }
@@ -62,6 +62,25 @@ const SellerSignup = () => {
     });
 
     setFilteredProducts(filtered);
+  };
+
+  const sortProducts = async (order) => {
+    const response = await fetch(`/api/productsRoute/sortProducts?order=${order}`);
+    const json = await response.json();
+    if (response.ok) {
+      setProducts(json); // Update the products state with sorted products
+      setFilteredProducts(json); // Update filtered products as well
+    } else {
+      console.error('Error sorting products:', json.error);
+    }
+  };
+
+  const handleSearch = () => {
+    // Filter products based on the search term
+    const filtered = products.filter(product =>
+      product.Name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(filtered); // Update filtered products
   };
 
   const handleUpdateProduct = async (e) => {
@@ -125,37 +144,37 @@ const SellerSignup = () => {
       <button onClick={handleSellerClick}>
         {isSellerVisible ? 'Hide' : 'Show'} Seller Details
       </button>
-      {/* {isSellerVisible && (
-        <div className="sellers">
-          {sellers.length > 0 ? (
-            sellers.map(seller => (
-              <SellerDetails seller={seller} key={seller._id} />
-            ))
-          ) : (
-            <p>No sellers found.</p>
-          )}
-        </div>
-      )} */}
       {isSellerVisible && (
-                <div className="workouts">
-                    {sellers && sellers.map(seller => (
-                        <div key={seller._id}>
-                            <SellerDetails seller={seller} />
-                            <button onClick={() => handleUpdate(seller)}>Update</button>
-                        </div>
-                    ))}
-                </div>
-            )}
+        <div className="workouts">
+          {sellers && sellers.map(seller => (
+            <div key={seller._id}>
+              <SellerDetails seller={seller} />
+              <button onClick={() => handleUpdate(seller)}>Update</button>
+            </div>
+          ))}
+        </div>
+      )}
 
-<UpdateSeller existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
+      <UpdateSeller existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
 
       <button onClick={handleProductClick}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
       {isProductVisible && (
         <div className="products">
-          {products.length > 0 ? (
-            products.map(product => (
+          <button onClick={() => sortProducts('asc')}>Sort Ascending</button>
+          <button onClick={() => sortProducts('desc')}>Sort Descending</button>
+          <h3>Search Products</h3>
+          <input
+            type="text"
+            placeholder="Search by product name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button onClick={handleSearch}>Search</button>
+
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map(product => (
               <div key={product._id}>
                 <ProductDetails product={product} />
                 <button
