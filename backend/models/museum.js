@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 // Schema for Museums and Historical Places
 const museumSchema = new mongoose.Schema({
   name: {
@@ -25,9 +26,9 @@ const museumSchema = new mongoose.Schema({
     type: Number, // Assume ticket price is a number
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  tag: {
+    type: String,
+    required: false,
   },
 });
 

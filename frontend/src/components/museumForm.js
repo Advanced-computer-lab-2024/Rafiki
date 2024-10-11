@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const MuseumForm = () => {
    
@@ -10,14 +11,15 @@ const MuseumForm = () => {
   const [location, setLocation] = useState('')
   const [openingHours, setOpeningHours] = useState('')
   const [ticketPrices, setTicketPrices] = useState('')
-  const [createdAt, setCreatedAt] = useState('')
+  const [tag, setTag] = useState('')
+  const [tags, setTags] = useState([]);
 
   const [error, setError] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const museum = {name,description,pictures,location,openingHours,ticketPrices,createdAt}
+    const museum = {name,description,pictures,location,openingHours,ticketPrices,tag}
     
     const response = await fetch('/api/museumRoute', {
       method: 'POST',
@@ -41,7 +43,7 @@ const MuseumForm = () => {
       setLocation('')
       setOpeningHours('')
       setTicketPrices('')
-      setCreatedAt('')
+      setTag('')
    
     
       console.log('new museum added:', json)
@@ -52,6 +54,17 @@ const MuseumForm = () => {
   const handleClick = () => {
     setIsVisible(!isVisible);
   };
+
+  useEffect(() => {
+    // Fetch tags from the backend
+    axios.get('/api/tagroute')  
+      .then(response => {
+        setTags(response.data);
+      })
+      .catch(error => {
+        setError('Failed to fetch tags');
+      });
+  }, []);
 
   return (
     <div>
@@ -98,12 +111,16 @@ const MuseumForm = () => {
         onChange={(e) => setTicketPrices(e.target.value)} 
         value={ticketPrices} 
       />
-       <label>createdAt:</label>
-      <input 
-        type="text" 
-        onChange={(e) => setCreatedAt(e.target.value)} 
-        value={createdAt} 
-      />
+       <label>Tag:</label>
+        <select 
+          onChange={(e) => setTag(e.target.value)} 
+          value={tag}
+        >
+          <option value="">Select a tag</option>
+          {tags.map(tag => (
+            <option key={tag._id} value={tag._name}>{tag.name}</option>
+          ))}
+        </select>
 
       <button>  Create Museum</button>
       {error && <div className="error">{error}</div>}

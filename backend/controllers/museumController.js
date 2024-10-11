@@ -2,7 +2,7 @@ const Museum = require('../models/museum');
 
 // Create a new museum
 const createMuseum = async (req, res) => {
-  const { name, description, pictures, location, openingHours, ticketPrices } = req.body;
+  const { name, description, pictures, location, openingHours, ticketPrices, tag } = req.body;
 
   try {
     const museum = await Museum.create({
@@ -12,6 +12,7 @@ const createMuseum = async (req, res) => {
       location,
       openingHours,
       ticketPrices,
+      tag,
     });
 
     res.status(201).json(museum);
@@ -40,7 +41,7 @@ const getMuseum = async (req, res) => {
 // Get all museums
 const getMuseums = async (req, res) => {
   try {
-    const museums = await Museum.find({}).sort({ createdAt: -1 });
+    const museums = await Museum.find({});
 
     res.status(200).json(museums);
   } catch (error) {

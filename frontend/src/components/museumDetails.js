@@ -7,6 +7,7 @@ const MuseumDetails = ({ museum, onDelete, onEdit }) => {
         <p><strong>Opening Hours: </strong>{museum.openingHours}</p>
         <p><strong>Ticket Prices: </strong>${museum.ticketPrices}</p>
         <p><strong>Picture: </strong>{museum.pictures}</p>
+        <p><strong>Tag: </strong>{museum.tag }</p>  
         {/* <button onClick={() => onEdit(museum)}>Edit</button>
         <button onClick={() => onDelete(museum._id)}>Delete</button> */}
       </div>
