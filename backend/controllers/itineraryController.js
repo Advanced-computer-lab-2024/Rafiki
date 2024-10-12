@@ -121,7 +121,7 @@ const getItinerariesSortedByPrice = async (req, res) => {
     }
 };
 
-const getActivitiesByBudget = async (req, res) => {
+const getItinerariesByBudget = async (req, res) => {
     const { budget } = req.params; // Get the budget from URL parameters
 
     // Ensure budget is a number
@@ -139,9 +139,54 @@ const getActivitiesByBudget = async (req, res) => {
     }
 };
 
+// Filter Itineraries by Available Date
+const getItinerariesByAvailableDate = async (req, res) => {
+    const { date } = req.params; // Get the date from URL parameters
+    
+    // Convert the date string to a JavaScript Date object
+    const inputDate = new Date(date);
+
+    // Check if the input date is valid
+    if (isNaN(inputDate.getTime())) {
+        return res.status(400).json({ message: "Invalid date format. Please provide a valid date (YYYY-MM-DD)." });
+    }
+
+    try {
+        // Find itineraries that have available dates greater than or equal to the input date
+        const itineraries = await ItineraryModel.find({
+            availableDates: { $gte: inputDate }
+        });
+
+        if (itineraries.length === 0) {
+            return res.status(404).json({ message: "No itineraries available on or after the specified date." });
+        }
+
+        res.status(200).json(itineraries);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+// Filter Itineraries by Language
+const getItinerariesByLanguage = async (req, res) => {
+    const { language } = req.params; // Get the language from URL parameters
+
+    try {
+        // Find itineraries that match the specified language
+        const itineraries = await ItineraryModel.find({ language: language });
+
+        if (itineraries.length === 0) {
+            return res.status(404).json({ message: `No itineraries found for the language: ${language}.` });
+        }
+
+        res.status(200).json(itineraries);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
 
 
-module.exports = { createItinerary, getItinerary, getAllItinerary, updateItinerary, deleteItinerary,getItinerariesSortedByPrice };
+module.exports = { createItinerary, getItinerary, getAllItinerary, updateItinerary, deleteItinerary,getItinerariesSortedByPrice,getItinerariesByBudget,getItinerariesByAvailableDate
+    ,getItinerariesByLanguage };

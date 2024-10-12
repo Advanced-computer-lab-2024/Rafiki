@@ -1,7 +1,7 @@
-const MuseumDetails = ({ museum, onDelete, onEdit }) => {
+const MuseumDetails = ({ museum}) => {
     return (
-      <div className="museum-details">
-        <h2>{museum.name}</h2>
+      <div className="workout-details">
+        <h4>{museum.name}</h4>
         <p><strong>Description: </strong>{museum.description}</p>
         <p><strong>Location: </strong>{museum.location}</p>
         <p><strong>Opening Hours: </strong>{museum.openingHours}</p>

@@ -11,7 +11,7 @@ const itinerarySchema = new Schema({
     activities: {
         type: [String], 
         required: true,
-    },
+    }, 
     locations: {
         type: [String], 
         required: true,
