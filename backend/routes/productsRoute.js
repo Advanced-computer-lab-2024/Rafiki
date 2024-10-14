@@ -1,16 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const { getProduct, createProduct, getProducts, filterProducts, sortProducts, updateProduct } = require('../controllers/productsController'); // Fix the path
+const { getProduct, upload, createProduct, getProducts, filterProducts, sortProducts, updateProduct } = require('../controllers/productsController');
 
-router.get("/getProduct/:Name", getProduct);
+// Route to get a product by name
+router.get("/getProduct/:name", getProduct);
 
-router.post("/addProduct", createProduct);
+// Route to create a new product
+router.post("/addProduct", upload.single('Picture'), createProduct);
 
+// Route to filter products by price
 router.get('/filterProducts', filterProducts);
+
+// Route to sort products by ratings
 router.get("/sortProducts", sortProducts);
 
-router.put('/updateProduct/:name', updateProduct)
+// Route to update a product by name (add multer for file upload)
+router.put('/updateProduct/:name', upload.single('Picture'), updateProduct);
+
+// Route to get all products
 router.get("/", getProducts);
 
-
 module.exports = router;
+

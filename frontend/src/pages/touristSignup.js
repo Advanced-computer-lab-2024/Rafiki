@@ -6,9 +6,14 @@ import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
 import  UpdateTourist  from "../components/UpdateTourist";
+import Rating from '../components/Rating';
+
 // components
 
 const TouristSignup = () => {
+    const [ratings, setRatings] = useState({}); // To hold ratings for each activity
+    const [comments, setComments] = useState({}); // To hold comments for each activity
+
     const [tourists, setTourists] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [products, setProducts] = useState([]);
@@ -47,6 +52,35 @@ const TouristSignup = () => {
         const [languageItinerary, setLanguageItinerary] = useState('');
         const [budgetItinerary, setBudgetItinerary] = useState('');
         const [dateItinerary, setDateItinerary] = useState('');
+
+        const handleRateActivity = (id, rating, comment) => {
+            setRatings((prevRatings) => ({
+                ...prevRatings,
+                [id]: rating,
+            }));
+        
+            setComments((prevComments) => ({
+                ...prevComments,
+                [id]: comment,
+            }));
+        
+            // Here you can also implement logic to save this data to your backend if needed
+        };
+
+        useEffect(() => {
+            const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
+            
+            setRatings(savedRatings);
+            setComments(savedComments);
+        }, []);
+        
+        useEffect(() => {
+            localStorage.setItem('ratings', JSON.stringify(ratings));
+            localStorage.setItem('comments', JSON.stringify(comments));
+        }, [ratings, comments]);
+        
+        
 
         useEffect(() => {
             const fetchActivities = async () => {
@@ -327,13 +361,28 @@ const TouristSignup = () => {
                 {isVisibleActivities ? 'Hide' : 'View'} Activities
             </button>
             
-            {isVisibleActivities && (
+            {/* {isVisibleActivities && (
                 <div className="activities">
                     {activities && activities.map(activity => (
                         <ActivityDetails activity={activity} key={activity._id} />
                     ))}
                 </div>
-            )}
+            )} */}
+            {isVisibleActivities && (
+    <div className="activities">
+        {activities && activities.map(activity => (
+            <div key={activity._id}>
+                <ActivityDetails activity={activity} />
+                {/* Add the Rating Component */}
+                <Rating 
+                    activityId={activity._id} 
+                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
+                />
+            </div>
+        ))}
+    </div>
+)}
+
             <br />
             <h4>Museums:</h4>
 

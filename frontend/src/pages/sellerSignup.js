@@ -20,6 +20,7 @@ const SellerSignup = () => {
   const [isUpdateVisible, setIsUpdateVisible] = useState(false);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [imageFile, setImageFile] = useState(null); // State for the image file
 
   // Fetch sellers from the backend
   const fetchSellers = async () => {
@@ -92,12 +93,16 @@ const SellerSignup = () => {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("Price", parseFloat(newPrice));
+      formData.append("Description", newDescription);
+      if (imageFile) {
+        formData.append("Picture", imageFile); // Include the image file if selected
+      }
+
       const response = await fetch(`/api/productsRoute/updateProduct/${selectedProduct.Name}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Price: parseFloat(newPrice), Description: newDescription }),
+        body: formData, // Send FormData instead of JSON
       });
 
       const result = await response.json();
@@ -108,6 +113,7 @@ const SellerSignup = () => {
         setSelectedProduct(null); // Reset selection
         setNewPrice(""); // Clear input
         setNewDescription(""); // Clear input
+        setImageFile(null); // Clear image file
         setIsUpdateVisible(false); // Hide update form after successful update
       } else {
         alert(`Error updating product: ${result.error}`);
@@ -182,6 +188,7 @@ const SellerSignup = () => {
                     setSelectedProduct(product); // Set the selected product
                     setNewPrice(product.Price); // Pre-fill with current price
                     setNewDescription(product.Description); // Pre-fill with current description
+                    setImageFile(null); // Reset image file for new upload
                     setIsUpdateVisible(true); // Show update form
                   }}
                 >
@@ -215,6 +222,11 @@ const SellerSignup = () => {
             value={newDescription}
             onChange={(e) => setNewDescription(e.target.value)}
             required
+          />
+          <input
+            type="file" // Add file input for image
+            onChange={(e) => setImageFile(e.target.files[0])}
+            accept="image/*" // Accept only image files
           />
           <button type="submit">Update Product</button>
         </form>
@@ -259,3 +271,4 @@ const SellerSignup = () => {
 };
 
 export default SellerSignup;
+
