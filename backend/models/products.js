@@ -34,8 +34,11 @@ const userSchema = new Schema({
     AvailableQuantity:{
         type: Number,
         required: true
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,  // By default, products are not archived
     }
-
 
     }, { timestamps: true });
 
