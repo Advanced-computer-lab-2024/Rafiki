@@ -4,7 +4,7 @@ import SellerDetails from "../components/sellerDetails"; // Import seller detail
 import ProductDetails from "../components/ProductDetails";
 import ProductForm from "../components/productForm";
 import UpdateSeller from "../components/UpdateSeller";
-
+import ChangePasswordForm from '../components/ChangePasswordForm';
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]); // Initialize sellers
   const [isSellerVisible, setIsSellerVisible] = useState(false);
@@ -22,6 +22,9 @@ const SellerSignup = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [imageFile, setImageFile] = useState(null); // State for the image file
 
+  const SellerChangePassword = () => (
+    <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
+  );
   // Fetch sellers from the backend
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
@@ -266,6 +269,7 @@ const SellerSignup = () => {
 
       <SellerForm onSellerAdded={fetchSellers} />
       <ProductForm onProductAdded={fetchProducts} />
+      <SellerChangePassword/>
     </div>
   );
 };

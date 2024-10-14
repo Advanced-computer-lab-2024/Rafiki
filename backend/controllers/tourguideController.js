@@ -73,4 +73,31 @@ const getAlltour = async (req, res) => {
     }
 };
 
-module.exports = { createTourguide, getTourguide, updateTourguide, getAlltour };
+
+const changePassword = async (req, res) => {
+    const { username, oldPassword, newPassword } = req.body;
+  
+    try {
+        // Fetch admin details from the database using Username
+        const admin = await TourguideModel.findOne({ Username: username });
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found.' });
+        }
+  
+        // Compare old password with the stored password (plain-text comparison)
+        if (admin.Password !== oldPassword) {
+            return res.status(400).json({ message: 'Incorrect old password.' });
+        }
+  
+        // Update the admin's password
+        admin.Password = newPassword;
+        await admin.save();
+  
+        return res.status(200).json({ message: 'Password changed successfully.' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+  };
+  
+
+module.exports = { createTourguide, getTourguide, updateTourguide, getAlltour,changePassword };

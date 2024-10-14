@@ -1,10 +1,12 @@
 const { default: mongoose } = require('mongoose');
 const sellerModel = require('../models/seller');
-const bcrypt = require('bcrypt'); 
+// const bcrypt = require('bcrypt'); 
+// const { default: ChangePasswordForm } = require('../../frontend/src/components/ChangePasswordForm');
 
 const createSeller = async(req,res) => {
     const{Username,Email,Password,Name,Description} = req.body;
-    const hashedPassword = await bcrypt.hash(Password,10);
+    // const hashedPassword = await bcrypt.hash(Password,10);
+    const hashedPassword = Password;
     try{
         const user = await sellerModel.create({Username,Email,Password:hashedPassword,Name,Description});
         res.status(200).json(user)
@@ -34,9 +36,9 @@ const getSeller = async (req, res) => {
         let updatedData = { Username, Email };
         
         // Hash new password if provided
-        if (Password) {
-            updatedData.Password = await bcrypt.hash(Password, 10);
-        }
+        // if (Password) {
+        //     updatedData.Password = await bcrypt.hash(Password, 10);
+        // }
 
         const tourguide = await sellerModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
 
@@ -55,5 +57,30 @@ const getSeller = async (req, res) => {
       res.status(200).json(seller); // Return the advertiser's details
     } 
 
+    const changePassword = async (req, res) => {
+      const { username, oldPassword, newPassword } = req.body;
+    
+      try {
+          // Fetch admin details from the database using Username
+          const admin = await sellerModel.findOne({ Username: username });
+          if (!admin) {
+              return res.status(404).json({ message: 'Admin not found.' });
+          }
+    
+          // Compare old password with the stored password (plain-text comparison)
+          if (admin.Password !== oldPassword) {
+              return res.status(400).json({ message: 'Incorrect old password.' });
+          }
+    
+          // Update the admin's password
+          admin.Password = newPassword;
+          await admin.save();
+    
+          return res.status(200).json({ message: 'Password changed successfully.' });
+      } catch (error) {
+          return res.status(500).json({ error: error.message });
+      }
+    };
+    
 
-  module.exports = {createSeller,getSeller,updateSeller,getAllSellers};
+  module.exports = {createSeller,getSeller,updateSeller,getAllSellers,changePassword};

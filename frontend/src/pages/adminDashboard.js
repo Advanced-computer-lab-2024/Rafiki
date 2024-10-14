@@ -8,6 +8,7 @@ import ProductDetails from "../components/ProductDetails";
 import AdminTagDetails from '../components/AdminTagDetails';
 import AdminTagForm from '../components/AdminTagForm';
 import ProductForm from '../components/productForm';
+import ChangePasswordForm from '../components/ChangePasswordForm';
 
 const AdminSignup = () => {
     const [categories, setCategories] = useState([]); // Initialize as an empty array
@@ -28,6 +29,10 @@ const AdminSignup = () => {
 
         fetchCategories();
     }, []);
+
+    const AdminChangePassword = () => (
+        <ChangePasswordForm apiEndpoint="/api/adminRoute/changePassword" />
+    );
 
     const updateCategory = async (id, newName) => {
 
@@ -233,6 +238,9 @@ const handleProductClick = () => {
             <AdminTagForm/>
             <br/>
             <ProductForm/>
+            <br/>
+            <AdminChangePassword/>
+
         </div>
     );
 };

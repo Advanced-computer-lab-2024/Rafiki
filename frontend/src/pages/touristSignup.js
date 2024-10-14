@@ -7,7 +7,7 @@ import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
 import  UpdateTourist  from "../components/UpdateTourist";
 import Rating from '../components/Rating';
-
+import ChangePasswordForm from '../components/ChangePasswordForm';
 // components
 
 const TouristSignup = () => {
@@ -66,6 +66,9 @@ const TouristSignup = () => {
         
             // Here you can also implement logic to save this data to your backend if needed
         };
+        const TouristChangePassword = () => (
+            <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
+          );
 
         useEffect(() => {
             const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
@@ -478,6 +481,8 @@ const TouristSignup = () => {
                 </div>
             )}
 
+
+
             {/* Sort by Price */}
             <button onClick={() => setIsVisiblePriceSortItinerary(!isVisiblePriceSortItinerary)}>
                 {isVisiblePriceSortItinerary ? 'Hide' : 'Sort by Price'}
@@ -498,6 +503,7 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
+            <TouristChangePassword/>
         </div>
     );
 };

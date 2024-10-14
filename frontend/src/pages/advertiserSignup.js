@@ -8,6 +8,10 @@ import ActivityForm from "../components/activityForm"
 import UpdateAdvertiser from "../components/updateAdvertiser"
 import DeleteActivity from "../components/DeleteActivity"
 import UpdateActivity from "../components/UpdateActivity"
+import ChangePasswordForm from '../components/ChangePasswordForm';
+const AdvChangePassword = () => (
+  <ChangePasswordForm apiEndpoint="/api/AdvertiserRoute/changePassword" />
+);
 const AdvertiserSignup= () => {
     const [advertiser, setAdvertiser] = useState(null)
     const [isVisible, setIsVisible] = useState(false);
@@ -114,6 +118,7 @@ const handleUpdate2 = (tourguide) => {
 <ActivityForm/>
 <DeleteActivity/>
     
+    <AdvChangePassword/>
     </div>
 
   )

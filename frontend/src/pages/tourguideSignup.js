@@ -5,7 +5,7 @@ import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails"; 
 import CreateTourguide from "../components/createTourguide";
-
+import ChangePasswordForm from '../components/ChangePasswordForm';
 const TourguideSignup = () => {
   const [tourguides, setTourguides] = useState(null);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
@@ -35,6 +35,9 @@ const TourguideSignup = () => {
     };
     fetchItineraries();
   }, []);
+  const GuideChangePassword = () => (
+    <ChangePasswordForm apiEndpoint="/api/tourguideRoute/changePassword" />
+  );
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -132,6 +135,7 @@ const TourguideSignup = () => {
       />
       
       <CreateTourguide />
+      <GuideChangePassword/>
     </div>
   );
 };
