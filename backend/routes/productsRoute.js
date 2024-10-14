@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getProduct, upload, createProduct, getProducts, filterProducts, sortProducts, updateProduct } = require('../controllers/productsController');
+const { getProduct, upload, createProduct, getProducts, filterProducts, sortProducts, updateProduct, archiveProduct,  getArchivedProducts } = require('../controllers/productsController');
 
 // Route to get a product by name
 router.get("/getProduct/:name", getProduct);
@@ -19,6 +19,10 @@ router.put('/updateProduct/:name', upload.single('Picture'), updateProduct);
 
 // Route to get all products
 router.get("/", getProducts);
+
+router.put('/archiveProduct/:id', archiveProduct);
+
+router.get('/viewArchived', getArchivedProducts);
 
 module.exports = router;
 
