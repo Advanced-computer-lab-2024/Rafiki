@@ -1,28 +1,13 @@
-// import { useEffect, useState } from "react"
 
-// components
 
 import { Link } from 'react-router-dom';
 const Home = () => {
-  // const [workouts, setWorkouts] = useState(null)
-
-  // useEffect(() => {
-  //   const fetchWorkouts = async () => {
-  //     const response = await fetch('/api/workouts')
-  //     const json = await response.json()
-
-  //     if (response.ok) {
-  //       setWorkouts(json)
-  //     }
-  //   }
-
-  //   fetchWorkouts()
-  // }, [])
+ 
 
   return (
     <div>
       <header>
-    {/* <h1>Rafiki</h1> */}
+    
    </header>
  
         <h2>Choose your path:</h2>
@@ -55,14 +40,7 @@ const Home = () => {
         </Link>
     </div>
     
-    // <div className="home">
-    //   <div className="workouts">
-    //     {workouts && workouts.map(workout => (
-    //       <WorkoutDetails workout={workout} key={workout._id} />
-    //     ))}
-    //   </div>
-    //   <WorkoutForm />
-    // </div>
+    
 
   )
 }

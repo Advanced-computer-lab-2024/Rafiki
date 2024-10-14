@@ -27,7 +27,7 @@ const ArchivedProducts = () => {
       body: JSON.stringify({ isArchived: false }),
     });
 
-    const data = await response.json();
+    // const data = await response.json();
     if (response.ok) {
       alert('Product unarchived successfully!');
       setArchivedProducts(archivedProducts.filter(product => product._id !== productId));
