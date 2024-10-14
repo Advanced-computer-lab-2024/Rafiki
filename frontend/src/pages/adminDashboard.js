@@ -7,7 +7,7 @@ import CategoryDetails from "../components/categoryDetails";
 import ProductDetails from "../components/ProductDetails";
 import AdminTagDetails from '../components/AdminTagDetails';
 import AdminTagForm from '../components/AdminTagForm';
-
+import ProductForm from '../components/productForm';
 
 const AdminSignup = () => {
     const [categories, setCategories] = useState([]); // Initialize as an empty array
@@ -231,6 +231,8 @@ const handleProductClick = () => {
             <CategoryForm />
             <br/>
             <AdminTagForm/>
+            <br/>
+            <ProductForm/>
         </div>
     );
 };
