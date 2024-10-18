@@ -36,6 +36,11 @@ const GuestDashboard = () => {
     const [budgetItinerary, setBudgetItinerary] = useState('');
     const [dateItinerary, setDateItinerary] = useState('');
 
+
+//docs
+const [selectedFile, setSelectedFile] = useState(null);
+
+
     useEffect(() => {
         const fetchActivities = async () => {
             const response = await fetch('/api/ActivityRoute');
@@ -47,6 +52,44 @@ const GuestDashboard = () => {
         fetchActivities();
     }, []);
     
+
+
+
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
+    // Handle file upload
+    const handleFileUpload = async () => {
+        if (!selectedFile) {
+            alert("Please select a file first.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        try {
+            const response = await fetch("/api/uploadDocument", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                alert("File uploaded successfully");
+                // Clear the selected file after upload
+                setSelectedFile(null);
+            } else {
+                alert("Failed to upload file");
+            }
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            alert("Error uploading file");
+        }
+    };
+
+
+
 
     const handleTagSearch = async () => {
         const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
@@ -158,6 +201,16 @@ const GuestDashboard = () => {
     return (
         <div>
             <h1>Guest Dashboard</h1>
+
+             {/* File Upload Section */}
+             <div className="file-upload">
+                <h2>Upload Documents</h2>
+                <input type="file" onChange={handleFileChange} />
+                <button onClick={handleFileUpload}>Upload</button>
+            </div>
+
+
+
             {/* Search by Tag */}
             <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
                 {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}

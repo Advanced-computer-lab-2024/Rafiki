@@ -19,6 +19,7 @@ const AdminSignup = () => {
   const [tag, setTag] = useState([]);
   const [products, setProducts] = useState([]);
   const [isProductVisible, setIsProductVisible] = useState(false); // For toggling product details visibility
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
     //         if (response.ok) {
     //             setCategories(json);
@@ -56,6 +57,24 @@ const AdminSignup = () => {
     fetchCategories();
   }, []);
 
+
+
+useEffect(() => {
+    const fetchDocuments = async () => {
+      const response = await fetch('/api/uploadedDocuments');
+      const json = await response.json();
+      if (response.ok) {
+        setUploadedDocuments(json);
+      }
+    };
+    fetchDocuments();
+  }, []);
+
+  const show=(pdf)=>{
+    window.open(`http://localhost:4000/uploads/${pdf}` , "_blank","noreferrer")
+  }
+
+  
   // Update category
   const updateCategory = async (id, newName) => {
     const response = await fetch(`/api/categoryRoutes/${id}`, {
@@ -146,6 +165,19 @@ const AdminSignup = () => {
     fetchProducts();
   }, []);
 
+  const acceptDocument = async (id) => {
+    alert('User has been accepted.');
+    setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id));
+  };
+
+  // Function to reject a document
+  const rejectDocument = async (id) => {
+    alert('User has been rejected.');
+    setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id))
+  };
+
+
+
   // Handle visibility toggles
   const handleClick = () => setIsVisible(!isVisible);
   const handleClick2 = () => setIsVisible2(!isVisible2);
@@ -233,6 +265,34 @@ const AdminSignup = () => {
         </div> */}
     {/* ); */}
 
+
+
+
+    <div>
+      <h2>Admin Dashboard - View Uploaded Documents</h2>
+      {uploadedDocuments.length > 0 ? (
+        uploadedDocuments.map((document, index) => (
+          <div key={index}>
+            <p>{document.originalname}</p>
+            {/* Button to view PDF */}
+            {document.filename.endsWith('.pdf') && (
+              <button onClick={() => show(document.filename)}>View PDF</button>
+            )}
+            <button onClick={() => acceptDocument(document._id)}>Accept</button>
+            <button onClick={() => rejectDocument(document._id)}>Reject</button>
+            <p>Status: {document.status}</p>
+          </div>
+        ))
+      ) : (
+        <p>No documents uploaded yet.</p>
+      )}
+    </div>
+
+
+
+
+
+
       <br />
 
       {/* Toggle Archived Products */}
@@ -242,6 +302,9 @@ const AdminSignup = () => {
       {isArchivedVisible && <ArchivedProducts />}
 
       <br />
+
+
+      
       {/* Admin Forms */}
       <AdminForm />
       <br />

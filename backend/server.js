@@ -72,7 +72,7 @@ const categoryRoutes = require('./routes/categeryRoute'); // Adjust the path as 
 const tagRoutes = require('./routes/TagRoute'); // Adjust the path as necessary
 const museumRoutes = require('./routes/museumRoute');
 const productRoutes = require('./routes/productsRoute');
-
+const uploadRoute = require('./routes/documentRoute');
 // Create an Express application
 const app = express();
 
@@ -98,6 +98,7 @@ app.use('/api/itineraryRoute', itineraryRoutes);
 app.use('/api/tagRoute', tagRoutes);
 app.use('/api/museumRoute', museumRoutes);
 app.use('/api/productsRoute', productRoutes);
+app.use('/api', uploadRoute);
 app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB
