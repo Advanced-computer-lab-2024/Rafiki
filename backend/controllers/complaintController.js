@@ -63,7 +63,7 @@ const updateReply = async (req, res) => {
 const getComplaintsSortedbyDate = async (req, res) => {
     try {
         // Fetch and sort complaints by date in descending order (most recent first)
-        const complaints = await Complaint.find({}).sort({ date: -1 }); 
+        const complaints = await Complaint.find({}).sort({ date: 1 }); 
         res.status(200).json(complaints); // Return the sorted complaints
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -22,6 +22,11 @@ const AdminSignup = () => {
   const [isProductVisible, setIsProductVisible] = useState(false); // For toggling product details visibility
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
+  const [complaints, setComplaints] = useState(null); 
+  const [isVisibleComplaints, setIsVisibleComplaints] = useState(false);
+  const [isVisibleStatusSearch, setIsVisibleStatusSearch] = useState(false);
+  const [isVisibleDateSort, setIsVisibleDateSort] = useState(false);
+  const [status, setStatus] = useState('');
     //         if (response.ok) {
     //             setCategories(json);
     //         }
@@ -43,7 +48,32 @@ const AdminSignup = () => {
     //       body: JSON.stringify({ name: newName }),
     //       headers: { 'Content-Type': 'application/json' },
     //   });
-      
+    useEffect(() => {
+      const fetchComplaints = async () => {
+          const response = await fetch('/api/complaintRoute');
+          const json = await response.json();
+          if (response.ok) {
+            setComplaints(json);
+          }
+      };
+      fetchComplaints();
+  }, []);
+
+  const complaintStatusFilter = async () => {
+    const response = await fetch(`/api/complaintRoute/search/${status}`);
+    const json = await response.json();
+    if (response.ok) {
+      setComplaints(json);
+    }
+  };
+  const complaintSortbyDtae = async () => {
+    const response = await fetch('/api/complaintRoute/sort/date');
+    const json = await response.json();
+    if (response.ok) {
+      setComplaints(json);
+    }
+  };
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -249,6 +279,46 @@ useEffect(() => {
           )}
         </div>
       )}
+         <br />
+            {/* Sort by Date */}
+            <button onClick={() => setIsVisibleDateSort(!isVisibleDateSort)}>
+                {isVisibleDateSort ? 'Hide' : 'Sort by Date'}
+            </button>
+            {isVisibleDateSort && (
+                <button onClick={complaintSortbyDtae}>Sort</button>
+            )}
+            {/* Search by Status */}
+            <button onClick={() => setIsVisibleStatusSearch(!isVisibleStatusSearch)}>
+                {isVisibleStatusSearch ? 'Hide' : 'Filter by Status'}
+            </button>
+            {isVisibleStatusSearch && (
+                <div>
+                    <select 
+                      value={status} 
+                      onChange={(e) => setStatus(e.target.value)}
+                    >
+                    <option value="">Select Status</option> {/* Disabled placeholder */}
+                    <option value="resolved">Resolved</option>
+                    <option value="pending">Pending</option>
+                    </select>
+                    <button onClick={complaintStatusFilter}>Search</button>
+                </div>
+            )}
+            <br />
+             {/* View Complaints */}
+             <button onClick={() => setIsVisibleComplaints(!isVisibleComplaints)}>
+                {isVisibleComplaints ? 'Hide' : 'View'} Complaints
+            </button>
+            {isVisibleComplaints && (
+                <div className="complaints">
+                    {complaints && complaints.map(complaint => (
+                        <ComplaintDetails complaint={complaint} key={complaint._id} />
+                    ))}
+                </div>
+            )}
+            <br />
+
+
             {/* <AdminForm />
             <br />
             <GovernerForm />
