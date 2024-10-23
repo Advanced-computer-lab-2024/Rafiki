@@ -10,6 +10,7 @@ import AdminTagForm from '../components/AdminTagForm';
 import ProductForm from '../components/productForm';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts'; // Import ArchivedProducts component
+import ComplaintDetails from '../components/complaintDetails';
 
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
