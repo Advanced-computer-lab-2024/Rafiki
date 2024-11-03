@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SellerForm from "../components/sellerForm";
-import SellerDetails from "../components/sellerDetails";
+import SellerDetails from "../components/sellerDetails"; // gharib
 import ProductDetails from "../components/ProductDetails";
 import ProductForm from "../components/productForm";
 import UpdateSeller from "../components/UpdateSeller";
@@ -9,7 +9,7 @@ import ArchivedProducts from '../components/ArchivedProducts';  // Corrected imp
 
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]);
-  const [isSellerVisible, setIsSellerVisible] = useState(false);
+  const [isSellerVisible, setIsSellerVisible] = useState(false); // gharib
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isProductVisible, setIsProductVisible] = useState(false);
@@ -29,6 +29,7 @@ const SellerSignup = () => {
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
   // Fetch sellers from the backend
+  // gharib
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
     const json = await response.json();
@@ -49,7 +50,7 @@ const SellerSignup = () => {
       console.error('Error fetching products:', json);
     }
   };
-
+// gharib
   useEffect(() => {
     fetchSellers();
     fetchProducts();
@@ -154,12 +155,13 @@ const SellerSignup = () => {
     }
   };
 
-  const handleSellerClick = () => setIsSellerVisible(!isSellerVisible);
+  const handleSellerClick = () => setIsSellerVisible(!isSellerVisible); // gharib
   const handleProductClick = () => setIsProductVisible(!isProductVisible);
   const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
   const handleFilterClick = () => setIsFilterVisible(!isFilterVisible);
 
   return (
+    // gharib
     <div>
       <h2>Seller Dashboard</h2>
 
@@ -174,8 +176,9 @@ const SellerSignup = () => {
               <button onClick={() => handleUpdate(seller)}>Update</button>
             </div>
           ))}
-        </div>
-      )}
+        </div>// gharib
+      )} 
+      
 
       <UpdateSeller existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
 
