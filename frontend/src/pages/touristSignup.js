@@ -8,12 +8,16 @@ import ProductDetails from "../components/ProductDetails";
 import  UpdateTourist  from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
+import PaymentForm from '../components/paymentForm';
+import RedemptionForm from '../components/redemptionForm';
+
+
+
 // components
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [comments, setComments] = useState({}); // To hold comments for each activity
-
     const [tourists, setTourists] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [products, setProducts] = useState([]);
@@ -33,6 +37,8 @@ const TouristSignup = () => {
         const [category, setCategory] = useState('');
         const [budget, setBudget] = useState('');
         const [date, setDate] = useState('');
+        
+        
     
         //museums
         const [museums, setMuseums] = useState(null); 
@@ -41,6 +47,7 @@ const TouristSignup = () => {
         const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
         const [tagMuseum, setTagMuseum] = useState('');
         const [nameMuseum, setNameMuseum] = useState('');
+
     
         //itineraries
         const [itineraries, setItineraries] = useState(null);
@@ -52,6 +59,17 @@ const TouristSignup = () => {
         const [languageItinerary, setLanguageItinerary] = useState('');
         const [budgetItinerary, setBudgetItinerary] = useState('');
         const [dateItinerary, setDateItinerary] = useState('');
+
+
+        const [selectedTourist, setSelectedTourist] = useState(null);
+        const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
+
+
+        const toggleRedemptionForm = (tourist) => {
+            setSelectedTourist(tourist);
+            setIsRedemptionVisible(!isRedemptionVisible);
+        };
+    
 
         const handleRateActivity = (id, rating, comment) => {
             setRatings((prevRatings) => ({
@@ -173,6 +191,49 @@ const TouristSignup = () => {
             };
             fetchItinerary();
         }, []);
+
+
+
+
+        const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+        const [selectedItinerary, setSelectedItinerary] = useState(null);
+        const [selectedMuseum, setSelectedMuseum] = useState(null);
+        const [selectedActivity, setSelectedActivity] = useState(null);
+
+
+        const handlePaymentClickItinerary = (itinerary) => {
+            setSelectedItinerary(itinerary);
+            setSelectedMuseum(null);
+            setSelectedActivity(null);
+            setIsPaymentVisible(true);
+        };
+    
+        // Function to handle payment click for museums
+        const handlePaymentClickMuseum = (museum) => {
+            setSelectedMuseum(museum);
+            setSelectedItinerary(null);
+            setSelectedActivity(null);
+            setIsPaymentVisible(true);
+        };
+    
+        // Function to handle payment click for activities
+        const handlePaymentClickActivity = (activity) => {
+            setSelectedActivity(activity);
+            setSelectedItinerary(null);
+            setSelectedMuseum(null);
+            setIsPaymentVisible(true);
+        };
+    
+        // Function to close payment form
+        const closePaymentForm = () => {
+            setIsPaymentVisible(false);
+            setSelectedItinerary(null);
+            setSelectedMuseum(null);
+            setSelectedActivity(null);
+        };
+
+
+
         const itineraryBudgetFilter = async () => {
             const response = await fetch(`/api/itineraryRoute/filter/${budgetItinerary}`);
             const json = await response.json();
@@ -256,31 +317,54 @@ const TouristSignup = () => {
             </button>
   
 
-{isVisible && (
-                <div className="workouts">
+            {isVisible && (
+                <div className="tourists">
                     {tourists && tourists.map(tourist => (
                         <div key={tourist._id}>
-                            < TouristDetails tourist={tourist} />
+                            <TouristDetails tourist={tourist} />
+                            <button onClick={() => toggleRedemptionForm(tourist)}>Redeem Points</button>
                             <button onClick={() => handleUpdate(tourist)}>Update</button>
                         </div>
                     ))}
                 </div>
             )}
 
+            {/* Render RedemptionForm if visible */}
+            {isRedemptionVisible && selectedTourist && (
+                <RedemptionForm
+                    tourist={selectedTourist}
+                    onClose={() => setIsRedemptionVisible(false)}
+                />
+            )}
+
+        
+
+
+
+
+
 
 <button onClick={handleProductClick}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
       {isProductVisible && (
-        <div className="products">
-          {products.length > 0 ? (
-            products.map(product => (
-              <ProductDetails product={product} key={product._id} />
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
-        </div>
+       <div className="products">
+    {products.length > 0 ? (
+        products.map(product => (
+            <div key={product._id}>
+                <ProductDetails product={product} />
+                {/* Add the Rating Component */}
+                <Rating 
+                    activityId={product._id} // Change this to a suitable identifier if needed
+                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} // Update function name
+                />
+            </div>
+        ))
+    ) : (
+        <p>No products available.</p> // Optional: Message if no products are found
+    )}
+</div>
+
       )}
       
 
@@ -381,11 +465,15 @@ const TouristSignup = () => {
                     activityId={activity._id} 
                     onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
                 />
+                                             <button onClick={() => handlePaymentClickActivity(activity)}>
+                                Pay for this Activity
+                            </button>
+
             </div>
         ))}
     </div>
 )}
-
+ 
             <br />
             <h4>Museums:</h4>
 
@@ -426,12 +514,22 @@ const TouristSignup = () => {
             </button>
             
             {isVisibleMuseums && (
-                <div className="museums">
-                    {museums && museums.map(museum => (
-                        <MuseumDetails museum={museum} key={museum._id} />
-                    ))}
-                </div>
-            )}
+    <div className="museums">
+        {museums && museums.map(museum => (
+            <div key={museum._id}>
+                <MuseumDetails museum={museum} />
+                
+                
+                <button onClick={() => handlePaymentClickMuseum(museum)}>
+                                Pay for this Museum
+                            </button>
+            </div>
+        ))}
+    </div>
+)}
+
+
+
             <br />
             <h4>Itineraries:</h4>
 
@@ -499,10 +597,27 @@ const TouristSignup = () => {
             {isVisibleItineraries && (
                 <div className="Itineraries">
                     {itineraries && itineraries.map(itinerary => (
-                        <ItineraryDetails itinerary={itinerary} key={itinerary._id} />
+                        <div key={itinerary._id}>
+                            <ItineraryDetails itinerary={itinerary} />
+                            {/* Payment Button */}
+                            <button onClick={() => handlePaymentClickItinerary(itinerary)}>
+                                Pay for this Itinerary
+                            </button>
+                        </div>
                     ))}
                 </div>
             )}
+
+            {/* Render Payment Form if visible */}
+                        {isPaymentVisible && (
+                <PaymentForm 
+                    itinerary={selectedItinerary} // Only pass the selected itinerary
+                    museum={selectedMuseum} // Only pass the selected museum
+                    activity={selectedActivity} // Only pass the selected activity
+                    onClose={closePaymentForm} // Use the function to close
+                />
+            )}
+
             <TouristChangePassword/>
         </div>
     );
