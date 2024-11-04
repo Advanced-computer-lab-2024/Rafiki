@@ -11,6 +11,7 @@ import ProductForm from '../components/productForm';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts'; // Import ArchivedProducts component
 import ComplaintDetails from '../components/complaintDetails';
+import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
@@ -21,6 +22,11 @@ const AdminSignup = () => {
   const [products, setProducts] = useState([]);
   const [isProductVisible, setIsProductVisible] = useState(false); // For toggling product details visibility
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [isDocumentsVisible, setIsDocumentsVisible] = useState(false);
+
+  const [activities, setActivities] = useState([]);
+  const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
+  const [isVisibleActivities, setIsVisibleActivities] = useState(false);
 
   const [complaints, setComplaints] = useState(null); 
   const [isVisibleComplaints, setIsVisibleComplaints] = useState(false);
@@ -198,14 +204,28 @@ useEffect(() => {
 
   const acceptDocument = async (id) => {
     alert('User has been accepted.');
-    setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id));
+    //setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id));
   };
 
   // Function to reject a document
   const rejectDocument = async (id) => {
     alert('User has been rejected.');
-    setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id))
+    //setUploadedDocuments(uploadedDocuments.filter(doc => doc._id !== id))
   };
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const response = await fetch('/api/ActivityRoute');
+      const json = await response.json();
+      if (response.ok) {
+        setActivities(json);
+      }
+    };
+    fetchActivities();
+  }, []);
+
+  
+
 
 
 
@@ -214,7 +234,7 @@ useEffect(() => {
   const handleClick2 = () => setIsVisible2(!isVisible2);
   const handleProductClick = () => setIsProductVisible(!isProductVisible);
   const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
-
+  const handleDocumentsClick = () => setIsDocumentsVisible(!isDocumentsVisible);
   return (
     <div>
       <h2>Admin Dashboard</h2>
@@ -319,6 +339,10 @@ useEffect(() => {
             <br />
 
 
+
+
+
+
             {/* <AdminForm />
             <br />
             <GovernerForm />
@@ -336,11 +360,16 @@ useEffect(() => {
         </div> */}
     {/* ); */}
 
-
+    
 
 
     <div>
-      <h2>Admin Dashboard - View Uploaded Documents</h2>
+  <h2>Admin Dashboard - View Uploaded Documents</h2>
+  <button onClick={() => handleDocumentsClick(!isDocumentsVisible)}>
+    {isDocumentsVisible ? 'Hide' : 'View'} Documents
+  </button>
+  {isDocumentsVisible && (
+    <div className="documents">
       {uploadedDocuments.length > 0 ? (
         uploadedDocuments.map((document, index) => (
           <div key={index}>
@@ -358,9 +387,26 @@ useEffect(() => {
         <p>No documents uploaded yet.</p>
       )}
     </div>
+  )}
+
+  {/* View Activities Section */}
+  <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
+    {isVisibleActivities ? 'Hide' : 'Show'} Activities
+  </button>
+  {isVisibleActivities && (
+    <div className="activities">
+      {activities.map(activity => (
+        <div key={activity._id}>
+          <p>{activity.location}</p> {/* Display any activity info */}
+          <button onClick={() => flagActivity(activity._id)}>Flag as Inappropriate</button>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
 
-
+        
 
 
 

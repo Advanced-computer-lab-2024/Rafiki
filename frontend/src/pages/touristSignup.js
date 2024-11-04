@@ -12,6 +12,7 @@ import axios from 'axios';
 import HotelPopup from "./HotelPopup";
 import FlightPopup from "./FlightPopup";
 import TransportationPopup from "./TransportationPopup";
+import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
@@ -38,7 +39,7 @@ const TouristSignup = () => {
     const showTransportationPopup = () => setIsTransportationPopupVisible(true);
     const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
     // activities
-    const [activities, setActivities] = useState(null);
+    const [activities, setActivities] = useState([]);
     const [isVisibleActivities, setIsVisibleActivities] = useState(false);
     const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
     const [isVisibleCategorySearch, setIsVisibleCategorySearch] = useState(false);
@@ -50,6 +51,7 @@ const TouristSignup = () => {
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
+    const { flaggedActivities } = useFlaggedActivities();
     //museums
     const [museums, setMuseums] = useState(null);
     const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
@@ -274,6 +276,9 @@ const TouristSignup = () => {
         };
         fetchActivities();
     }, []);
+
+    const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
+
 
     const handleTagSearch = async () => {
         const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
@@ -651,20 +656,19 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )} */}
-            {isVisibleActivities && (
-                <div className="activities">
-                    {activities && activities.map(activity => (
+          {isVisibleActivities && (
+  <div className="activities">
+   {visibleActivities.map(activity => (
                         <div key={activity._id}>
                             <ActivityDetails activity={activity} />
-                            {/* Add the Rating Component */}
-                            <Rating
-                                activityId={activity._id}
-                                onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
-                            />
+                            <Rating activityId={activity._id} onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} />
                         </div>
                     ))}
+                    {visibleActivities.length === 0 && <p>No available activities to display.</p>}
                 </div>
             )}
+
+            
 
             <br />
             <h4>Museums:</h4>
