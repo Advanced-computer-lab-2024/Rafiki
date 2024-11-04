@@ -6,13 +6,13 @@ const ActivityDetails = ({ activity }) => {
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   
   const copyLinkToClipboard = () => {
-    const link = `${window.location.origin}/activity/${activity.id}`;
+    const link = `${window.location.origin}/tourist-signup/`;
     navigator.clipboard.writeText(link)
       .then(() => alert('Link copied to clipboard!'))
       .catch(error => console.error("Failed to copy link:", error));
   };
   const shareViaEmail = () => {
-    const link = `${window.location.origin}/activity/${activity.id}`;
+    const link = `${window.location.origin}/tourist-signup/`;
     window.location.href = `mailto:?subject=Check%20out%20this%20activity&body=Here%20is%20an%20activity%20I%20found:%20${link}`;
   };
   const handleCurrencyChange = (e) => {
