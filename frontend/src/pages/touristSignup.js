@@ -51,6 +51,15 @@ const TouristSignup = () => {
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
     const { flaggedActivities } = useFlaggedActivities();
+    const [isVisibleRating, setIsVisibleRating] = useState(false);
+
+    const toggleRatingForm = (id) => {
+        setIsVisibleRating((prevVisibility) => ({
+          ...prevVisibility,
+          [id]: !prevVisibility[id], // Toggle the visibility for the specific product
+        }));
+      };
+    
         
         
     
@@ -534,17 +543,29 @@ const TouristSignup = () => {
 
 
 <button onClick={handleProductClick}>
-                {isProductVisible ? 'Hide' : 'Show'} Product Details
-            </button>
-            {isProductVisible && (
-                <div className="products">
-                    {products.length > 0 ? (
-                        products.map(product => (
-                            <ProductDetails product={product} key={product._id} />
-                        ))
-                    ) : (
-                        <p>No products found.</p>
-                    )}
+        {isProductVisible ? 'Hide' : 'Show'} Product Details
+      </button>
+      {isProductVisible && (
+        <div className="products">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <div key={product._id} className="product-item">
+                <ProductDetails product={product} />
+
+                <button onClick={() => toggleRatingForm(product._id)} style={{ marginTop: '10px' }}>
+                  {isVisibleRating[product._id] ? 'Hide payment' : 'Pay for this product'}
+                </button>
+
+                
+                <Rating 
+                    activityId={product._id} 
+                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
+                />
+              </div>
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
                 </div>
             )}
 
