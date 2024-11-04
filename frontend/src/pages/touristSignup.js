@@ -8,29 +8,51 @@ import ProductDetails from "../components/ProductDetails";
 import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
+import PaymentForm from '../components/paymentForm';
+import RedemptionForm from '../components/redemptionForm';
+
 // components
+import axios from 'axios';
+import HotelPopup from "./HotelPopup";
+import FlightPopup from "./FlightPopup";
+import TransportationPopup from "./TransportationPopup";
+import ComplainCreateForm from "../components/complainCreateForm"
+import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [comments, setComments] = useState({}); // To hold comments for each activity
-
+    const [isHotelPopupVisible, setIsHotelPopupVisible] = useState(false);
+    const [isFlightPopupVisible, setIsFlightPopupVisible] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [CityName, setCityName] = useState('');
     const [tourists, setTourists] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [isProductVisible, setIsProductVisible] = useState(false);
     const [selectedTourguide, setSelectedTourguide] = useState(null);
+    const [searchByFlightVisible, setSearchByFlightVisible] = useState(false);
+    const [searchForAHotelByCity, setSearchForAHotelByCity] = useState(false);
+    const [hotelsData, setHotelsData] = useState([]);
+    const [flightPopupData, setFlightPopupData] = useState([]);
+    const showHotelPopup = () => setIsHotelPopupVisible(true);
+    const hideHotelPopup = () => setIsHotelPopupVisible(false);
 
         // activities
-        const [activities, setActivities] = useState(null); 
-        const [isVisibleActivities, setIsVisibleActivities] = useState(false);
-        const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
-        const [isVisibleCategorySearch, setIsVisibleCategorySearch] = useState(false);
-        const [isVisibleBudgetFilter, setIsVisibleBudgetFilter] = useState(false);
-        const [isVisibleDateFilter, setIsVisibleDateFilter] = useState(false);
-        const [isVisiblePriceSort, setIsVisiblePriceSort] = useState(false);
-        const [tag, setTag] = useState('');
-        const [category, setCategory] = useState('');
-        const [budget, setBudget] = useState('');
-        const [date, setDate] = useState('');
+        const [activities, setActivities] = useState([]);
+    const [isVisibleActivities, setIsVisibleActivities] = useState(false);
+    const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
+    const [isVisibleCategorySearch, setIsVisibleCategorySearch] = useState(false);
+    const [isVisibleBudgetFilter, setIsVisibleBudgetFilter] = useState(false);
+    const [isVisibleDateFilter, setIsVisibleDateFilter] = useState(false);
+    const [isVisiblePriceSort, setIsVisiblePriceSort] = useState(false);
+    const [tag, setTag] = useState('');
+    const [category, setCategory] = useState('');
+    const [budget, setBudget] = useState('');
+    const [date, setDate] = useState('');
+    const [transportationData, setTransportationData ] = useState([]);
+    const { flaggedActivities } = useFlaggedActivities();
+        
+        
     
         //museums
         const [museums, setMuseums] = useState(null); 
@@ -39,6 +61,7 @@ const TouristSignup = () => {
         const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
         const [tagMuseum, setTagMuseum] = useState('');
         const [nameMuseum, setNameMuseum] = useState('');
+
     
         //itineraries
         const [itineraries, setItineraries] = useState(null);
@@ -50,6 +73,17 @@ const TouristSignup = () => {
         const [languageItinerary, setLanguageItinerary] = useState('');
         const [budgetItinerary, setBudgetItinerary] = useState('');
         const [dateItinerary, setDateItinerary] = useState('');
+
+
+        const [selectedTourist, setSelectedTourist] = useState(null);
+        const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
+
+
+        const toggleRedemptionForm = (tourist) => {
+            setSelectedTourist(tourist);
+            setIsRedemptionVisible(!isRedemptionVisible);
+        };
+    
 
         const handleRateActivity = (id, rating, comment) => {
             setRatings((prevRatings) => ({
@@ -68,6 +102,186 @@ const TouristSignup = () => {
             <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
           );
 
+
+    const showFlightPopup = () => setIsFlightPopupVisible(true);
+    const hideFlightPopup = () => setIsFlightPopupVisible(false);
+    const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
+    const showTransportationPopup = () => setIsTransportationPopupVisible(true);
+    const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
+    
+   
+    
+
+    
+
+    // axios get request for transportation
+    const fetchTransportationData = async () => {
+        try {
+            const response = await axios.get('/getAllTransportations');
+            const data = response.data;
+            console.log(data);
+            setTransportationData(data);
+            showTransportationPopup();
+        } catch (error) {
+            console.log('Error:', error);
+        }
+    };
+
+    const handleSearchForTransportation = async () => {
+        fetchTransportationData();
+    };
+
+    const [flightData, setFlightData] = useState({
+        originLocationCode: '',
+        destinationLocationCode: '',
+        departureDateTimeRange: {
+            date: '',
+            time: ''
+        },
+        travelers: []
+    });
+
+    async function bookFlight() {
+        try {
+
+            // Step 1: Get access token
+            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', {
+                grant_type: 'client_credentials',
+                client_id: 'p8pHTQfm3k74s8Y6yNDggKauNeQJfNse',
+                client_secret: 'bGJ8fKU4gQucuTF9'
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            console.log(tokenResponse);
+
+            const accessToken = tokenResponse.data.access_token;
+            console.log(accessToken);
+
+            // Step 2: Create Axios instance with the access token
+            const amadeus = await axios.create({
+                baseURL: 'https://test.api.amadeus.com/v2',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                validateStatus: function (status) {
+                    return status >= 200 && status < 300; // Adjust this if needed
+                }
+            });
+
+            const travelersData = flightData.travelers.map((traveler, index) => ({
+                id: `${index + 1}`,
+                travelerType: "ADULT",  // Adjust as needed for different types
+                name: traveler.name
+            }));
+
+            // Step 3: Make the API request
+            const response = await amadeus.post('/shopping/flight-offers', {
+                originDestinations: [
+                    {
+                        id: "1",
+                        originLocationCode: flightData.originLocationCode,
+                        destinationLocationCode: flightData.destinationLocationCode,
+                        departureDateTimeRange: {
+                            date: flightData.departureDateTimeRange.date,
+                            time: flightData.departureDateTimeRange.time
+                        }
+                    }
+                ],
+                sources: ["GDS"],
+                travelers: travelersData
+            });
+
+            console.log('API request successful');
+            console.log(response.data.data);
+            setFlightPopupData(response.data.data);
+            console.log(flightPopupData);
+            showFlightPopup();
+            console.log(isFlightPopupVisible)
+
+        } catch (error) {
+            console.error('Error:', error.message || 'An error occurred');
+            console.error('Response data:', error.response?.data || 'No response data available');
+            console.error('Request config:', error.config);
+            console.error('Full error stack:', error.stack);
+        }
+    }
+
+    const handleSearchForFlight = async (e) => {
+        e.preventDefault();
+
+        console.log('Flight Data:', flightData);
+        setFlightData({
+            originLocationCode: '',
+            destinationLocationCode: '',
+            departureDateTimeRange: {
+                date: '',
+                time: ''
+            },
+            travelers: []
+        });
+
+        bookFlight();
+    };
+
+    const handleHotelSearch = async (e) => {
+        e.preventDefault();
+        try {
+
+            // Step 1: Get access token
+            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', {
+                grant_type: 'client_credentials',
+                client_id: 'p8pHTQfm3k74s8Y6yNDggKauNeQJfNse',
+                client_secret: 'bGJ8fKU4gQucuTF9'
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            console.log(tokenResponse);
+
+            const accessToken = tokenResponse.data.access_token;
+            console.log(accessToken);
+
+            // Step 2: Create Axios instance with the access token
+            const amadeus = await axios.create({
+                baseURL: 'https://test.api.amadeus.com/v1',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                },
+                validateStatus: function (status) {
+                    return status >= 200 && status < 300; // Adjust this if needed
+                }
+            });
+
+            // Step 3: Make the API request
+            const response = await amadeus.get('/reference-data/locations/hotels/by-city', {
+                params: {
+                    cityCode: CityName
+                }
+            });
+
+
+            console.log('API request successful');
+            console.log(response.data.data);
+            setHotelsData(response.data.data);
+            console.log(hotelsData);
+            showHotelPopup();
+            console.log(isHotelPopupVisible)
+        } catch (error) {
+            console.error('Error:', error.message || 'An error occurred');
+            console.error('Response data:', error.response?.data || 'No response data available');
+            console.error('Request config:', error.config);
+            console.error('Full error stack:', error.stack);
+        }
+    };
+
+   
+    
+
     useEffect(() => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
         const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
@@ -81,123 +295,134 @@ const TouristSignup = () => {
         localStorage.setItem('comments', JSON.stringify(comments));
     }, [ratings, comments]);
 
-        useEffect(() => {
-            const fetchActivities = async () => {
-                const response = await fetch('/api/ActivityRoute');
-                const json = await response.json();
-                if (response.ok) {
-                    setActivities(json);
-                }
-            };
-            fetchActivities();
-        }, []);
-        
-    
-        const handleTagSearch = async () => {
-            const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
+    useEffect(() => {
+        const fetchActivities = async () => {
+            const response = await fetch('/api/ActivityRoute');
             const json = await response.json();
             if (response.ok) {
                 setActivities(json);
             }
         };
-    
-        const handleCategorySearch = async () => {
-            const response = await fetch(`/api/ActivityRoute/searchC/${category}`);
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
-            }
-        };
-    
-        const handleBudgetFilter = async () => {
-            const response = await fetch(`/api/ActivityRoute/filter/${budget}`);
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
-            }
-        };
-    
-        const handleDateFilter = async () => {
-            const response = await fetch(`/api/ActivityRoute/filterDate/${date}`);
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
-            }
-        };
-    
-        const handleSortByPrice = async () => {
-            const response = await fetch('/api/ActivityRoute/sort/price');
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
-            }
-        };
-        //museum
-        useEffect(() => {
-            const fetchMuseum = async () => {
-                const response = await fetch('/api/museumRoute');
-                const json = await response.json();
-                if (response.ok) {
-                    setMuseums(json);
-                }
-            };
-            fetchMuseum();
-        }, []);
-    
-        const museumNameSearch = async () => {
-            const response = await fetch(`/api/museumRoute/search/${nameMuseum}`);
+        fetchActivities();
+    }, []);
+
+    const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
+
+
+    const handleTagSearch = async () => {
+        const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
+        const json = await response.json();
+        if (response.ok) {
+            setActivities(json);
+        }
+    };
+
+    const handleCategorySearch = async () => {
+        const response = await fetch(`/api/ActivityRoute/searchC/${category}`);
+        const json = await response.json();
+        if (response.ok) {
+            setActivities(json);
+        }
+    };
+
+    const handleBudgetFilter = async () => {
+        const response = await fetch(`/api/ActivityRoute/filter/${budget}`);
+        const json = await response.json();
+        if (response.ok) {
+            setActivities(json);
+        }
+    };
+
+    const handleDateFilter = async () => {
+        const response = await fetch(`/api/ActivityRoute/filterDate/${date}`);
+        const json = await response.json();
+        if (response.ok) {
+            setActivities(json);
+        }
+    };
+
+    const handleSortByPrice = async () => {
+        const response = await fetch('/api/ActivityRoute/sort/price');
+        const json = await response.json();
+        if (response.ok) {
+            setActivities(json);
+        }
+    };
+
+    //museum
+    useEffect(() => {
+        const fetchMuseum = async () => {
+            const response = await fetch('/api/museumRoute');
             const json = await response.json();
             if (response.ok) {
                 setMuseums(json);
             }
         };
-        const museumTagSearch = async () => {
-            const response = await fetch(`/api/museumRoute/searchT/${tagMuseum}`);
-            const json = await response.json();
-            if (response.ok) {
-                setMuseums(json);
-            }
-        };
-        //itineraries
-        useEffect(() => {
-            const fetchItinerary = async () => {
-                const response = await fetch('/api/itineraryRoute');
-                const json = await response.json();
-                if (response.ok) {
-                    setItineraries(json);
-                }
-            };
-            fetchItinerary();
-        }, []);
-        const itineraryBudgetFilter = async () => {
-            const response = await fetch(`/api/itineraryRoute/filter/${budgetItinerary}`);
-            const json = await response.json();
-            if (response.ok) {
-                setItineraries(json);
-            }
-        };
-    
-        const itineraryDateFilter = async () => {
-            const response = await fetch(`/api/itineraryRoute/filterDate/${dateItinerary}`);
-            const json = await response.json();
-            if (response.ok) {
-                setItineraries(json);
-            }
-        };
-        const itineraryLanguageFilter = async () => {
-            const response = await fetch(`/api/itineraryRoute/filterLanguage/${languageItinerary}`);
+        fetchMuseum();
+    }, []);
+
+    const museumNameSearch = async () => {
+        const response = await fetch(`/api/museumRoute/search/${nameMuseum}`);
+        const json = await response.json();
+        if (response.ok) {
+            setMuseums(json);
+        }
+    };
+
+    const museumTagSearch = async () => {
+        const response = await fetch(`/api/museumRoute/searchT/${tagMuseum}`);
+        const json = await response.json();
+        if (response.ok) {
+            setMuseums(json);
+        }
+    };
+
+
+
+
+    //itineraries
+    useEffect(() => {
+        const fetchItinerary = async () => {
+            const response = await fetch('/api/itineraryRoute');
             const json = await response.json();
             if (response.ok) {
                 setItineraries(json);
             }
         };
-        const ItinerarySortByPrice = async () => {
-            const response = await fetch('/api/itineraryRoute/sort/price');
-            const json = await response.json();
-            if (response.ok) {
-                setItineraries(json);
-            }
-        };
+        fetchItinerary();
+    }, []);
+
+    const itineraryBudgetFilter = async () => {
+        const response = await fetch(`/api/itineraryRoute/filter/${budgetItinerary}`);
+        const json = await response.json();
+        if (response.ok) {
+            setItineraries(json);
+        }
+    };
+
+    const itineraryDateFilter = async () => {
+        const response = await fetch(`/api/itineraryRoute/filterDate/${dateItinerary}`);
+        const json = await response.json();
+        if (response.ok) {
+            setItineraries(json);
+        }
+    };
+
+    const itineraryLanguageFilter = async () => {
+        const response = await fetch(`/api/itineraryRoute/filterLanguage/${languageItinerary}`);
+        const json = await response.json();
+        if (response.ok) {
+            setItineraries(json);
+        }
+    };
+
+    const ItinerarySortByPrice = async () => {
+        const response = await fetch('/api/itineraryRoute/sort/price');
+        const json = await response.json();
+        if (response.ok) {
+            setItineraries(json);
+        }
+    };
 
     // Fetch tourists
     useEffect(() => {
@@ -241,15 +466,53 @@ const TouristSignup = () => {
         setIsProductVisible(!isProductVisible);
     };
 
+
+    const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+    const [selectedItinerary, setSelectedItinerary] = useState(null);
+    const [selectedMuseum, setSelectedMuseum] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+
+
+    const handlePaymentClickItinerary = (itinerary) => {
+        setSelectedItinerary(itinerary);
+        setSelectedMuseum(null);
+        setSelectedActivity(null);
+        setIsPaymentVisible(true);
+    };
+
+    // Function to handle payment click for museums
+    const handlePaymentClickMuseum = (museum) => {
+        setSelectedMuseum(museum);
+        setSelectedItinerary(null);
+        setSelectedActivity(null);
+        setIsPaymentVisible(true);
+    };
+
+    // Function to handle payment click for activities
+    const handlePaymentClickActivity = (activity) => {
+        setSelectedActivity(activity);
+        setSelectedItinerary(null);
+        setSelectedMuseum(null);
+        setIsPaymentVisible(true);
+    };
+
+    // Function to close payment form
+    const closePaymentForm = () => {
+        setIsPaymentVisible(false);
+        setSelectedItinerary(null);
+        setSelectedMuseum(null);
+        setSelectedActivity(null);
+    };
+
+
+
     return (
         <div>
             <h2>Tourist Dashboard</h2>
             <button onClick={handleClick}>
                 {isVisible ? 'Hide' : 'Show'} Tourist Details
             </button>
-  
-
-{isVisible && (
+            {isVisible && (
                 <div className="workouts">
                     {tourists && tourists.map(tourist => (
                         <div key={tourist._id}>
@@ -261,22 +524,29 @@ const TouristSignup = () => {
                 </div>
             )}
 
+             {/* Render RedemptionForm if visible */}
+             {isRedemptionVisible && selectedTourist && (
+                <RedemptionForm
+                    tourist={selectedTourist}
+                    onClose={() => setIsRedemptionVisible(false)}
+                />
+            )}
+
 
 <button onClick={handleProductClick}>
-        {isProductVisible ? 'Hide' : 'Show'} Product Details
-      </button>
-      {isProductVisible && (
-        <div className="products">
-          {products.length > 0 ? (
-            products.map(product => (
-              <ProductDetails product={product} key={product._id} />
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
-        </div>
-      )}
-      
+                {isProductVisible ? 'Hide' : 'Show'} Product Details
+            </button>
+            {isProductVisible && (
+                <div className="products">
+                    {products.length > 0 ? (
+                        products.map(product => (
+                            <ProductDetails product={product} key={product._id} />
+                        ))
+                    ) : (
+                        <p>No products found.</p>
+                    )}
+                </div>
+            )}
 
             {/* Tourist Signup Form */}
             <TouristForm />
@@ -472,9 +742,11 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )} */}
+
+
             {isVisibleActivities && (
     <div className="activities">
-        {activities && activities.map(activity => (
+        {visibleActivities.map(activity => (
             <div key={activity._id}>
                 <ActivityDetails activity={activity} />
                 {/* Add the Rating Component */}
@@ -482,11 +754,15 @@ const TouristSignup = () => {
                     activityId={activity._id} 
                     onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
                 />
+                                             <button onClick={() => handlePaymentClickActivity(activity)}>
+                                Pay for this Activity
+                            </button>
+
             </div>
         ))}
     </div>
 )}
-
+ 
             <br />
             <h4>Museums:</h4>
 
@@ -539,7 +815,7 @@ const TouristSignup = () => {
             </div>
         ))}
     </div>
-)}
+ )}
 
 
 
@@ -620,7 +896,22 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
-            <TouristChangePassword/>
+
+            {/* Render Payment Form if visible */}
+                        {isPaymentVisible && (
+                <PaymentForm 
+                    itinerary={selectedItinerary} // Only pass the selected itinerary
+                    museum={selectedMuseum} // Only pass the selected museum
+                    activity={selectedActivity} // Only pass the selected activity
+                    onClose={closePaymentForm} // Use the function to close
+                />
+            )}
+
+    
+            <TouristChangePassword />
+            {isHotelPopupVisible && <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />}
+            {isFlightPopupVisible && <FlightPopup flights={flightPopupData} onClose={hideFlightPopup} />}
+            {isTransportationPopupVisible && <TransportationPopup transportation={transportationData} onClose={hideTransportationPopup} />}
         </div>
     );
 };
