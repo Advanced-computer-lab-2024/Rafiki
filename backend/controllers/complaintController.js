@@ -1,9 +1,10 @@
 const Complaint = require('../models/complaint');
 
 const createComplaint = async (req, res) => {
-    const { title,body,date,status,reply } = req.body;
+    const { username,title,body,date,status,reply } = req.body;
     try {
         const complaint = await Complaint.create({
+            username,
             title, 
             body, 
             date, 
@@ -23,6 +24,16 @@ const getAllComplaints = async (req, res) => {
         res.status(200).json(complaints); // Return the filtered activities
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+};
+const getComplaintsByUsername = async (req, res) => {
+    const { username } = req.params; // Get username from request parameters
+
+    try {
+        const complaints = await Complaint.find({ username: username });
+        res.status(200).json(complaints);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to retrieve complaints", error: error.message });
     }
 };
 
@@ -82,7 +93,7 @@ const searchComplaintsbyStatus = async (req, res) => {
 
 // Export the function
 module.exports = { createComplaint, getAllComplaints, updateStatus ,updateReply,getComplaintsSortedbyDate
-    ,searchComplaintsbyStatus
+    ,searchComplaintsbyStatus,getComplaintsByUsername
 };
 
 

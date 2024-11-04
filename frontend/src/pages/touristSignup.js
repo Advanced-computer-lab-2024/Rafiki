@@ -1,28 +1,22 @@
 import { useEffect, useState } from "react";
-import ActivityDetails from "../components/ActivityDetails"; 
-import MuseumDetails from "../components/museumDetails"; 
+import ActivityDetails from "../components/ActivityDetails";
+import MuseumDetails from "../components/museumDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
-import  UpdateTourist  from "../components/UpdateTourist";
+import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
-import PaymentForm from '../components/paymentForm';
-import RedemptionForm from '../components/redemptionForm';
-
-
-
 // components
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [comments, setComments] = useState({}); // To hold comments for each activity
+
     const [tourists, setTourists] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
-    const [products, setProducts] = useState([]);
     const [isProductVisible, setIsProductVisible] = useState(false);
-
     const [selectedTourguide, setSelectedTourguide] = useState(null);
 
         // activities
@@ -37,8 +31,6 @@ const TouristSignup = () => {
         const [category, setCategory] = useState('');
         const [budget, setBudget] = useState('');
         const [date, setDate] = useState('');
-        
-        
     
         //museums
         const [museums, setMuseums] = useState(null); 
@@ -47,7 +39,6 @@ const TouristSignup = () => {
         const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
         const [tagMuseum, setTagMuseum] = useState('');
         const [nameMuseum, setNameMuseum] = useState('');
-
     
         //itineraries
         const [itineraries, setItineraries] = useState(null);
@@ -59,17 +50,6 @@ const TouristSignup = () => {
         const [languageItinerary, setLanguageItinerary] = useState('');
         const [budgetItinerary, setBudgetItinerary] = useState('');
         const [dateItinerary, setDateItinerary] = useState('');
-
-
-        const [selectedTourist, setSelectedTourist] = useState(null);
-        const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
-
-
-        const toggleRedemptionForm = (tourist) => {
-            setSelectedTourist(tourist);
-            setIsRedemptionVisible(!isRedemptionVisible);
-        };
-    
 
         const handleRateActivity = (id, rating, comment) => {
             setRatings((prevRatings) => ({
@@ -88,20 +68,18 @@ const TouristSignup = () => {
             <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
           );
 
-        useEffect(() => {
-            const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
-            const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
-            
-            setRatings(savedRatings);
-            setComments(savedComments);
-        }, []);
-        
-        useEffect(() => {
-            localStorage.setItem('ratings', JSON.stringify(ratings));
-            localStorage.setItem('comments', JSON.stringify(comments));
-        }, [ratings, comments]);
-        
-        
+    useEffect(() => {
+        const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
+        const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
+
+        setRatings(savedRatings);
+        setComments(savedComments);
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('ratings', JSON.stringify(ratings));
+        localStorage.setItem('comments', JSON.stringify(comments));
+    }, [ratings, comments]);
 
         useEffect(() => {
             const fetchActivities = async () => {
@@ -191,49 +169,6 @@ const TouristSignup = () => {
             };
             fetchItinerary();
         }, []);
-
-
-
-
-        const [isPaymentVisible, setIsPaymentVisible] = useState(false);
-        const [selectedItinerary, setSelectedItinerary] = useState(null);
-        const [selectedMuseum, setSelectedMuseum] = useState(null);
-        const [selectedActivity, setSelectedActivity] = useState(null);
-
-
-        const handlePaymentClickItinerary = (itinerary) => {
-            setSelectedItinerary(itinerary);
-            setSelectedMuseum(null);
-            setSelectedActivity(null);
-            setIsPaymentVisible(true);
-        };
-    
-        // Function to handle payment click for museums
-        const handlePaymentClickMuseum = (museum) => {
-            setSelectedMuseum(museum);
-            setSelectedItinerary(null);
-            setSelectedActivity(null);
-            setIsPaymentVisible(true);
-        };
-    
-        // Function to handle payment click for activities
-        const handlePaymentClickActivity = (activity) => {
-            setSelectedActivity(activity);
-            setSelectedItinerary(null);
-            setSelectedMuseum(null);
-            setIsPaymentVisible(true);
-        };
-    
-        // Function to close payment form
-        const closePaymentForm = () => {
-            setIsPaymentVisible(false);
-            setSelectedItinerary(null);
-            setSelectedMuseum(null);
-            setSelectedActivity(null);
-        };
-
-
-
         const itineraryBudgetFilter = async () => {
             const response = await fetch(`/api/itineraryRoute/filter/${budgetItinerary}`);
             const json = await response.json();
@@ -264,7 +199,6 @@ const TouristSignup = () => {
             }
         };
 
-
     // Fetch tourists
     useEffect(() => {
         const fetchTourists = async () => {
@@ -284,29 +218,27 @@ const TouristSignup = () => {
     };
 
     // Fetch activities with filters
-    
-
     const fetchProducts = async () => {
-      const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
-      const json = await response.json();
-      if (response.ok) {
-        setProducts(json); // Set the state with the fetched products
-      } else {
-        console.error('Error fetching products:', json); // Log errors
-      }
+        const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
+        const json = await response.json();
+        if (response.ok) {
+            setProducts(json); // Set the state with the fetched products
+        } else {
+            console.error('Error fetching products:', json); // Log errors
+        }
     };
- 
+
     useEffect(() => {
-     
-      fetchProducts(); 
+
+        fetchProducts();
     }, []);
 
     const handleClick = () => {
         setIsVisible(!isVisible);
     };
-    
+
     const handleProductClick = () => {
-      setIsProductVisible(!isProductVisible);
+        setIsProductVisible(!isProductVisible);
     };
 
     return (
@@ -317,8 +249,8 @@ const TouristSignup = () => {
             </button>
   
 
-            {isVisible && (
-                <div className="tourists">
+{isVisible && (
+                <div className="workouts">
                     {tourists && tourists.map(tourist => (
                         <div key={tourist._id}>
                             <TouristDetails tourist={tourist} />
@@ -329,60 +261,145 @@ const TouristSignup = () => {
                 </div>
             )}
 
-            {/* Render RedemptionForm if visible */}
-            {isRedemptionVisible && selectedTourist && (
-                <RedemptionForm
-                    tourist={selectedTourist}
-                    onClose={() => setIsRedemptionVisible(false)}
-                />
-            )}
-
-        
-
-
-
-
-
 
 <button onClick={handleProductClick}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
       {isProductVisible && (
-       <div className="products">
-    {products.length > 0 ? (
-        products.map(product => (
-            <div key={product._id}>
-                <ProductDetails product={product} />
-                {/* Add the Rating Component */}
-                <Rating 
-                    activityId={product._id} // Change this to a suitable identifier if needed
-                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} // Update function name
-                />
-            </div>
-        ))
-    ) : (
-        <p>No products available.</p> // Optional: Message if no products are found
-    )}
-</div>
-
+        <div className="products">
+          {products.length > 0 ? (
+            products.map(product => (
+              <ProductDetails product={product} key={product._id} />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
       )}
       
 
             {/* Tourist Signup Form */}
             <TouristForm />
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
+            <h4>Complaint:</h4>
+            <ComplainCreateForm />
+
             <h4>Activities:</h4>
-                {/* Search by Tag */}
+
+            {/* Search for transportaion */}
+
+            <button onClick={handleSearchForTransportation}>
+                Show All transportaion
+            </button>
+
+            {/* Search For flight */}
+            <button onClick={() => setSearchByFlightVisible(!searchByFlightVisible)}>
+                Search for a Flight
+            </button>
+
+            {searchByFlightVisible && (
+                <form onSubmit={handleSearchForFlight}>
+                    <input
+                        type="text"
+                        value={flightData.originLocationCode}
+                        onChange={(e) => setFlightData({ ...flightData, originLocationCode: e.target.value })}
+                        placeholder="Origin Location Code"
+                    />
+                    <input
+                        type="text"
+                        value={flightData.destinationLocationCode}
+                        onChange={(e) => setFlightData({ ...flightData, destinationLocationCode: e.target.value })}
+                        placeholder="Destination Location Code"
+                    />
+                    <input
+                        type="text"
+                        value={flightData.departureDateTimeRange.date}
+                        onChange={(e) =>
+                            setFlightData({
+                                ...flightData,
+                                departureDateTimeRange: {
+                                    ...flightData.departureDateTimeRange,
+                                    date: e.target.value
+                                }
+                            })
+                        }
+                        placeholder="Departure Date (YYYY-MM-DD)"
+                    />
+                    <input
+                        type="text"
+                        value={flightData.departureDateTimeRange.time}
+                        onChange={(e) =>
+                            setFlightData({
+                                ...flightData,
+                                departureDateTimeRange: {
+                                    ...flightData.departureDateTimeRange,
+                                    time: e.target.value
+                                }
+                            })
+                        }
+                        placeholder="Departure Time (HH:MM:SS)"
+                    />
+                    <input
+                        type="number"
+                        value={flightData.travelers.length}
+                        onChange={(e) => {
+                            const numTravelers = parseInt(e.target.value) || 0;
+                            const newTravelers = Array(numTravelers).fill({ name: '' });
+                            setFlightData({ ...flightData, travelers: newTravelers });
+                        }}
+                        placeholder="Number of Passengers"
+                    />
+                    <ul>
+                        {flightData.travelers.map((passenger, index) => (
+                            <li key={index}>
+                                <input
+                                    type="text"
+                                    value={passenger.name}
+                                    onChange={(e) =>
+                                        setFlightData({
+                                            ...flightData,
+                                            travelers: flightData.travelers.map((p, i) =>
+                                                i === index ? { ...p, name: e.target.value } : p
+                                            )
+                                        })
+                                    }
+                                    placeholder={`Passenger ${index + 1} Name`}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                    <button type="submit">Book Flight</button>
+                </form>
+            )}
+
+            {/* Search For a Hotel */}
+            <button onClick={() => setSearchForAHotelByCity(!searchForAHotelByCity)}>
+                Search for a Hotel
+            </button>
+
+            {searchForAHotelByCity && (
+                <form onSubmit={handleHotelSearch}>
+                    <input
+                        type="text"
+                        placeholder="Enter City"
+                        value={CityName}
+                        onChange={(e) => setCityName(e.target.value)}
+                    />
+                    <button type="submit">Search</button>
+                </form>
+            )}
+
+            {/* Search by Tag */}
             <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
                 {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}
             </button>
             {isVisibleTagSearch && (
                 <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Tag" 
-                        value={tag} 
-                        onChange={(e) => setTag(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder="Enter Tag"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
                     />
                     <button onClick={handleTagSearch}>Search</button>
                 </div>
@@ -394,11 +411,11 @@ const TouristSignup = () => {
             </button>
             {isVisibleCategorySearch && (
                 <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Category" 
-                        value={category} 
-                        onChange={(e) => setCategory(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder="Enter Category"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
                     />
                     <button onClick={handleCategorySearch}>Search</button>
                 </div>
@@ -410,11 +427,11 @@ const TouristSignup = () => {
             </button>
             {isVisibleBudgetFilter && (
                 <div>
-                    <input 
-                        type="number" 
-                        placeholder="Enter Budget" 
-                        value={budget} 
-                        onChange={(e) => setBudget(e.target.value)} 
+                    <input
+                        type="number"
+                        placeholder="Enter Budget"
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
                     />
                     <button onClick={handleBudgetFilter}>Filter</button>
                 </div>
@@ -426,10 +443,10 @@ const TouristSignup = () => {
             </button>
             {isVisibleDateFilter && (
                 <div>
-                    <input 
-                        type="date" 
-                        value={date} 
-                        onChange={(e) => setDate(e.target.value)} 
+                    <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                     />
                     <button onClick={handleDateFilter}>Filter</button>
                 </div>
@@ -447,7 +464,7 @@ const TouristSignup = () => {
             <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
                 {isVisibleActivities ? 'Hide' : 'View'} Activities
             </button>
-            
+
             {/* {isVisibleActivities && (
                 <div className="activities">
                     {activities && activities.map(activity => (
@@ -465,15 +482,11 @@ const TouristSignup = () => {
                     activityId={activity._id} 
                     onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
                 />
-                                             <button onClick={() => handlePaymentClickActivity(activity)}>
-                                Pay for this Activity
-                            </button>
-
             </div>
         ))}
     </div>
 )}
- 
+
             <br />
             <h4>Museums:</h4>
 
@@ -483,36 +496,36 @@ const TouristSignup = () => {
             </button>
             {isVisibleSearchMuseums && (
                 <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Name" 
-                        value={nameMuseum} 
-                        onChange={(e) => setNameMuseum(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder="Enter Name"
+                        value={nameMuseum}
+                        onChange={(e) => setNameMuseum(e.target.value)}
                     />
                     <button onClick={museumNameSearch}>Search</button>
                 </div>
             )}
-         {/* Search by Tag */}
+            {/* Search by Tag */}
             <button onClick={() => setIsVisibleTagSearchMuseums(!isVisibleTagSearchMuseums)}>
-            {isVisibleTagSearchMuseums ? 'Hide Search' : 'Search by Tag'}
+                {isVisibleTagSearchMuseums ? 'Hide Search' : 'Search by Tag'}
             </button>
             {isVisibleTagSearchMuseums && (
                 <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Tag" 
-                        value={tagMuseum} 
-                        onChange={(e) => setTagMuseum(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder="Enter Tag"
+                        value={tagMuseum}
+                        onChange={(e) => setTagMuseum(e.target.value)}
                     />
                     <button onClick={museumTagSearch}>Search</button>
                 </div>
             )}
             <br />
-             {/* View Museums */}
-             <button onClick={() => setIsVisibleMuseums(!isVisibleMuseums)}>
+            {/* View Museums */}
+            <button onClick={() => setIsVisibleMuseums(!isVisibleMuseums)}>
                 {isVisibleMuseums ? 'Hide' : 'View'} Museums
             </button>
-            
+
             {isVisibleMuseums && (
     <div className="museums">
         {museums && museums.map(museum => (
@@ -539,11 +552,11 @@ const TouristSignup = () => {
             </button>
             {isVisibleBudgetFilterItinerary && (
                 <div>
-                    <input 
-                        type="number" 
-                        placeholder="Enter Budget" 
-                        value={budgetItinerary} 
-                        onChange={(e) => setBudgetItinerary(e.target.value)} 
+                    <input
+                        type="number"
+                        placeholder="Enter Budget"
+                        value={budgetItinerary}
+                        onChange={(e) => setBudgetItinerary(e.target.value)}
                     />
                     <button onClick={itineraryBudgetFilter}>Filter</button>
                 </div>
@@ -555,25 +568,25 @@ const TouristSignup = () => {
             </button>
             {isVisibleDateFilterItinerary && (
                 <div>
-                    <input 
-                        type="date" 
-                        value={dateItinerary} 
-                        onChange={(e) => setDateItinerary(e.target.value)} 
+                    <input
+                        type="date"
+                        value={dateItinerary}
+                        onChange={(e) => setDateItinerary(e.target.value)}
                     />
                     <button onClick={itineraryDateFilter}>Filter</button>
                 </div>
             )}
             {/* Filter by Language */}
             <button onClick={() => setIsVisibleLanguageFilter(!isVisibleLanguageFilter)}>
-            {isVisibleLanguageFilter ? 'Hide' : 'Filter by Language'}
+                {isVisibleLanguageFilter ? 'Hide' : 'Filter by Language'}
             </button>
             {isVisibleLanguageFilter && (
                 <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Language" 
-                        value={languageItinerary} 
-                        onChange={(e) => setLanguageItinerary(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder="Enter Language"
+                        value={languageItinerary}
+                        onChange={(e) => setLanguageItinerary(e.target.value)}
                     />
                     <button onClick={itineraryLanguageFilter}>Filter</button>
                 </div>
@@ -593,7 +606,7 @@ const TouristSignup = () => {
             <button onClick={() => setIsVisibleItineraries(!isVisibleItineraries)}>
                 {isVisibleItineraries ? 'Hide' : 'View'} Itineraries
             </button>
-            
+
             {isVisibleItineraries && (
                 <div className="Itineraries">
                     {itineraries && itineraries.map(itinerary => (
@@ -607,17 +620,6 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
-
-            {/* Render Payment Form if visible */}
-                        {isPaymentVisible && (
-                <PaymentForm 
-                    itinerary={selectedItinerary} // Only pass the selected itinerary
-                    museum={selectedMuseum} // Only pass the selected museum
-                    activity={selectedActivity} // Only pass the selected activity
-                    onClose={closePaymentForm} // Use the function to close
-                />
-            )}
-
             <TouristChangePassword/>
         </div>
     );

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
+    username:{
+        type:String,
+        required:true
+    },
     title: {
         type: String,
         required: true
