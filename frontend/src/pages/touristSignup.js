@@ -12,6 +12,7 @@ import axios from 'axios';
 import HotelPopup from "./HotelPopup";
 import FlightPopup from "./FlightPopup";
 import TransportationPopup from "./TransportationPopup";
+import ComplainCreateForm from "../components/complainCreateForm"
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const TouristSignup = () => {
@@ -468,6 +469,9 @@ const TouristSignup = () => {
             {/* Tourist Signup Form */}
             <TouristForm />
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
+            <h4>Complaint:</h4>
+            <ComplainCreateForm />
+
             <h4>Activities:</h4>
 
             {/* Search for transportaion */}
