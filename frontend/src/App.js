@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import ActivityDetailsWrapper from './components/ActivityDetailsWrapper';
 
 // pages & components
 import Home from './pages/Home'
@@ -33,6 +34,7 @@ function App() {
             <Route path="/seller-signup" element={<SellerSignup/>} />
             <Route path="/GovernorDashboard" element={<GovernorDashboard/>} />
             <Route path="/guestDashboard" element={<GuestDashboard/>} />
+            <Route path="/activity/:id" element={<ActivityDetailsWrapper />} />
           </Routes>
         </div>
       </BrowserRouter>
