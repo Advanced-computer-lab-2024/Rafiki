@@ -4,8 +4,6 @@ import PaymentForm from '../components/paymentForm';
 
 const ActivityDetails = ({ activity }) => {
     const [isPaymentVisible, setIsPaymentVisible] = useState(false);
-    const [selectedItinerary, setSelectedItinerary] = useState(null);
-    const [selectedMuseum, setSelectedMuseum] = useState(null);
     const [selectedActivity, setSelectedActivity] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
@@ -39,8 +37,7 @@ const ActivityDetails = ({ activity }) => {
 
   const handlePaymentClickActivity = (activity) => {
     setSelectedActivity(activity);
-    setSelectedItinerary(null);
-    setSelectedMuseum(null);
+
     setIsPaymentVisible(prev => !prev);
     };
   return (

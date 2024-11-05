@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const PaymentForm = ({ price }) => {
     const [touristUsername, setTouristUsername] = useState('');
-    const [amountPaid, setAmountPaid] = useState(price);
+    const [amountPaid] = useState(price);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [badgeLevel, setBadgeLevel] = useState('');

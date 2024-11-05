@@ -8,7 +8,6 @@ import ProductDetails from "../components/ProductDetails";
 import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
-import PaymentForm from '../components/paymentForm';
 import RedemptionForm from '../components/redemptionForm';
 
 // components
@@ -476,42 +475,7 @@ const TouristSignup = () => {
     };
 
 
-    const [isPaymentVisible, setIsPaymentVisible] = useState(false);
-    const [selectedItinerary, setSelectedItinerary] = useState(null);
-    const [selectedMuseum, setSelectedMuseum] = useState(null);
-    const [selectedActivity, setSelectedActivity] = useState(null);
 
-
-    const handlePaymentClickItinerary = (itinerary) => {
-        setSelectedItinerary(itinerary);
-        setSelectedMuseum(null);
-        setSelectedActivity(null);
-        setIsPaymentVisible(prev => !prev);
-    };
-
-    // Function to handle payment click for museums
-    const handlePaymentClickMuseum = (museum) => {
-        setSelectedMuseum(museum);
-        setSelectedItinerary(null);
-        setSelectedActivity(null);
-        setIsPaymentVisible(prev => !prev);
-    };
-
-    // Function to handle payment click for activities
-    const handlePaymentClickActivity = (activity) => {
-        setSelectedActivity(activity);
-        setSelectedItinerary(null);
-        setSelectedMuseum(null);
-        setIsPaymentVisible(prev => !prev);
-    };
-
-    // Function to close payment form
-    const closePaymentForm = () => {
-        setIsPaymentVisible(false);
-        setSelectedItinerary(null);
-        setSelectedMuseum(null);
-        setSelectedActivity(null);
-    };
 
 
 

@@ -4,8 +4,6 @@ import PaymentForm from '../components/paymentForm';
 const ItineraryDetails = ({ itinerary }) => {
     const [isPaymentVisible, setIsPaymentVisible] = useState(false);
     const [selectedItinerary, setSelectedItinerary] = useState(null);
-    const [selectedMuseum, setSelectedMuseum] = useState(null);
-    const [selectedActivity, setSelectedActivity] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   const handleCurrencyChange = (e) => {
@@ -26,8 +24,7 @@ const ItineraryDetails = ({ itinerary }) => {
   };
   const handlePaymentClickItinerary = (itinerary) => {
     setSelectedItinerary(itinerary);
-    setSelectedMuseum(null);
-    setSelectedActivity(null);
+
     setIsPaymentVisible(prev => !prev);
 };
     return (
