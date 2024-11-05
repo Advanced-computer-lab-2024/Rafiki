@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import ActivityDetails from "../components/ActivityDetails";
-import MuseumDetails from "../components/museumDetails";
-import ItineraryDetails from "../components/itineraryDetails";
+import ActivityDetails from "../components/ActivityDetailsforTouriSignup";
+import MuseumDetails from "../components/museumDetailsforTouristSignup";
+import ItineraryDetails from "../components/itineraryDetailsforTouristSignup";
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
@@ -486,7 +486,7 @@ const TouristSignup = () => {
         setSelectedItinerary(itinerary);
         setSelectedMuseum(null);
         setSelectedActivity(null);
-        setIsPaymentVisible(true);
+        setIsPaymentVisible(prev => !prev);
     };
 
     // Function to handle payment click for museums
@@ -494,7 +494,7 @@ const TouristSignup = () => {
         setSelectedMuseum(museum);
         setSelectedItinerary(null);
         setSelectedActivity(null);
-        setIsPaymentVisible(true);
+        setIsPaymentVisible(prev => !prev);
     };
 
     // Function to handle payment click for activities
@@ -502,7 +502,7 @@ const TouristSignup = () => {
         setSelectedActivity(activity);
         setSelectedItinerary(null);
         setSelectedMuseum(null);
-        setIsPaymentVisible(true);
+        setIsPaymentVisible(prev => !prev);
     };
 
     // Function to close payment form
@@ -679,7 +679,7 @@ const TouristSignup = () => {
                     <button type="submit">Search</button>
                 </form>
             )}
-
+            <div></div>
             {/* Search by Tag */}
             <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
                 {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}
@@ -775,10 +775,7 @@ const TouristSignup = () => {
                     activityId={activity._id} 
                     onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
                 />
-                                             <button onClick={() => handlePaymentClickActivity(activity)}>
-                                Pay for this Activity
-                            </button>
-
+                
             </div>
         ))}
     </div>
@@ -828,11 +825,6 @@ const TouristSignup = () => {
         {museums && museums.map(museum => (
             <div key={museum._id}>
                 <MuseumDetails museum={museum} />
-                
-                
-                <button onClick={() => handlePaymentClickMuseum(museum)}>
-                                Pay for this Museum
-                            </button>
             </div>
         ))}
     </div>
@@ -909,25 +901,12 @@ const TouristSignup = () => {
                     {itineraries && itineraries.map(itinerary => (
                         <div key={itinerary._id}>
                             <ItineraryDetails itinerary={itinerary} />
-                            {/* Payment Button */}
-                            <button onClick={() => handlePaymentClickItinerary(itinerary)}>
-                                Pay for this Itinerary
-                            </button>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Render Payment Form if visible */}
-                        {isPaymentVisible && (
-                <PaymentForm 
-                    itinerary={selectedItinerary} // Only pass the selected itinerary
-                    museum={selectedMuseum} // Only pass the selected museum
-                    activity={selectedActivity} // Only pass the selected activity
-                    onClose={closePaymentForm} // Use the function to close
-                />
-            )}
-
+           
     
             <TouristChangePassword />
             {isHotelPopupVisible && <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />}

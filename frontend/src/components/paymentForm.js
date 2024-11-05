@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-const PaymentForm = () => {
+const PaymentForm = ({ price }) => {
     const [touristUsername, setTouristUsername] = useState('');
-    const [amountPaid, setAmountPaid] = useState('');
+    const [amountPaid, setAmountPaid] = useState(price);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [badgeLevel, setBadgeLevel] = useState('');
@@ -55,6 +55,7 @@ const PaymentForm = () => {
             <h2>Process Payment</h2>
             <form onSubmit={handleSubmit}>
                 <div>
+                <label><strong>Price:</strong> {price}</label>
                     <label>Tourist Username:</label>
                     <input 
                         type="text"
@@ -63,17 +64,7 @@ const PaymentForm = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label>Amount Paid:</label>
-                    <input 
-                        type="number"
-                        value={amountPaid}
-                        onChange={(e) => setAmountPaid(e.target.value)}
-                        required
-                        min="0.01"
-                        step="0.01"
-                    />
-                </div>
+                
                 <button type="submit">Submit Payment</button>
             </form>
 
