@@ -1,6 +1,10 @@
 import { useState } from 'react';
+import PaymentForm from '../components/paymentForm';
+
 
 const MuseumDetails = ({ museum}) => {
+    const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+    const [selectedMuseum, setSelectedMuseum] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
 
@@ -20,6 +24,10 @@ const MuseumDetails = ({ museum}) => {
           setCurrencyMultiplier(1);
       }
     };
+    const handlePaymentClickMuseum = (museum) => {
+        setSelectedMuseum(museum);
+        setIsPaymentVisible(prev => !prev);
+    };
     return (
       <div className="workout-details">
         <h4>{museum.name}</h4>
@@ -38,6 +46,13 @@ const MuseumDetails = ({ museum}) => {
         <p><strong>Tag: </strong>{museum.tag }</p>  
         {/* <button onClick={() => onEdit(museum)}>Edit</button>
         <button onClick={() => onDelete(museum._id)}>Delete</button> */}
+        <button onClick={() => handlePaymentClickMuseum(museum)}>
+        Pay for this Museum
+        </button>
+         {/* Render Payment Form if visible */}
+        {isPaymentVisible && (
+           <PaymentForm price={(selectedMuseum.ticketPrices * currencyMultiplier).toFixed(2)} />
+        )}
       </div>
     );
   };

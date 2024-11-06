@@ -1,5 +1,9 @@
 import { useState } from 'react';
+import PaymentForm from '../components/paymentForm';
+
 const ItineraryDetails = ({ itinerary }) => {
+    const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+    const [selectedItinerary, setSelectedItinerary] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   const handleCurrencyChange = (e) => {
@@ -18,6 +22,11 @@ const ItineraryDetails = ({ itinerary }) => {
         setCurrencyMultiplier(1);
     }
   };
+  const handlePaymentClickItinerary = (itinerary) => {
+    setSelectedItinerary(itinerary);
+
+    setIsPaymentVisible(prev => !prev);
+};
     return (
       <div className="workout-details">
         <h4>{itinerary.tourGuideUsername}</h4>
@@ -39,6 +48,13 @@ const ItineraryDetails = ({ itinerary }) => {
         <p><strong>Pickup Location: </strong>{itinerary.pickupLocation}</p>
         <p><strong>Drop Off Location: </strong>{itinerary.dropOffLocation}</p>
         <p>{itinerary.createdAt}</p>
+      <button onClick={() => handlePaymentClickItinerary(itinerary)}>
+        Pay for this Itinerary
+        </button>
+         {/* Render Payment Form if visible */}
+        {isPaymentVisible && (
+           <PaymentForm price={(selectedItinerary.price * currencyMultiplier).toFixed(2)} />
+        )}
       </div>
     )
   }

@@ -5,7 +5,8 @@ const touristSchema = new Schema({
   Username: {
     type: String,
     required: true,
-    immutable: true // Username cannot be changed
+    unique: true,
+   
   },
   Email: {
     type: String,
@@ -35,10 +36,28 @@ const touristSchema = new Schema({
   },
   Wallet: {
     type: Number,
-    required: false,
-    default: 0, // Default wallet value
-    immutable: true // Wallet cannot be changed
+    default:0, // Default wallet value
+    
   },
+
+  LoyaltyPoints: {
+    type: Number,
+    default: 0, // Default loyalty points value
+  },
+
+  BadgeLevel: {
+    type: String,
+    default: "Level 1" // Default badge level
+  },
+
+  TotalPoints: { 
+    type: Number,
+     default: 0,
+  }, // Total points earned over time
+
+
+
+
 }, { timestamps: true });
 
 const TouristModel = mongoose.model('Tourist', touristSchema);

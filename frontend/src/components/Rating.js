@@ -18,7 +18,7 @@ const Rating = ({ activityId, onRate }) => {
         <div className="rating-container">
             <form onSubmit={handleSubmit} className="rating-form">
                 <div className="rating-inputs">
-                    <label className="rating-label">Rate this activity:</label>
+                    <label className="rating-label">Rate your purchase:</label>
                     <div className="rating-stars">
                         {[...Array(5)].map((_, index) => (
                             <span key={index} className="star">

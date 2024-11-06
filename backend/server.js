@@ -74,6 +74,8 @@ const museumRoutes = require('./routes/museumRoute');
 const productRoutes = require('./routes/productsRoute');
 const uploadRoute = require('./routes/documentRoute');
 const complaintRoutes = require('./routes/complaintRoute');
+const paymentRoutes = require('./routes/paymentRoute'); 
+const redemptionRoutes = require('./routes/redemptionRoute'); 
 const transportationRoutes = require('./routes/transportationRoutes');
 // Create an Express application
 const app = express();
@@ -91,7 +93,7 @@ app.use((req, res, next) => {
 
 app.use('/api/categoryRoutes', categoryRoutes);
 app.use('/api/workouts', workoutRoutes);
-app.use('/api/TouristRoute', touristRoutes);
+app.use('/api/TouristRoute', touristRoutes);  
 app.use('/api/AdvertiserRoute', advertiserRoutes);
 app.use('/api/ActivityRoute', activityRoutes);
 app.use('/api/tourguideRoute', tourGuideRoutes);
@@ -104,6 +106,9 @@ app.use('/api/productsRoute', productRoutes);
 app.use('/api', uploadRoute);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/complaintRoute', complaintRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/redemption', redemptionRoutes);
+
 app.use(transportationRoutes);
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)

@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
-import ActivityDetails from "../components/ActivityDetails";
-import MuseumDetails from "../components/museumDetails";
-import ItineraryDetails from "../components/itineraryDetails";
+import ActivityDetails from "../components/ActivityDetailsforTouriSignup";
+import MuseumDetails from "../components/museumDetailsforTouristSignup";
+import ItineraryDetails from "../components/itineraryDetailsforTouristSignup";
 import TouristForm from "../components/touristForm";
 import TouristDetails from "../components/TouristDetails";
 import ProductDetails from "../components/ProductDetails";
 import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
+import RedemptionForm from '../components/redemptionForm';
+
+// components
 import axios from 'axios';
 import HotelPopup from "./HotelPopup";
 import FlightPopup from "./FlightPopup";
 import TransportationPopup from "./TransportationPopup";
+import ComplainCreateForm from "../components/complainCreateForm"
+import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [comments, setComments] = useState({}); // To hold comments for each activity
-
     const [isHotelPopupVisible, setIsHotelPopupVisible] = useState(false);
     const [isFlightPopupVisible, setIsFlightPopupVisible] = useState(false);
     const [products, setProducts] = useState([]);
@@ -32,13 +36,8 @@ const TouristSignup = () => {
     const showHotelPopup = () => setIsHotelPopupVisible(true);
     const hideHotelPopup = () => setIsHotelPopupVisible(false);
 
-    const showFlightPopup = () => setIsFlightPopupVisible(true);
-    const hideFlightPopup = () => setIsFlightPopupVisible(false);
-    const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
-    const showTransportationPopup = () => setIsTransportationPopupVisible(true);
-    const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
-    // activities
-    const [activities, setActivities] = useState(null);
+        // activities
+        const [activities, setActivities] = useState([]);
     const [isVisibleActivities, setIsVisibleActivities] = useState(false);
     const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
     const [isVisibleCategorySearch, setIsVisibleCategorySearch] = useState(false);
@@ -50,24 +49,78 @@ const TouristSignup = () => {
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
-    //museums
-    const [museums, setMuseums] = useState(null);
-    const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
-    const [isVisibleTagSearchMuseums, setIsVisibleTagSearchMuseums] = useState(false);
-    const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
-    const [tagMuseum, setTagMuseum] = useState('');
-    const [nameMuseum, setNameMuseum] = useState('');
+    const { flaggedActivities } = useFlaggedActivities();
+    const [isVisibleRating, setIsVisibleRating] = useState(false);
 
-    //itineraries
-    const [itineraries, setItineraries] = useState(null);
-    const [isVisibleItineraries, setIsVisibleItineraries] = useState(false);
-    const [isVisibleLanguageFilter, setIsVisibleLanguageFilter] = useState(false);
-    const [isVisibleBudgetFilterItinerary, setIsVisibleBudgetFilterItinerary] = useState(false);
-    const [isVisibleDateFilterItinerary, setIsVisibleDateFilterItinerary] = useState(false);
-    const [isVisiblePriceSortItinerary, setIsVisiblePriceSortItinerary] = useState(false);
-    const [languageItinerary, setLanguageItinerary] = useState('');
-    const [budgetItinerary, setBudgetItinerary] = useState('');
-    const [dateItinerary, setDateItinerary] = useState('');
+    const toggleRatingForm = (id) => {
+        setIsVisibleRating((prevVisibility) => ({
+          ...prevVisibility,
+          [id]: !prevVisibility[id], // Toggle the visibility for the specific product
+        }));
+      };
+    
+        
+        
+    
+        //museums
+        const [museums, setMuseums] = useState(null); 
+        const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
+        const [isVisibleTagSearchMuseums, setIsVisibleTagSearchMuseums] = useState(false);
+        const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
+        const [tagMuseum, setTagMuseum] = useState('');
+        const [nameMuseum, setNameMuseum] = useState('');
+
+    
+        //itineraries
+        const [itineraries, setItineraries] = useState(null);
+        const [isVisibleItineraries, setIsVisibleItineraries] = useState(false);
+        const [isVisibleLanguageFilter, setIsVisibleLanguageFilter] = useState(false);
+        const [isVisibleBudgetFilterItinerary, setIsVisibleBudgetFilterItinerary] = useState(false);
+        const [isVisibleDateFilterItinerary, setIsVisibleDateFilterItinerary] = useState(false);
+        const [isVisiblePriceSortItinerary, setIsVisiblePriceSortItinerary] = useState(false);
+        const [languageItinerary, setLanguageItinerary] = useState('');
+        const [budgetItinerary, setBudgetItinerary] = useState('');
+        const [dateItinerary, setDateItinerary] = useState('');
+
+
+        const [selectedTourist, setSelectedTourist] = useState(null);
+        const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
+
+
+        const toggleRedemptionForm = (tourist) => {
+            setSelectedTourist(tourist);
+            setIsRedemptionVisible(!isRedemptionVisible);
+        };
+    
+
+        const handleRateActivity = (id, rating, comment) => {
+            setRatings((prevRatings) => ({
+                ...prevRatings,
+                [id]: rating,
+            }));
+        
+            setComments((prevComments) => ({
+                ...prevComments,
+                [id]: comment,
+            }));
+        
+            // Here you can also implement logic to save this data to your backend if needed
+        };
+        const TouristChangePassword = () => (
+            <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
+          );
+
+
+    const showFlightPopup = () => setIsFlightPopupVisible(true);
+    const hideFlightPopup = () => setIsFlightPopupVisible(false);
+    const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
+    const showTransportationPopup = () => setIsTransportationPopupVisible(true);
+    const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
+    
+   
+    
+
+    
 
     // axios get request for transportation
     const fetchTransportationData = async () => {
@@ -234,22 +287,8 @@ const TouristSignup = () => {
         }
     };
 
-    const handleRateActivity = (id, rating, comment) => {
-        setRatings((prevRatings) => ({
-            ...prevRatings,
-            [id]: rating,
-        }));
-
-        setComments((prevComments) => ({
-            ...prevComments,
-            [id]: comment,
-        }));
-
-        // Here you can also implement logic to save this data to your backend if needed
-    };
-    const TouristChangePassword = () => (
-        <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
-    );
+   
+    
 
     useEffect(() => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
@@ -274,6 +313,9 @@ const TouristSignup = () => {
         };
         fetchActivities();
     }, []);
+
+    const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
+
 
     const handleTagSearch = async () => {
         const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
@@ -342,6 +384,9 @@ const TouristSignup = () => {
             setMuseums(json);
         }
     };
+
+
+
 
     //itineraries
     useEffect(() => {
@@ -429,6 +474,11 @@ const TouristSignup = () => {
         setIsProductVisible(!isProductVisible);
     };
 
+
+
+
+
+
     return (
         <div>
             <h2>Tourist Dashboard</h2>
@@ -439,30 +489,56 @@ const TouristSignup = () => {
                 <div className="workouts">
                     {tourists && tourists.map(tourist => (
                         <div key={tourist._id}>
-                            < TouristDetails tourist={tourist} />
+                            <TouristDetails tourist={tourist} />
+                            <button onClick={() => toggleRedemptionForm(tourist)}>Redeem Points</button>
                             <button onClick={() => handleUpdate(tourist)}>Update</button>
                         </div>
                     ))}
                 </div>
             )}
-            <button onClick={handleProductClick}>
-                {isProductVisible ? 'Hide' : 'Show'} Product Details
-            </button>
-            {isProductVisible && (
-                <div className="products">
-                    {products.length > 0 ? (
-                        products.map(product => (
-                            <ProductDetails product={product} key={product._id} />
-                        ))
-                    ) : (
-                        <p>No products found.</p>
-                    )}
+
+             {/* Render RedemptionForm if visible */}
+             {isRedemptionVisible && selectedTourist && (
+                <RedemptionForm
+                    tourist={selectedTourist}
+                    onClose={() => setIsRedemptionVisible(false)}
+                />
+            )}
+
+
+<button onClick={handleProductClick}>
+        {isProductVisible ? 'Hide' : 'Show'} Product Details
+      </button>
+      {isProductVisible && (
+        <div className="products">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <div key={product._id} className="product-item">
+                <ProductDetails product={product} />
+
+                <button onClick={() => toggleRatingForm(product._id)} style={{ marginTop: '10px' }}>
+                  {isVisibleRating[product._id] ? 'Hide payment' : 'Pay for this product'}
+                </button>
+
+                
+                <Rating 
+                    activityId={product._id} 
+                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
+                />
+              </div>
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
                 </div>
             )}
 
             {/* Tourist Signup Form */}
             <TouristForm />
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
+            <h4>Complaint:</h4>
+            <ComplainCreateForm />
+
             <h4>Activities:</h4>
 
             {/* Search for transportaion */}
@@ -567,7 +643,7 @@ const TouristSignup = () => {
                     <button type="submit">Search</button>
                 </form>
             )}
-
+            <div></div>
             {/* Search by Tag */}
             <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
                 {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}
@@ -651,21 +727,24 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )} */}
-            {isVisibleActivities && (
-                <div className="activities">
-                    {activities && activities.map(activity => (
-                        <div key={activity._id}>
-                            <ActivityDetails activity={activity} />
-                            {/* Add the Rating Component */}
-                            <Rating
-                                activityId={activity._id}
-                                onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
 
+
+            {isVisibleActivities && (
+    <div className="activities">
+        {visibleActivities.map(activity => (
+            <div key={activity._id}>
+                <ActivityDetails activity={activity} />
+                {/* Add the Rating Component */}
+                <Rating 
+                    activityId={activity._id} 
+                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
+                />
+                
+            </div>
+        ))}
+    </div>
+)}
+ 
             <br />
             <h4>Museums:</h4>
 
@@ -706,12 +785,17 @@ const TouristSignup = () => {
             </button>
 
             {isVisibleMuseums && (
-                <div className="museums">
-                    {museums && museums.map(museum => (
-                        <MuseumDetails museum={museum} key={museum._id} />
-                    ))}
-                </div>
-            )}
+    <div className="museums">
+        {museums && museums.map(museum => (
+            <div key={museum._id}>
+                <MuseumDetails museum={museum} />
+            </div>
+        ))}
+    </div>
+ )}
+
+
+
             <br />
             <h4>Itineraries:</h4>
 
@@ -779,10 +863,15 @@ const TouristSignup = () => {
             {isVisibleItineraries && (
                 <div className="Itineraries">
                     {itineraries && itineraries.map(itinerary => (
-                        <ItineraryDetails itinerary={itinerary} key={itinerary._id} />
+                        <div key={itinerary._id}>
+                            <ItineraryDetails itinerary={itinerary} />
+                        </div>
                     ))}
                 </div>
             )}
+
+           
+    
             <TouristChangePassword />
             {isHotelPopupVisible && <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />}
             {isFlightPopupVisible && <FlightPopup flights={flightPopupData} onClose={hideFlightPopup} />}

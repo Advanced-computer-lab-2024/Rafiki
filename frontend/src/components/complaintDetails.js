@@ -67,6 +67,7 @@ const ComplaintDetails = ({ complaint }) => {
       {/* Conditionally render more details */}
       {showDetails && (
         <div className="additional-details">
+          <p><strong>Name: </strong>{complaint.username}</p>
           <p><strong>Description: </strong>{complaint.body}</p>
           <p><strong>Reply: </strong>{complaint.reply}</p>
 

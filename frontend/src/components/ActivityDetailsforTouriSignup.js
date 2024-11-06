@@ -1,7 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
-const ActivityDetails = ({ activity }) => {
+import PaymentForm from '../components/paymentForm';
 
+const ActivityDetails = ({ activity }) => {
+    const [isPaymentVisible, setIsPaymentVisible] = useState(false);
+    const [selectedActivity, setSelectedActivity] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   
@@ -31,6 +34,12 @@ const ActivityDetails = ({ activity }) => {
         setCurrencyMultiplier(1);
     }
   };
+
+  const handlePaymentClickActivity = (activity) => {
+    setSelectedActivity(activity);
+
+    setIsPaymentVisible(prev => !prev);
+    };
   return (
     <div className="workout-details">
       <h4>Activity Details</h4>
@@ -52,6 +61,14 @@ const ActivityDetails = ({ activity }) => {
       {/* Copy Link Button */}
       <button onClick={copyLinkToClipboard}>Copy Activity Link</button>
       <button onClick={shareViaEmail}>Share via Email</button>
+      <div></div>
+      <button onClick={() => handlePaymentClickActivity(activity)}>
+        Pay for this Activity
+        </button>
+         {/* Render Payment Form if visible */}
+        {isPaymentVisible && (
+           <PaymentForm price={(selectedActivity.price * currencyMultiplier).toFixed(2)} />
+        )}
     </div>
   );
 };
