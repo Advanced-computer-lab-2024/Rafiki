@@ -57,11 +57,7 @@ const TouristSignup = () => {
           ...prevVisibility,
           [id]: !prevVisibility[id], // Toggle the visibility for the specific product
         }));
-      };
-    
-        
-        
-    
+      };   
         //museums
         const [museums, setMuseums] = useState(null); 
         const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
@@ -91,8 +87,6 @@ const TouristSignup = () => {
             setSelectedTourist(tourist);
             setIsRedemptionVisible(!isRedemptionVisible);
         };
-    
-
         const handleRateActivity = (id, rating, comment) => {
             setRatings((prevRatings) => ({
                 ...prevRatings,
@@ -109,19 +103,11 @@ const TouristSignup = () => {
         const TouristChangePassword = () => (
             <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
           );
-
-
     const showFlightPopup = () => setIsFlightPopupVisible(true);
     const hideFlightPopup = () => setIsFlightPopupVisible(false);
     const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
     const showTransportationPopup = () => setIsTransportationPopupVisible(true);
     const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
-    
-   
-    
-
-    
-
     // axios get request for transportation
     const fetchTransportationData = async () => {
         try {
@@ -473,11 +459,6 @@ const TouristSignup = () => {
     const handleProductClick = () => {
         setIsProductVisible(!isProductVisible);
     };
-
-
-
-
-
 
     return (
         <div>
