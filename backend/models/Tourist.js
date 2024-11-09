@@ -23,7 +23,7 @@ const touristSchema = new Schema({
   },
   Nationality: {
     type: String,
-    required: false,
+    required: true,
   },
   DOB: {
     type: Date,
@@ -55,6 +55,11 @@ const touristSchema = new Schema({
      default: 0,
   }, // Total points earned over time
 
+  BookedActivity:{
+    type : Number,
+    
+    required: true,
+  },
 
 
 

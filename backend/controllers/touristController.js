@@ -2,7 +2,7 @@ const TouristModel = require('../Models/Tourist'); // Import the Tourist model
 const bcrypt = require('bcrypt'); // Ensure you have this imported for password hashing
 
 const createTourist = async (req, res) => {
-  const { Username, Email, Password, MobileNumber, Nationality, DOB, Job } = req.body;
+  const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
 
   // Validate age
   const currentDate = new Date();
@@ -28,6 +28,7 @@ const createTourist = async (req, res) => {
       Nationality, 
       DOB, 
       Job,
+      BookedActivity,
       Wallet: 0 // Set default wallet value
     });
     
@@ -115,5 +116,40 @@ const changePassword = async (req, res) => {
   }
 };
 
+const incrementBookedActivity = async (req, res) => {
+  const { id } = req.params;
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword };
+  try {
+    const updatedTourist = await TouristModel.findByIdAndUpdate(
+      id,
+      { $inc: { BookedActivity: 1 } },
+      { new: true }
+    );
+
+   
+
+    res.status(200).json(updatedTourist);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const decrementBookedActivity = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedTourist = await TouristModel.findByIdAndUpdate(
+      id,
+      { $inc: { BookedActivity: -1 } }, // Decrement by 1
+      { new: true }
+    );
+
+    res.status(200).json(updatedTourist);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,incrementBookedActivity,decrementBookedActivity };
