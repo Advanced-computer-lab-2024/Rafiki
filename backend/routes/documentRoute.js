@@ -88,5 +88,17 @@ router.get('/uploadedDocuments', (req, res) => {
     
 
 
+  router.post('/accept-reject', async (req, res) => {
+    const { name, action } = req.body;
+    try {
+      // Logic to accept or reject the document based on 'name' and 'action'
+      // Example: finding the document by 'name' and updating its status.
+      res.status(200).json({ message: `Document ${action}ed successfully.` });
+    } catch (error) {
+      console.error('Error processing document:', error);
+      res.status(500).json({ error: 'Failed to process document action' });
+    }
+  });
+
 
 module.exports = router;
