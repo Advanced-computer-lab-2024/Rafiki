@@ -50,14 +50,15 @@ const TouristSignup = () => {
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
     const { flaggedActivities } = useFlaggedActivities();
-    const [isVisibleRating, setIsVisibleRating] = useState(false);
+    const [isVisibleRating, setIsVisibleRating] = useState({}); // Initialize as an object
 
     const toggleRatingForm = (id) => {
         setIsVisibleRating((prevVisibility) => ({
           ...prevVisibility,
-          [id]: !prevVisibility[id], // Toggle the visibility for the specific product
+          [id]: !prevVisibility[id], 
         }));
-      };
+    };
+    
     
         
         
@@ -151,41 +152,49 @@ const TouristSignup = () => {
 
     async function bookFlight() {
         try {
-
-            // Step 1: Get access token
-            const tokenResponse = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', {
-                grant_type: 'client_credentials',
-                client_id: 'p8pHTQfm3k74s8Y6yNDggKauNeQJfNse',
-                client_secret: 'bGJ8fKU4gQucuTF9'
-            }, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+            // Step 1: Validate flightData inputs
+            if (!flightData.originLocationCode || !flightData.destinationLocationCode) {
+                console.error("Origin and Destination codes are required.");
+                return;
+            }
+            if (!flightData.departureDateTimeRange.date || !flightData.departureDateTimeRange.time) {
+                console.error("Departure date and time are required.");
+                return;
+            }
+    
+            // Step 2: Get access token
+            const tokenResponse = await axios.post(
+                'https://test.api.amadeus.com/v1/security/oauth2/token',
+                {
+                    grant_type: 'client_credentials',
+                    client_id: 'p8pHTQfm3k74s8Y6yNDggKauNeQJfNse',
+                    client_secret: 'bGJ8fKU4gQucuTF9'
+                },
+                {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }
-            });
-            console.log(tokenResponse);
-
+            );
+    
             const accessToken = tokenResponse.data.access_token;
-            console.log(accessToken);
-
-            // Step 2: Create Axios instance with the access token
-            const amadeus = await axios.create({
+            console.log("Access Token:", accessToken);
+    
+            // Step 3: Configure Axios with access token
+            const amadeus = axios.create({
                 baseURL: 'https://test.api.amadeus.com/v2',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
-                },
-                validateStatus: function (status) {
-                    return status >= 200 && status < 300; // Adjust this if needed
+                    Authorization: `Bearer ${accessToken}`
                 }
             });
-
+    
+            // Step 4: Format travelers data
             const travelersData = flightData.travelers.map((traveler, index) => ({
                 id: `${index + 1}`,
-                travelerType: "ADULT",  // Adjust as needed for different types
-                name: traveler.name
+                travelerType: "ADULT",  // Adjust as needed for different traveler types
+                name: { firstName: traveler.name.split(" ")[0], lastName: traveler.name.split(" ")[1] || '' }
             }));
-
-            // Step 3: Make the API request
+    
+            // Step 5: Make the API request to fetch flight offers
             const response = await amadeus.post('/shopping/flight-offers', {
                 originDestinations: [
                     {
@@ -201,21 +210,27 @@ const TouristSignup = () => {
                 sources: ["GDS"],
                 travelers: travelersData
             });
-
-            console.log('API request successful');
-            console.log(response.data.data);
-            setFlightPopupData(response.data.data);
-            console.log(flightPopupData);
-            showFlightPopup();
-            console.log(isFlightPopupVisible)
-
+    
+            // Step 6: Check if response data is as expected
+            if (response.data && response.data.data) {
+                setFlightPopupData(response.data.data);
+                showFlightPopup();
+                console.log("Flight data:", response.data.data);
+            } else {
+                console.error("Unexpected response format:", response.data);
+            }
+    
         } catch (error) {
-            console.error('Error:', error.message || 'An error occurred');
-            console.error('Response data:', error.response?.data || 'No response data available');
+            // Enhanced error logging
+            console.error('Request failed:', error.message || 'An error occurred');
+            if (error.response) {
+                console.error('Response data:', error.response.data);
+                console.error('Status code:', error.response.status);
+            }
             console.error('Request config:', error.config);
-            console.error('Full error stack:', error.stack);
         }
     }
+    
 
     const handleSearchForFlight = async (e) => {
         e.preventDefault();
