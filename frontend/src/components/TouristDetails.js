@@ -8,6 +8,8 @@ const TouristDetails = ({ tourist }) => {
         <p><strong>Wallet: </strong>{tourist.Wallet}</p>
         <p><strong>Job: </strong>{tourist.Job}</p>
         <p>{tourist.createdAt}</p>
+        <p><strong>attendedActivities: </strong>{tourist.attendedActivities}</p>
+
       </div>
     )
   }

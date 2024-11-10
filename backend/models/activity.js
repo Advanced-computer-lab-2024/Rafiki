@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+// Define the Rating schema
+const RatingSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String, required: true }
+});
+
+// Define the Activity schema, with ratings using the RatingSchema
 const activitySchema = new mongoose.Schema({
     date: {
         type: Date,
@@ -14,25 +22,23 @@ const activitySchema = new mongoose.Schema({
         required: true
     },
     price: {
-        type: Number, // You can add min/max values if needed
+        type: Number,
         required: true
     },
-   
     tags: {
         type: String
     },  
-    category: { 
-        type: String, // Reference to Category
-        
+    category: {
+        type: String
     },
-    
     specialDiscounts: {
         type: String
     },
     isBookingOpen: {
         type: Boolean,
         default: true
-    }
+    },
+    ratings: [RatingSchema]  // Array of RatingSchema objects
 }, { timestamps: true });
 
 const Activity = mongoose.model('Activity', activitySchema);

@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const {
@@ -12,19 +11,24 @@ const {
     getActivitiesByBudget,
     getActivitiesByDate,
     getActivitiesSortedByPrice,
+    addRatingToActivity,    // Import new function
+    getActivityRatings      // Import new function
 } = require('../controllers/activityController');
 
-// Routes
+// Existing routes...
 router.post('/', createActivity);
-router.get('/', getAllActivities); // This route now supports query parameters
+router.get('/', getAllActivities);
 router.get('/:id', getActivityById);
 router.put('/:id', updateActivity);
 router.delete('/:id', deleteActivity);
-router.get('/searchT/:tag', searchActivitiesByTag); // New search route
+router.get('/searchT/:tag', searchActivitiesByTag);
 router.get('/searchC/:category', searchActivitiesByCategory);
-router.get('/filter/:budget', getActivitiesByBudget); // Add this line for budget filtering
-router.get('/filterDate/:date', getActivitiesByDate); // Add this line for date filtering   
-router.get('/sort/price', getActivitiesSortedByPrice); // Add this line for sorting
+router.get('/filter/:budget', getActivitiesByBudget);
+router.get('/filterDate/:date', getActivitiesByDate);
+router.get('/sort/price', getActivitiesSortedByPrice);
 
+// New routes for ratings
+router.post('/:id/ratings', addRatingToActivity); // Route to add a rating to an activity
+router.get('/:id/ratings', getActivityRatings);   // Route to get all ratings for an activity
 
 module.exports = router;

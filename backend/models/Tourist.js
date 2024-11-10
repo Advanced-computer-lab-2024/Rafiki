@@ -54,7 +54,9 @@ const touristSchema = new Schema({
     type: Number,
      default: 0,
   }, // Total points earned over time
-
+  attendedActivities: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Activity' }]
 
 
 

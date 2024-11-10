@@ -114,6 +114,25 @@ const changePassword = async (req, res) => {
       return res.status(500).json({ error: error.message });
   }
 };
+const attendActivity = async (req, res) => {
+  const { touristId, activityId } = req.body;
+  
+  try {
+      // Find the tourist and update their attendedActivities list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $addToSet: { attendedActivities: activityId } }, // Use $addToSet to avoid duplicates
+          { new: true }
+      ).populate('attendedActivities'); // Populate to see full details of attended activities if needed
 
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword };
+      res.status(200).json({ message: "Activity attended successfully.", attendedActivities: tourist.attendedActivities });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword , attendActivity};

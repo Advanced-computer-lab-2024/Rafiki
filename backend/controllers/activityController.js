@@ -165,11 +165,44 @@ const getActivitiesSortedByPrice = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const addRatingToActivity = async (req, res) => {
+    const { id } = req.params; // Activity ID
+    const { name, rating, comment } = req.body; // Rating details from request body
 
+    try {
+        // Find the activity by ID
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({ message: "Activity not found." });
+        }
+
+        // Add the new rating to the activity
+        activity.ratings.push({ name, rating, comment });
+        await activity.save(); // Save the updated activity
+
+        res.status(200).json({ message: "Rating added successfully", activity });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+const getActivityRatings = async (req, res) => {
+    const { id } = req.params; // Activity ID
+
+    try {
+        const activity = await Activity.findById(id).select('ratings'); // Get only ratings field
+        if (!activity) {
+            return res.status(404).json({ message: "Activity not found." });
+        }
+
+        res.status(200).json(activity.ratings); // Return all ratings
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 
 
 
 module.exports = { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity, searchActivitiesByTag,searchActivitiesByCategory,getActivitiesByBudget 
-    ,getActivitiesByDate,getActivitiesSortedByPrice};
+    ,getActivitiesByDate,getActivitiesSortedByPrice, getActivityRatings, addRatingToActivity};

@@ -17,10 +17,10 @@ import FlightPopup from "./FlightPopup";
 import TransportationPopup from "./TransportationPopup";
 import ComplainCreateForm from "../components/complainCreateForm"
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
+import { fetchActivities, fetchRatings, submitRating } from '../components/activityService';
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
-    const [comments, setComments] = useState({}); // To hold comments for each activity
     const [isHotelPopupVisible, setIsHotelPopupVisible] = useState(false);
     const [isFlightPopupVisible, setIsFlightPopupVisible] = useState(false);
     const [products, setProducts] = useState([]);
@@ -35,6 +35,8 @@ const TouristSignup = () => {
     const [flightPopupData, setFlightPopupData] = useState([]);
     const showHotelPopup = () => setIsHotelPopupVisible(true);
     const hideHotelPopup = () => setIsHotelPopupVisible(false);
+    const [visibleRating, setVisibleRating] = useState({});
+
 
         // activities
         const [activities, setActivities] = useState([]);
@@ -53,11 +55,12 @@ const TouristSignup = () => {
     const [isVisibleRating, setIsVisibleRating] = useState(false);
 
     const toggleRatingForm = (id) => {
-        setIsVisibleRating((prevVisibility) => ({
-          ...prevVisibility,
-          [id]: !prevVisibility[id], // Toggle the visibility for the specific product
+        setIsVisibleRating(prevVisibility => ({
+            ...prevVisibility,
+            [id]: !prevVisibility[id]
         }));
-      };
+    };
+    
     
         
         
@@ -93,19 +96,25 @@ const TouristSignup = () => {
         };
     
 
-        const handleRateActivity = (id, rating, comment) => {
-            setRatings((prevRatings) => ({
-                ...prevRatings,
-                [id]: rating,
-            }));
-        
-            setComments((prevComments) => ({
-                ...prevComments,
-                [id]: comment,
-            }));
-        
-            // Here you can also implement logic to save this data to your backend if needed
+        const handleRateActivity = async (activityId, rating, comment) => {
+            try {
+                await submitRating(activityId, rating, comment, nameBeforeRating); // Pass nameBeforeRating here
+                const updatedRatings = await fetchRatings(activityId); // Fetch the latest ratings after submitting
+                setRatings(prevRatings => ({
+                    ...prevRatings,
+                    [activityId]: updatedRatings,
+                }));
+                console.log("Rating submitted successfully for", nameBeforeRating);
+            } catch (error) {
+                console.error("Failed to submit rating:", error);
+            }
         };
+        
+        
+        
+        
+        
+        
         const TouristChangePassword = () => (
             <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
           );
@@ -116,8 +125,23 @@ const TouristSignup = () => {
     const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
     const showTransportationPopup = () => setIsTransportationPopupVisible(true);
     const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
+    const [nameBeforeRating, setNameBeforeRating] = useState(''); // New state for the entered name
+
+    const handleRateButtonClick = (activityId) => {
+        const name = prompt("Please enter your name to rate this activity:");
+        if (!name) {
+            alert("Name is required to rate the activity.");
+            return;
+        }
+        const tourist = tourists?.find(t => t.Username?.toLowerCase() === name.toLowerCase());
+        if (tourist && tourist.attendedActivities?.includes(activityId)) {
+            setNameBeforeRating(name); // Set the entered name
+            setVisibleRating(prev => ({ ...prev, [activityId]: true }));
+        } else {
+            alert("You must have attended this activity to rate it.");
+        }
+    };
     
-   
     
 
     
@@ -292,28 +316,37 @@ const TouristSignup = () => {
 
     useEffect(() => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
-        const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
-
         setRatings(savedRatings);
-        setComments(savedComments);
-    }, []);
+    }, []); // Runs only on mount
+    
+    useEffect(() => {
+        if (Object.keys(ratings).length) {
+            localStorage.setItem('ratings', JSON.stringify(ratings));
+        }
+    }, [ratings]);
+    
 
     useEffect(() => {
-        localStorage.setItem('ratings', JSON.stringify(ratings));
-        localStorage.setItem('comments', JSON.stringify(comments));
-    }, [ratings, comments]);
-
-    useEffect(() => {
-        const fetchActivities = async () => {
-            const response = await fetch('/api/ActivityRoute');
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
+        const fetchInitialData = async () => {
+            try {
+                const activities = await fetchActivities();
+                setActivities(activities);
+    
+                // Fetch ratings for each activity
+                const allRatings = {};
+                for (const activity of activities) {
+                    const activityRatings = await fetchRatings(activity._id);
+                    allRatings[activity._id] = activityRatings;
+                }
+                setRatings(allRatings);
+            } catch (error) {
+                console.error('Error loading data:', error);
             }
         };
-        fetchActivities();
+    
+        fetchInitialData();
     }, []);
-
+    
     const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
 
 
@@ -730,19 +763,32 @@ const TouristSignup = () => {
 
 
             {isVisibleActivities && (
-    <div className="activities">
-        {visibleActivities.map(activity => (
-            <div key={activity._id}>
-                <ActivityDetails activity={activity} />
-                {/* Add the Rating Component */}
-                <Rating 
-                    activityId={activity._id} 
-                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
-                />
-                
-            </div>
-        ))}
-    </div>
+      <div className="activities">
+      {visibleActivities.map(activity => (
+          <div key={activity._id}>
+              <ActivityDetails activity={activity} />
+              <button onClick={() => handleRateButtonClick(activity._id)}>
+                  {visibleRating[activity._id] ? "Hide Rating" : "Rate"}
+              </button>
+              {visibleRating[activity._id] && (
+    <Rating
+        activityId={activity._id}
+        onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
+    />
+)}
+
+             <div>
+    <h5>Existing Ratings:</h5>
+    {(ratings[activity._id] || []).map((entry, index) => (
+        <p key={index}>
+            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+        </p>
+    ))}
+</div>
+
+          </div>
+      ))}
+</div>
 )}
  
             <br />
