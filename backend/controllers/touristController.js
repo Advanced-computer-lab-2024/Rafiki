@@ -173,4 +173,4 @@ const decrementBookedActivity = async (req, res) => {
 
 
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,incrementBookedActivity,decrementBookedActivity };
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,incrementBookedActivity,decrementBookedActivity ,attendActivity};
