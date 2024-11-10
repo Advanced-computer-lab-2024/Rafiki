@@ -11,6 +11,7 @@ import AdminDashboard from './pages/adminDashboard'
 import SellerSignup from './pages/sellerSignup'
 import GovernorDashboard from './pages/GovernorDashboard'
 import GuestDashboard from './pages/guestDashboard'
+import ActivityDetailsPage from './pages/ActivityDetailsPage'
 import { FlaggedActivitiesProvider } from './FlaggedActivitiesContext' // Import the provider
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
               <Route path="/seller-signup" element={<SellerSignup />} />
               <Route path="/GovernorDashboard" element={<GovernorDashboard />} />
               <Route path="/guestDashboard" element={<GuestDashboard />} />
+              <Route path="/activities/:activityId" element={<ActivityDetailsPage />} />
             </Routes>
           </div>
         </FlaggedActivitiesProvider>

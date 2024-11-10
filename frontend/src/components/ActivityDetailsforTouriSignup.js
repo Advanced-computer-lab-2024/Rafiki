@@ -69,14 +69,13 @@ const ActivityDetails = ({ activity }) => {
   };
 
   const copyLinkToClipboard = () => {
-    const link = `${window.location.origin}/tourist-signup/`;
+    const link = `${window.location.origin}/activities/${activity._id}`;
     navigator.clipboard.writeText(link)
       .then(() => alert('Link copied to clipboard!'))
       .catch(error => console.error("Failed to copy link:", error));
   };
-
   const shareViaEmail = () => {
-    const link = `${window.location.origin}/tourist-signup/`;
+    const link = `${window.location.origin}/activities/${activity._id}`;
     window.location.href = `mailto:?subject=Check%20out%20this%20activity&body=Here%20is%20an%20activity%20I%20found:%20${link}`;
   };
 
