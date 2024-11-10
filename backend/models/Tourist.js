@@ -23,7 +23,7 @@ const touristSchema = new Schema({
   },
   Nationality: {
     type: String,
-    required: false,
+    required: true,
   },
   DOB: {
     type: Date,
@@ -57,6 +57,12 @@ const touristSchema = new Schema({
   attendedActivities: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Activity' }]
+,
+  BookedActivity:{
+    type : Number,
+    
+    required: true,
+  },
 
 
 

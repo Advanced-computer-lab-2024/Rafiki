@@ -1,3 +1,4 @@
+import axios from 'axios';
 import AdminForm from '../components/adminForm';
 import GovernerForm from '../components/governerForm';
 import DeleteAdmin from '../components/DeleteAdmin';
@@ -23,6 +24,8 @@ const AdminSignup = () => {
   const [isProductVisible, setIsProductVisible] = useState(false); // For toggling product details visibility
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [isDocumentsVisible, setIsDocumentsVisible] = useState(false);
+  
+
 
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
@@ -96,16 +99,25 @@ const AdminSignup = () => {
 
 
 
-useEffect(() => {
+  useEffect(() => {
     const fetchDocuments = async () => {
-      const response = await fetch('/api/uploadedDocuments');
-      const json = await response.json();
-      if (response.ok) {
-        setUploadedDocuments(json);
+      try {
+        const response = await fetch('/api/uploadedDocuments');
+        const json = await response.json();
+        console.log("Fetched documents:", json); // Log the fetched documents
+        
+        if (response.ok) {
+          setUploadedDocuments(json);
+        } else {
+          console.error("Error fetching documents:", json);
+        }
+      } catch (error) {
+        console.error("Error fetching documents:", error);
       }
     };
     fetchDocuments();
   }, []);
+  
 
   const show=(pdf)=>{
     window.open(`http://localhost:4000/uploads/${pdf}` , "_blank","noreferrer")
@@ -226,7 +238,21 @@ useEffect(() => {
 
   
 
-
+  const handleDocumentAction = async (name, action) => {
+    try {
+      const response = await axios.post('/api/accept-reject', { name, action });
+      console.log(response.data.message);
+  
+      // Update documents in state after action
+      setUploadedDocuments((prevDocuments) =>
+        prevDocuments.filter((doc) => doc.originalname !== name)
+      );
+    } catch (error) {
+      console.error(`Error ${action}ing document:`, error.response?.data || error.message);
+    }
+  };
+  
+  
 
 
   // Handle visibility toggles
@@ -378,8 +404,8 @@ useEffect(() => {
             {document.filename.endsWith('.pdf') && (
               <button onClick={() => show(document.filename)}>View PDF</button>
             )}
-            <button onClick={() => acceptDocument(document._id)}>Accept</button>
-            <button onClick={() => rejectDocument(document._id)}>Reject</button>
+           <button onClick={() => handleDocumentAction(document.originalname, 'accept')}>Accept</button>
+           <button onClick={() => handleDocumentAction(document.originalname, 'reject')}>Reject</button>
             <p>Status: {document.status}</p>
           </div>
         ))

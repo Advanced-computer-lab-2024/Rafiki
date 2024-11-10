@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import ActivityDetailsWrapper from './components/ActivityDetailsWrapper';
 
 // pages & components
 import Home from './pages/Home'
@@ -11,6 +10,9 @@ import AdminDashboard from './pages/adminDashboard'
 import SellerSignup from './pages/sellerSignup'
 import GovernorDashboard from './pages/GovernorDashboard'
 import GuestDashboard from './pages/guestDashboard'
+import ActivityDetailsPage from './pages/ActivityDetailsPage'
+import MuseumDetailsPage from './pages/MusuemDetailsPage';
+import ItineraryDetailsPage from './pages/itineraryDetailsPage';
 import { FlaggedActivitiesProvider } from './FlaggedActivitiesContext' // Import the provider
 
 function App() {
@@ -33,6 +35,9 @@ function App() {
               <Route path="/seller-signup" element={<SellerSignup />} />
               <Route path="/GovernorDashboard" element={<GovernorDashboard />} />
               <Route path="/guestDashboard" element={<GuestDashboard />} />
+              <Route path="/activities/:activityId" element={<ActivityDetailsPage />} />
+              <Route path="/museums/:museumId" element={<MuseumDetailsPage />} />
+              <Route path="/itinerary/:itineraryId" element={<ItineraryDetailsPage />} />
             </Routes>
           </div>
         </FlaggedActivitiesProvider>

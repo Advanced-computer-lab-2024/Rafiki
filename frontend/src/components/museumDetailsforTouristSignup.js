@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React,{ useState } from 'react';
 import PaymentForm from '../components/paymentForm';
 
 
@@ -7,6 +7,17 @@ const MuseumDetails = ({ museum}) => {
     const [selectedMuseum, setSelectedMuseum] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
+
+  const copyLinkToClipboard = () => {
+    const link = `${window.location.origin}/museums/${museum._id}`;
+    navigator.clipboard.writeText(link)
+      .then(() => alert('Link copied to clipboard!'))
+      .catch(error => console.error("Failed to copy link:", error));
+  };
+  const shareViaEmail = () => {
+    const link = `${window.location.origin}/museum/${museum._id}`;
+    window.location.href = `mailto:?subject=Check%20out%20this%20musuem&body=Here%20is%20an%20musuem%20I%20found:%20${link}`;
+  };
 
   const handleCurrencyChange = (e) => {
       const selectedCurrency = e.target.value;
@@ -53,6 +64,8 @@ const MuseumDetails = ({ museum}) => {
         {isPaymentVisible && (
            <PaymentForm price={(selectedMuseum.ticketPrices * currencyMultiplier).toFixed(2)} />
         )}
+        <button onClick={copyLinkToClipboard}>Copy museum Link</button>
+        <button onClick={shareViaEmail}>Share via Email</button>
       </div>
     );
   };
