@@ -9,7 +9,7 @@ const ItineraryDetailsPage = () => {
   useEffect(() => {
     if (itineraryId) {
       // Update the fetch URL to match your route structure
-      fetch(`http://localhost:3000/api/itineraryRoutes/${itineraryId}`) // Replace with your server's port
+      fetch(`http://localhost:3000/api/itineraryRoute/itinerary/${itineraryId}`) // Replace with your server's port
         .then((res) => {
           if (!res.ok) {
             throw new Error(`Error: ${res.status}`);

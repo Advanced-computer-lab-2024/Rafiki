@@ -11,7 +11,7 @@ const ItineraryDetails = ({ itinerary }) => {
       .catch(error => console.error("Failed to copy link:", error));
   };
   const shareViaEmail = () => {
-    const link = `${window.location.origin}/itineraries/${itinerary._id}`;
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`;
     window.location.href = `mailto:?subject=Check%20out%20this%20itinerary&body=Here%20is%20an%20itinerary%20I%20found:%20${link}`;
   };
 
