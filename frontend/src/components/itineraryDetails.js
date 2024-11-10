@@ -1,7 +1,20 @@
+import React from "react";
 import { useState } from 'react';
 const ItineraryDetails = ({ itinerary }) => {
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
+
+  const copyLinkToClipboard = () => {
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`;
+    navigator.clipboard.writeText(link)
+      .then(() => alert('Link copied to clipboard!'))
+      .catch(error => console.error("Failed to copy link:", error));
+  };
+  const shareViaEmail = () => {
+    const link = `${window.location.origin}/itineraries/${itinerary._id}`;
+    window.location.href = `mailto:?subject=Check%20out%20this%20itinerary&body=Here%20is%20an%20itinerary%20I%20found:%20${link}`;
+  };
+
   const handleCurrencyChange = (e) => {
     const selectedCurrency = e.target.value;
     setCurrency(selectedCurrency);
@@ -39,6 +52,8 @@ const ItineraryDetails = ({ itinerary }) => {
         <p><strong>Pickup Location: </strong>{itinerary.pickupLocation}</p>
         <p><strong>Drop Off Location: </strong>{itinerary.dropOffLocation}</p>
         <p>{itinerary.createdAt}</p>
+        <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>
+      <button onClick={shareViaEmail}>Share via Email</button>
       </div>
     )
   }

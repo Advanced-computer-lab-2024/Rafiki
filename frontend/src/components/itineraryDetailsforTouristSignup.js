@@ -11,6 +11,18 @@ const ItineraryDetails = ({ itinerary }) => {
 
   const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
 
+
+  const copyLinkToClipboard = () => {
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`;
+    navigator.clipboard.writeText(link)
+      .then(() => alert('Link copied to clipboard!'))
+      .catch(error => console.error("Failed to copy link:", error));
+  };
+  const shareViaEmail = () => {
+    const link = `${window.location.origin}/itineraries/${itinerary._id}`;
+    window.location.href = `mailto:?subject=Check%20out%20this%20itinerary&body=Here%20is%20an%20itinerary%20I%20found:%20${link}`;
+  };
+
   useEffect(() => {
     const itineraryDate = new Date(itinerary.availableDates); // Assuming `availableDates` is the itinerary date
     const currentDate = new Date();
@@ -68,6 +80,8 @@ const ItineraryDetails = ({ itinerary }) => {
     }
   };
 
+  
+
   const handleCurrencyChange = (e) => {
     const selectedCurrency = e.target.value;
     setCurrency(selectedCurrency);
@@ -121,10 +135,13 @@ const ItineraryDetails = ({ itinerary }) => {
       <button onClick={handleDecrement} disabled={!isCancelable}>
         Cancel Booking
       </button>
+      <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>
+      <button onClick={shareViaEmail}>Share via Email</button>
       {error && <p className="error">{error}</p>}
       {!isCancelable && (
         <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
       )}
+       
     </div>
   );
 };
