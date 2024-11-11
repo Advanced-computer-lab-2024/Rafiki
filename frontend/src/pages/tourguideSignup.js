@@ -66,10 +66,7 @@ const TourguideSignup = () => {
     }
   };
 
-  const handleTourguideCreated = () => {
-    setSelectedTourguide(null);
-  };
-
+  
   const handleItineraryCreated = () => {
     setSelectedItinerary(null);
   };
@@ -123,10 +120,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Forms */}
-      <TourguideForm 
-        existingTourguide={selectedTourguide} 
-        onCreated={handleTourguideCreated} 
-      />
+      
       
       <ItineraryForm 
         existingItinerary={selectedItinerary} 

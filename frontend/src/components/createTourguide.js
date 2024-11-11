@@ -58,7 +58,7 @@ const SellerForm = () => {
 
       {isVisible && (
         <form className="create" onSubmit={handleSubmit}>
-          <h3>Seller Signup</h3>
+          <h3>Tourguide Signup</h3>
 
           <label>Username:</label>
           <input
