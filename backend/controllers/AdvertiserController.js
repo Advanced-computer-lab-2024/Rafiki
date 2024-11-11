@@ -106,22 +106,24 @@ const changePassword = async (req, res) => {
   const { username, oldPassword, newPassword } = req.body;
 
   try {
-    const advertiser = await AdvertiserModel.findOne({ Username: username });
-    if (!advertiser) {
-      return res.status(404).json({ message: 'Advertiser not found.' });
-    }
+      // Fetch the advertiser details from the database using Username
+      const advertiser = await AdvertiserModel.findOne({ Username: username });
+      if (!advertiser) {
+          return res.status(404).json({ message: 'Advertiser not found.' });
+      }
 
-    const isMatch = await bcrypt.compare(oldPassword, advertiser.Password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect old password.' });
-    }
+      // Compare old password with the stored password (plain-text comparison)
+      if (advertiser.Password !== oldPassword) {
+          return res.status(400).json({ message: 'Incorrect old password.' });
+      }
 
-    advertiser.Password = await bcrypt.hash(newPassword, 10);
-    await advertiser.save();
+      // Update the advertiser's password
+      advertiser.Password = newPassword;
+      await advertiser.save();
 
-    res.status(200).json({ message: 'Password changed successfully.' });
+      return res.status(200).json({ message: 'Password changed successfully.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
   }
 };
 

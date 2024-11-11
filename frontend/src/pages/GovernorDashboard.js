@@ -3,6 +3,7 @@ import MuseumForm from '../components/museumForm';
 import MuseumDetails from '../components/museumDetails';
 import TagForm from '../components/TagForm'
 import ActivityDetails from "../components/ActivityDetails"; 
+import ChangePasswordForm from '../components/ChangePasswordForm';
 //import museum from '../backend/models/museum'
 
 const TourismGovernorDashboard = () => {
@@ -13,7 +14,9 @@ const TourismGovernorDashboard = () => {
     const [activity, setActivity] = useState(null)
     const [isVisible2, setIsVisible2] = useState(false);
   
-    
+    const AdminChangePassword = () => (
+      <ChangePasswordForm apiEndpoint="/api/adminRoute/changeGovernorPassword" />
+  );
     const fetchmuseum = async () => {
       const response = await fetch('/api/museumRoute');
       const json = await response.json();
@@ -82,7 +85,9 @@ const TourismGovernorDashboard = () => {
         ))}
       </div>
       )}
-        <MuseumForm/></div>
+        <MuseumForm/>
+        <AdminChangePassword/>
+        </div>
          
     );
 };

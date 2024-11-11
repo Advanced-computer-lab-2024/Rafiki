@@ -209,6 +209,8 @@ const [selectedFile, setSelectedFile] = useState(null);
                 <button onClick={handleFileUpload}>Upload</button>
             </div>
 
+            <br></br>
+
 
 
             {/* Search by Tag */}

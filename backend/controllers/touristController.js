@@ -95,26 +95,28 @@ const changePassword = async (req, res) => {
   const { username, oldPassword, newPassword } = req.body;
 
   try {
-      // Fetch admin details from the database using Username
-      const admin = await TouristModel.findOne({ Username: username });
-      if (!admin) {
-          return res.status(404).json({ message: 'Admin not found.' });
+      // Fetch tourist details from the database using Username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found.' });
       }
 
-      // Compare old password with the stored password (plain-text comparison)
-      if (admin.Password !== oldPassword) {
+      // Compare old password with the stored hashed password
+      const isMatch = await bcrypt.compare(oldPassword, tourist.Password);
+      if (!isMatch) {
           return res.status(400).json({ message: 'Incorrect old password.' });
       }
 
-      // Update the admin's password
-      admin.Password = newPassword;
-      await admin.save();
+      // Hash the new password and update
+      tourist.Password = await bcrypt.hash(newPassword, 10);
+      await tourist.save();
 
       return res.status(200).json({ message: 'Password changed successfully.' });
   } catch (error) {
       return res.status(500).json({ error: error.message });
   }
 };
+
 const attendActivity = async (req, res) => {
   const { touristId, activityId } = req.body;
   

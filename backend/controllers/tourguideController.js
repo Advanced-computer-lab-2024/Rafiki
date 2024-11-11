@@ -93,10 +93,12 @@ const getAlltour = async (req, res) => {
 };
 
 // Change Password
+// Change Password for Tour Guide with hashed passwords
 const changePassword = async (req, res) => {
     const { username, oldPassword, newPassword } = req.body;
   
     try {
+        // Find the tour guide by username
         const tourGuide = await TourguideModel.findOne({ Username: username });
         if (!tourGuide) {
             return res.status(404).json({ message: 'Tour guide not found.' });
@@ -105,13 +107,13 @@ const changePassword = async (req, res) => {
         // Check if terms are accepted
         if (!checkTermsAccepted(tourGuide, res)) return;
 
-        // Verify old password
+        // Verify the old password
         const isMatch = await bcrypt.compare(oldPassword, tourGuide.Password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Incorrect old password.' });
         }
 
-        // Update the password
+        // Hash and update the new password
         tourGuide.Password = await bcrypt.hash(newPassword, 10);
         await tourGuide.save();
   

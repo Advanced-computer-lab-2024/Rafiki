@@ -18,7 +18,9 @@ const TourguideSignup = () => {
     activities: false
   });
   const [selectedItinerary, setSelectedItinerary] = useState(null);
-
+  const AdminChangePassword = () => (
+    <ChangePasswordForm apiEndpoint="/api/tourguideRoute/changePassword" />
+);
   useEffect(() => {
     const fetchTourguides = async () => {
       const response = await fetch('/api/tourguideRoute');
@@ -133,6 +135,8 @@ const TourguideSignup = () => {
       />
       
       <CreateTourguide />
+<br></br>
+      <AdminChangePassword/>
     </div>
   );
 };
