@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-
 const userSchema = new Schema({
     Username: {
       type: String,
@@ -13,18 +12,21 @@ const userSchema = new Schema({
     },
     Password: {
       type: String,
-      required: true},
-    Name:{  
-        type:String,
-        required:false
+      required: true
     },
-    Description:{
-        type:String,
-        required:false
+    Name: {  
+        type: String,
+        required: false
+    },
+    Description: {
+        type: String,
+        required: false
+    },
+    Picture: { // New field for profile picture
+        type: String,
+        required: false
     }
+}, { timestamps: true });
 
-
-    }, { timestamps: true });
-
-const seller = mongoose.model('seller', userSchema);
-module.exports = seller;
+const Seller = mongoose.model('Seller', userSchema);
+module.exports = Seller;

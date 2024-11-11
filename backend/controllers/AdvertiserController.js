@@ -1,93 +1,177 @@
 const AdvertiserModel = require('../models/Advertiser');
+const ActivityModel = require('../models/activity'); // Replace with actual Activity model
+const ItineraryModel = require('../models/Itinerary'); // Replace with actual Itinerary model
+const BookingModel = require('../models/Booking');
+const multer = require('multer');
+const bcrypt = require('bcrypt');
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // specify the upload directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // generate a unique filename
+  },
+});
+const upload = multer({ storage: storage }).single('profilePicture');
+
+// Controller to create a new advertiser
 const createAdvertiser = async (req, res) => {
-  const { Username, Email, Password } = req.body;
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ error: 'File upload failed.' });
+    }
+
+    const { Username, Email, Password, MobileNumber, Nationalty, DOB, Job, isTermsAccepted } = req.body;
+
+    if (!isTermsAccepted) {
+      return res.status(400).json({ error: 'Terms and conditions must be accepted.' });
+    }
+
+    try {
+      const hashedPassword = await bcrypt.hash(Password, 10);
+      const profilePicture = req.file ? req.file.path : null;
+
+      const advertiser = await AdvertiserModel.create({
+        Username,
+        Email,
+        Password: hashedPassword,
+        MobileNumber,
+        Nationalty,
+        DOB,
+        Job,
+        profilePicture,
+      });
+
+      res.status(201).json(advertiser);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+};
+
+// Controller to get an advertiser by ID
+const getAdvertiser = async (req, res) => {
+  const { id } = req.params;
   try {
-    const advertiser = await AdvertiserModel.create({ Username, Email, Password });
-    res.status(201).json(advertiser); // Return the created advertiser
+    const advertiser = await AdvertiserModel.findById(id);
+    if (!advertiser) {
+      return res.status(404).json({ message: 'Advertiser not found.' });
+    }
+    res.status(200).json(advertiser);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const getAdvertiser = async (req, res) => {
-    const { id } = req.params; // Extracting id from request parameters
-    try {
-      const advertiser = await AdvertiserModel.findById(id); // Find advertiser by ID
-      if (!advertiser) {
-        return res.status(404).json({ message: "Advertiser not found." });
-      }
-      res.status(200).json(advertiser); // Return the advertiser's details
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+// Controller to get all advertisers
+const getAdvertisers = async (req, res) => {
+  try {
+    const advertisers = await AdvertiserModel.find({}).sort({ createdAt: -1 });
+    if (!advertisers.length) {
+      return res.status(404).json({ message: 'No advertisers found.' });
     }
-  };
-
-  const getAdvertisers = async (req, res) => {
-    try {
-      // Fetch all advertisers from the database and sort them by creation date
-      const advertisers = await AdvertiserModel.find({}).sort({ createdAt: -1 });
-  
-      // If no advertisers found, you can return an empty array or a message
-      if (!advertisers.length) {
-        return res.status(404).json({ message: "No advertisers found." });
-      }
-  
-      res.status(200).json(advertisers); // Return the list of advertisers
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
-  
-
-
-  const updateAdvertiser = async (req, res) => {
-    const { id } = req.params;
-    const { Username, Email, Password} = req.body;
-
-    try {
-        let updatedData = { Username, Email };
-        
-        // Hash new password if provided
-        if (Password) {
-            updatedData.Password = await bcrypt.hash(Password, 10);
-        }
-
-        const tourguide = await AdvertiserModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
-
-        if (!tourguide) {
-            return res.status(404).json({ message: "Tour guide not found." });
-        }
-        res.status(200).json(tourguide);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+    res.status(200).json(advertisers);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
+// Controller to update an advertiser's details
+const updateAdvertiser = async (req, res) => {
+  const { id } = req.params;
+  const { Username, Email, Password } = req.body;
+
+  try {
+    let updatedData = { Username, Email };
+    
+    if (Password) {
+      updatedData.Password = await bcrypt.hash(Password, 10);
+    }
+
+    const advertiser = await AdvertiserModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+
+    if (!advertiser) {
+      return res.status(404).json({ message: 'Advertiser not found.' });
+    }
+    res.status(200).json(advertiser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Controller to change an advertiser's password
 const changePassword = async (req, res) => {
   const { username, oldPassword, newPassword } = req.body;
 
   try {
-      // Fetch admin details from the database using Username
-      const admin = await AdvertiserModel.findOne({ Username: username });
-      if (!admin) {
-          return res.status(404).json({ message: 'Admin not found.' });
-      }
+    const advertiser = await AdvertiserModel.findOne({ Username: username });
+    if (!advertiser) {
+      return res.status(404).json({ message: 'Advertiser not found.' });
+    }
 
-      // Compare old password with the stored password (plain-text comparison)
-      if (admin.Password !== oldPassword) {
-          return res.status(400).json({ message: 'Incorrect old password.' });
-      }
+    const isMatch = await bcrypt.compare(oldPassword, advertiser.Password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect old password.' });
+    }
 
-      // Update the admin's password
-      admin.Password = newPassword;
-      await admin.save();
+    advertiser.Password = await bcrypt.hash(newPassword, 10);
+    await advertiser.save();
 
-      return res.status(200).json({ message: 'Password changed successfully.' });
+    res.status(200).json({ message: 'Password changed successfully.' });
   } catch (error) {
-      return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
+// Controller to request account deletion with conditions
+const requestAccountDeletion = async (req, res) => {
+  const { id } = req.params;
 
-module.exports = { createAdvertiser, getAdvertiser, getAdvertisers, updateAdvertiser,changePassword };
+  try {
+    // Check for any upcoming, paid bookings associated with activities or itineraries
+    const hasPaidUpcomingActivities = await BookingModel.exists({
+      advertiserId: id,
+      status: 'paid',
+      activityDate: { $gte: new Date() }
+    });
+
+    const hasPaidUpcomingItineraries = await BookingModel.exists({
+      advertiserId: id,
+      status: 'paid',
+      itineraryDate: { $gte: new Date() }
+    });
+
+    if (hasPaidUpcomingActivities || hasPaidUpcomingItineraries) {
+      return res.status(400).json({
+        error: 'Account cannot be deleted due to upcoming paid bookings associated with activities or itineraries.',
+      });
+    }
+
+    // Hide associated data
+    await ActivityModel.updateMany({ advertiserId: id }, { visible: false });
+    await ItineraryModel.updateMany({ advertiserId: id }, { visible: false });
+
+    // Delete the advertiser account
+    const deletedAdvertiser = await AdvertiserModel.findByIdAndDelete(id);
+
+    if (!deletedAdvertiser) {
+      return res.status(404).json({ error: 'Advertiser not found.' });
+    }
+
+    res.status(200).json({ message: 'Account deleted successfully, and all associated activities and itineraries are now hidden.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An internal server error occurred.' });
+  }
+};
+
+module.exports = {
+  createAdvertiser,
+  getAdvertiser,
+  getAdvertisers,
+  updateAdvertiser,
+  changePassword,
+  requestAccountDeletion
+};

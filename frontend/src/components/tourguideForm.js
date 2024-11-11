@@ -9,6 +9,8 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
     const [Nationalty, setNationalty] = useState(existingTourguide ? existingTourguide.Nationalty : '');
     const [DOB, setDOB] = useState(existingTourguide ? existingTourguide.DOB : '');
     const [Job, setJob] = useState(existingTourguide ? existingTourguide.Job : '');
+    const [Picture, setPicture] = useState(null);
+    const [termsAccepted, setTermsAccepted] = useState(false); // New state for terms acceptance
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -19,40 +21,46 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
             setNationalty(existingTourguide.Nationalty);
             setDOB(existingTourguide.DOB);
             setJob(existingTourguide.Job);
+            setPicture(null);
         } else {
-            // Reset the form if there's no existing tour guide
             setUsername('');
             setEmail('');
             setMobileNumber('');
             setNationalty('');
             setDOB('');
             setJob('');
+            setPicture(null);
         }
     }, [existingTourguide]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const tourguide = { Username, Email, Password, MobileNumber, Nationalty, DOB, Job };
+        const formData = new FormData();
+        formData.append("Username", Username);
+        formData.append("Email", Email);
+        formData.append("Password", Password);
+        formData.append("MobileNumber", MobileNumber);
+        formData.append("Nationalty", Nationalty);
+        formData.append("DOB", DOB);
+        formData.append("Job", Job);
+        if (Picture) {
+            formData.append("picture", Picture);
+        }
 
         const method = existingTourguide ? 'PUT' : 'POST';
         const url = existingTourguide ? `/api/tourguideRoute/${existingTourguide._id}` : '/api/tourguideRoute';
 
         const response = await fetch(url, {
             method,
-            body: JSON.stringify(tourguide),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            body: formData,
         });
         const json = await response.json();
 
         if (!response.ok) {
             setError(json.error);
-        }
-        if (response.ok) {
+        } else {
             setError(null);
-            // Reset form fields after successful submission
             if (!existingTourguide) {
                 setUsername('');
                 setEmail('');
@@ -61,9 +69,11 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                 setNationalty('');
                 setDOB('');
                 setJob('');
+                setPicture(null);
+                setTermsAccepted(false); // Reset termsAccepted after successful submission
             }
             console.log(existingTourguide ? 'Tourguide updated:' : 'New tourguide added:', json);
-            if (onUpdate) onUpdate(); // Call the onUpdate prop if provided
+            if (onUpdate) onUpdate();
         }
     };
 
@@ -77,7 +87,7 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                 {isVisible ? 'Hide' : 'Show'} {existingTourguide ? 'Update' : 'Sign up'}
             </button>
             {isVisible && (
-                <form className="create" onSubmit={handleSubmit}>
+                <form className="create" onSubmit={handleSubmit} encType="multipart/form-data">
                     <h3>{existingTourguide ? 'Update Tourguide' : 'Tourguide Signup'}</h3>
 
                     <label>Username:</label>
@@ -85,13 +95,15 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                         type="text"
                         onChange={(e) => setUsername(e.target.value)}
                         value={Username}
+                        required
                     />
 
                     <label>Email:</label>
                     <input
-                        type="text"
+                        type="email"
                         onChange={(e) => setEmail(e.target.value)}
                         value={Email}
+                        required
                     />
 
                     <label>Password:</label>
@@ -99,6 +111,7 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                         type="password"
                         onChange={(e) => setPassword(e.target.value)}
                         value={Password}
+                        required
                     />
 
                     <label>Mobile Number:</label>
@@ -106,6 +119,7 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                         type="text"
                         onChange={(e) => setMobileNumber(e.target.value)}
                         value={MobileNumber}
+                        required
                     />
 
                     <label>Job:</label>
@@ -113,23 +127,43 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                         type="text"
                         onChange={(e) => setJob(e.target.value)}
                         value={Job}
+                        required
                     />
 
-                    <label>Nationalty:</label>
+                    <label>Nationality:</label>
                     <input
                         type="text"
                         onChange={(e) => setNationalty(e.target.value)}
                         value={Nationalty}
+                        required
                     />
-                    
+
                     <label>DOB:</label>
                     <input
                         type="date"
                         onChange={(e) => setDOB(e.target.value)}
                         value={DOB}
+                        required
                     />
 
-                    <button>{existingTourguide ? 'Update' : 'Signup'}</button>
+                    <label>Profile Picture:</label>
+                    <input
+                        type="file"
+                        onChange={(e) => setPicture(e.target.files[0])}
+                    />
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={termsAccepted}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                        />
+                        I accept the terms and conditions
+                    </label>
+
+                    <button type="submit" disabled={!termsAccepted}>
+                        {existingTourguide ? 'Update' : 'Signup'}
+                    </button>
                     {error && <div className="error">{error}</div>}
                 </form>
             )}

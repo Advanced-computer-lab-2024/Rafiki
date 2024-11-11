@@ -3,14 +3,16 @@ import TourguideForm from "../components/tourguideForm";
 import TourguideDetails from "../components/tourguideDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
-import ActivityDetails from "../components/ActivityDetails"; 
+import ActivityDetails from "../components/ActivityDetails";
 import CreateTourguide from "../components/createTourguide";
 import ChangePasswordForm from '../components/ChangePasswordForm';
+
 const TourguideSignup = () => {
   const [tourguides, setTourguides] = useState(null);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [itineraries, setItineraries] = useState(null);
   const [activities, setActivities] = useState(null);
+  const [termsAccepted, setTermsAccepted] = useState(false); // New state for terms acceptance
   const [visibleSections, setVisibleSections] = useState({
     tourguides: false,
     itineraries: false,
@@ -35,9 +37,6 @@ const TourguideSignup = () => {
     };
     fetchItineraries();
   }, []);
-  const GuideChangePassword = () => (
-    <ChangePasswordForm apiEndpoint="/api/tourguideRoute/changePassword" />
-  );
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -74,23 +73,34 @@ const TourguideSignup = () => {
     setSelectedItinerary(null);
   };
 
+  const handleTermsAccepted = (accepted) => {
+    setTermsAccepted(accepted); // Update the termsAccepted state
+  };
+
   return (
     <div>
       <h2>Tourguide Dashboard</h2>
 
+      {/* Show terms acceptance message if terms are not accepted */}
+      {!termsAccepted && (
+        <div style={{ color: "red", marginBottom: "10px" }}>
+          You must accept the terms and conditions to access the system.
+        </div>
+      )}
+
       {/* Toggle Buttons */}
-      <button onClick={() => toggleVisibility('tourguides')}>
+      <button onClick={() => toggleVisibility('tourguides')} disabled={!termsAccepted}>
         {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
       </button>
-      <button onClick={() => toggleVisibility('itineraries')}>
+      <button onClick={() => toggleVisibility('itineraries')} disabled={!termsAccepted}>
         {visibleSections.itineraries ? 'Hide' : 'Show'} Itinerary Details
       </button>
-      <button onClick={() => toggleVisibility('activities')}>
+      <button onClick={() => toggleVisibility('activities')} disabled={!termsAccepted}>
         {visibleSections.activities ? 'Hide' : 'Show'} Activities
       </button>
 
       {/* Tourguides Section */}
-      {visibleSections.tourguides && (
+      {visibleSections.tourguides && termsAccepted && (
         <div className="tourguides">
           {tourguides && tourguides.map(tourguide => (
             <div key={tourguide._id}>
@@ -102,7 +112,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Itineraries Section */}
-      {visibleSections.itineraries && (
+      {visibleSections.itineraries && termsAccepted && (
         <div className="itineraries">
           {itineraries && itineraries.map(itinerary => (
             <div key={itinerary._id}>
@@ -114,7 +124,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Activities Section */}
-      {visibleSections.activities && (
+      {visibleSections.activities && termsAccepted && (
         <div className="activities">
           {activities && activities.map(activity => (
             <ActivityDetails activity={activity} key={activity._id} />
@@ -126,6 +136,7 @@ const TourguideSignup = () => {
       <TourguideForm 
         existingTourguide={selectedTourguide} 
         onCreated={handleTourguideCreated} 
+        onTermsAccepted={handleTermsAccepted} // Pass terms acceptance handler to form
       />
       
       <ItineraryForm 
@@ -135,7 +146,7 @@ const TourguideSignup = () => {
       />
       
       <CreateTourguide />
-      <GuideChangePassword/>
+      <GuideChangePassword />
     </div>
   );
 };

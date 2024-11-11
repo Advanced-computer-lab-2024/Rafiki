@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import SellerForm from "../components/sellerForm";
-import SellerDetails from "../components/sellerDetails"; // gharib
-import ProductDetails from "../components/ProductDetails";
+import SellerDetails from "../components/sellerDetails";
 import ProductForm from "../components/productForm";
+import ProductDetails from "../components/ProductDetails";
 import UpdateSeller from "../components/UpdateSeller";
 import ChangePasswordForm from '../components/ChangePasswordForm';
-import ArchivedProducts from '../components/ArchivedProducts';  // Corrected import
+import ArchivedProducts from '../components/ArchivedProducts';
 
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]);
-  const [isSellerVisible, setIsSellerVisible] = useState(false); // gharib
+  const [isSellerVisible, setIsSellerVisible] = useState(false);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isProductVisible, setIsProductVisible] = useState(false);
@@ -24,12 +24,14 @@ const SellerSignup = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
-  // Fetch sellers from the backend
-  // gharib
+
+  // Function to fetch sellers from the backend
   const fetchSellers = async () => {
     const response = await fetch('/api/sellerRoute');
     const json = await response.json();
@@ -37,6 +39,27 @@ const SellerSignup = () => {
       setSellers(json);
     } else {
       console.error('Error fetching sellers:', json);
+    }
+  };
+
+  // Function to request account deletion for a seller
+  const requestAccountDeletion = async (sellerId) => {
+    try {
+      const response = await fetch(`/api/sellerRoute/deleteRequest/${sellerId}`, {
+        method: 'DELETE',
+      });
+      
+      const result = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage("Account deletion requested successfully! If eligible, it will be processed soon.");
+        fetchSellers(); // Refresh the seller list
+      } else {
+        setError(result.message || "Failed to request account deletion due to pending obligations.");
+      }
+    } catch (error) {
+      console.error("Error requesting account deletion:", error);
+      setError("An error occurred while requesting account deletion.");
     }
   };
 
@@ -50,7 +73,7 @@ const SellerSignup = () => {
       console.error('Error fetching products:', json);
     }
   };
-// gharib
+
   useEffect(() => {
     fetchSellers();
     fetchProducts();
@@ -79,7 +102,7 @@ const SellerSignup = () => {
 
     if (response.ok) {
       alert(`Product ${isArchived ? 'unarchived' : 'archived'} successfully!`);
-      fetchProducts(); // Refresh product list
+      fetchProducts();
     } else {
       alert('Error archiving/unarchiving product.');
     }
@@ -87,7 +110,7 @@ const SellerSignup = () => {
 
   const handleUpdate = (seller) => {
     setSelectedTourguide(seller);
-    setIsUpdateVisible(true); // Show the update form
+    setIsUpdateVisible(true);
   };
 
   const sortProducts = async (order) => {
@@ -133,7 +156,7 @@ const SellerSignup = () => {
 
       if (response.ok) {
         alert("Product updated successfully!");
-        fetchProducts(); // Refresh product list
+        fetchProducts();
         setSelectedProduct(null);
         setNewPrice("");
         setNewDescription("");
@@ -147,44 +170,43 @@ const SellerSignup = () => {
     }
   };
 
-  const handleUpdateClick = () => {
-    if (selectedProduct) {
-      setIsUpdateVisible(!isUpdateVisible);
-    } else {
-      alert("Please select a product to update.");
-    }
-  };
-
-  const handleSellerClick = () => setIsSellerVisible(!isSellerVisible); // gharib
-  const handleProductClick = () => setIsProductVisible(!isProductVisible);
-  const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
-  const handleFilterClick = () => setIsFilterVisible(!isFilterVisible);
-
   return (
-    // gharib
     <div>
       <h2>Seller Dashboard</h2>
 
-      <button onClick={handleSellerClick}>
+      <SellerForm onSellerAdded={fetchSellers} />
+
+      {/* Button for requesting account deletion under the upload picture section */}
+      <div style={{ marginTop: "10px" }}>
+        <button
+          onClick={() => requestAccountDeletion(selectedTourguide?._id)}
+          style={{ backgroundColor: "red", color: "white" }}
+        >
+          Request my account to be deleted off the system
+        </button>
+      </div>
+
+      <button onClick={() => setIsSellerVisible(!isSellerVisible)}>
         {isSellerVisible ? 'Hide' : 'Show'} Seller Details
       </button>
+
       {isSellerVisible && (
         <div className="workouts">
           {sellers && sellers.map(seller => (
-            <div key={seller._id}>
+            <div key={seller._id} style={{ marginBottom: '20px' }}>
               <SellerDetails seller={seller} />
               <button onClick={() => handleUpdate(seller)}>Update</button>
             </div>
           ))}
-        </div>// gharib
-      )} 
-      
+        </div>
+      )}
 
       <UpdateSeller existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
 
-      <button onClick={handleProductClick}>
+      <button onClick={() => setIsProductVisible(!isProductVisible)}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
+
       {isProductVisible && (
         <div className="products">
           <button onClick={() => sortProducts('asc')}>Sort Ascending</button>
@@ -224,7 +246,7 @@ const SellerSignup = () => {
         </div>
       )}
 
-      <button onClick={handleUpdateClick}>
+      <button onClick={() => setIsUpdateVisible(!isUpdateVisible)}>
         {isUpdateVisible ? 'Hide' : 'Show'} Update Product
       </button>
 
@@ -254,9 +276,10 @@ const SellerSignup = () => {
         </form>
       )}
 
-      <button onClick={handleFilterClick}>
+      <button onClick={() => setIsFilterVisible(!isFilterVisible)}>
         {isFilterVisible ? 'Hide' : 'Show'} Filter Products
       </button>
+
       {isFilterVisible && (
         <div className="products">
           <div>
@@ -286,18 +309,19 @@ const SellerSignup = () => {
         </div>
       )}
 
-      <button onClick={handleArchivedClick}>
+      <button onClick={() => setIsArchivedVisible(!isArchivedVisible)}>
         {isArchivedVisible ? 'Hide' : 'Show'} Archived Products
       </button>
       {isArchivedVisible && <ArchivedProducts />}
 
-      <SellerForm onSellerAdded={fetchSellers} />
       <ProductForm onProductAdded={fetchProducts} />
-      <SellerChangePassword/>
+      <SellerChangePassword />
+
+      {/* Display error or success messages */}
+      {error && <div style={{ color: "red" }}>{error}</div>}
+      {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
     </div>
   );
 };
 
 export default SellerSignup;
-
-

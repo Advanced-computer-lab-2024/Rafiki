@@ -11,12 +11,12 @@ const {
     getActivitiesByBudget,
     getActivitiesByDate,
     getActivitiesSortedByPrice,
-    addRatingToActivity,    // Import new function
-    getActivityRatings      // Import new function
+    addRatingToActivity,    // Function to add a rating to an activity
+    getActivityRatings      // Function to get all ratings for an activity
 } = require('../controllers/activityController');
 
-// Existing routes...
-router.post('/', createActivity);
+// Existing routes
+//router.post('/', createActivity);
 router.get('/', getAllActivities);
 router.get('/:id', getActivityById);
 router.put('/:id', updateActivity);
@@ -30,5 +30,3 @@ router.get('/sort/price', getActivitiesSortedByPrice);
 // New routes for ratings
 router.post('/:id/ratings', addRatingToActivity); // Route to add a rating to an activity
 router.get('/:id/ratings', getActivityRatings);   // Route to get all ratings for an activity
-
-module.exports = router;

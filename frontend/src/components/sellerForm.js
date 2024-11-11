@@ -7,41 +7,53 @@ const SellerForm = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [picture, setPicture] = useState(null); // State for the uploaded picture
+  const [acceptedTerms, setAcceptedTerms] = useState(false); // State for terms acceptance
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents page reload when the form is submitted
+    e.preventDefault();
 
-    const seller = { 
-        Username: username, // Use correct casing
-        Email: email,
-        Password: password,
-        Name: name,
-        Description: description 
-    };
+    // Check if terms and conditions are accepted
+    if (!acceptedTerms) {
+      setError("You must accept the terms and conditions.");
+      return;
+    }
 
-    const response = await fetch('/api/sellerRoute', { // Ensure correct endpoint
-        method: 'POST',
-        body: JSON.stringify(seller),
-        headers: {
-            'Content-Type': 'application/json',
-        },
+    // Create FormData to handle text fields and file upload
+    const formData = new FormData();
+    formData.append("Username", username);
+    formData.append("Email", email);
+    formData.append("Password", password);
+    formData.append("Name", name);
+    formData.append("Description", description);
+    if (picture) {
+      formData.append("picture", picture); // Append the file only if one was selected
+    }
+
+    // Make a POST request to the server
+    const response = await fetch('/api/sellerRoute', {
+      method: 'POST',
+      body: formData, // Send formData directly
     });
+
     const json = await response.json();
 
     if (!response.ok) {
-        setError(json.error);
+      setError(json.error);
     } else {
-        setError(null);
-        setUsername('');  // Clear the form fields
-        setEmail('');
-        setPassword('');
-        setName('');
-        setDescription('');
-        console.log('New seller added:', json);
+      setError(null);
+      // Reset form fields after successful submission
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setName('');
+      setDescription('');
+      setPicture(null);
+      setAcceptedTerms(false);
+      console.log('New seller added:', json);
     }
-};
-
+  };
 
   const handleClick = () => {
     setIsVisible(!isVisible);
@@ -54,7 +66,7 @@ const SellerForm = () => {
       </button>
 
       {isVisible && (
-        <form className="create" onSubmit={handleSubmit}>
+        <form className="create" onSubmit={handleSubmit} encType="multipart/form-data">
           <h3>Seller Signup</h3>
 
           <label>Username:</label>
@@ -96,6 +108,22 @@ const SellerForm = () => {
             value={description}
             required
           />
+
+          <label>Upload Picture:</label>
+          <input
+            type="file"
+            onChange={(e) => setPicture(e.target.files[0])}
+            accept="image/*"
+          />
+
+          <label>
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={() => setAcceptedTerms(!acceptedTerms)}
+            />
+            Accept Terms and Conditions
+          </label>
 
           <button type="submit">Signup</button>
           {error && <div className="error">{error}</div>}

@@ -204,5 +204,14 @@ const getActivityRatings = async (req, res) => {
 
 
 
-module.exports = { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity, searchActivitiesByTag,searchActivitiesByCategory,getActivitiesByBudget 
-    ,getActivitiesByDate,getActivitiesSortedByPrice, getActivityRatings, addRatingToActivity};
+//module.exports = { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity, searchActivitiesByTag,searchActivitiesByCategory,getActivitiesByBudget 
+//<<<<<<< Updated upstream
+    //,getActivitiesByDate,getActivitiesSortedByPrice, getActivityRatings, addRatingToActivity};
+//=======
+ //   ,getActivitiesByDate,getActivitiesSortedByPrice};
+
+
+
+
+ 
+//>>>>>>> Stashed changes

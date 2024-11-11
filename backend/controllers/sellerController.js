@@ -1,45 +1,39 @@
 const { default: mongoose } = require('mongoose');
 const sellerModel = require('../models/seller');
-// const bcrypt = require('bcrypt'); 
-// const { default: ChangePasswordForm } = require('../../frontend/src/components/ChangePasswordForm');
+const path = require('path');
+const fs = require('fs');
 
-const createSeller = async(req,res) => {
-    const{Username,Email,Password,Name,Description} = req.body;
-    // const hashedPassword = await bcrypt.hash(Password,10);
+// Define each function as a standalone, outside of any other function
+const createSeller = async (req, res) => {
+    const { Username, Email, Password, Name, Description } = req.body;
     const hashedPassword = Password;
-    try{
-        const user = await sellerModel.create({Username,Email,Password:hashedPassword,Name,Description});
-        res.status(200).json(user)
-    }catch(error){
-        res.status(400).json({error:error.message})
+    try {
+        const user = await sellerModel.create({ Username, Email, Password: hashedPassword, Name, Description });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 const getSeller = async (req, res) => {
-    const { id } = req.params; // Extracting id from request parameters
-    try {
-      const seller = await sellerModel.findById(id); // Find advertiser by ID
-      if (!seller) {
-        return res.status(404).json({ message: "Seller not found." });
-      }
-      res.status(200).json(seller); // Return the advertiser's details
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
-
-  const updateSeller = async (req, res) => {
     const { id } = req.params;
-    const { Username, Email, Password} = req.body;
+    try {
+        const seller = await sellerModel.findById(id);
+        if (!seller) {
+            return res.status(404).json({ message: "Seller not found." });
+        }
+        res.status(200).json(seller);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const updateSeller = async (req, res) => {
+    const { id } = req.params;
+    const { Username, Email, Password } = req.body;
 
     try {
         let updatedData = { Username, Email };
-        
-        // Hash new password if provided
-        // if (Password) {
-        //     updatedData.Password = await bcrypt.hash(Password, 10);
-        // }
-
         const tourguide = await sellerModel.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
 
         if (!tourguide) {
@@ -49,38 +43,126 @@ const getSeller = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-  };
-  const getAllSellers = async (req, res) => {
-    
-      const seller = await sellerModel.find({}) // Find advertiser by ID
-    
-      res.status(200).json(seller); // Return the advertiser's details
-    } 
+};
 
-    const changePassword = async (req, res) => {
-      const { username, oldPassword, newPassword } = req.body;
-    
-      try {
-          // Fetch admin details from the database using Username
-          const admin = await sellerModel.findOne({ Username: username });
-          if (!admin) {
-              return res.status(404).json({ message: 'Admin not found.' });
-          }
-    
-          // Compare old password with the stored password (plain-text comparison)
-          if (admin.Password !== oldPassword) {
-              return res.status(400).json({ message: 'Incorrect old password.' });
-          }
-    
-          // Update the admin's password
-          admin.Password = newPassword;
-          await admin.save();
-    
-          return res.status(200).json({ message: 'Password changed successfully.' });
-      } catch (error) {
-          return res.status(500).json({ error: error.message });
-      }
-    };
-    
+const getAllSellers = async (req, res) => {
+    const sellers = await sellerModel.find({});
+    res.status(200).json(sellers);
+};
 
-  module.exports = {createSeller,getSeller,updateSeller,getAllSellers,changePassword};
+const changePassword = async (req, res) => {
+    const { username, oldPassword, newPassword } = req.body;
+
+    try {
+        const admin = await sellerModel.findOne({ Username: username });
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found.' });
+        }
+
+        if (admin.Password !== oldPassword) {
+            return res.status(400).json({ message: 'Incorrect old password.' });
+        }
+
+        admin.Password = newPassword;
+        await admin.save();
+
+        return res.status(200).json({ message: 'Password changed successfully.' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+const uploadSellerPicture = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const seller = await sellerModel.findById(id);
+        if (!seller) {
+            return res.status(404).json({ message: "Seller not found." });
+        }
+
+        const newPicture = req.file ? req.file.filename : null;
+
+        if (seller.Picture && newPicture) {
+            const oldPicturePath = path.join(__dirname, '../uploads/sellerPictures', seller.Picture);
+            if (fs.existsSync(oldPicturePath)) {
+                fs.unlinkSync(oldPicturePath);
+            }
+        }
+
+        seller.Picture = newPicture;
+        await seller.save();
+
+        res.status(200).json({ message: "Profile picture uploaded successfully.", seller });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Function to delete a seller if allowed
+const deleteSellerIfAllowed = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const seller = await sellerModel.findById(id);
+        if (!seller) {
+            return res.status(404).json({ message: "Seller not found." });
+        }
+
+        const hasPaidBookings = await checkForPaidBookings(id);
+        if (hasPaidBookings) {
+            return res.status(403).json({
+                message: "Cannot delete seller. There are upcoming events, activities, or itineraries with paid bookings."
+            });
+        }
+
+        await sellerModel.findByIdAndDelete(id);
+        await deleteAssociatedData(id);
+
+        res.status(200).json({ message: "Seller account and associated data deleted successfully." });
+    } catch (error) {
+        console.error("Error in deleteSellerIfAllowed:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Helper function to check for upcoming paid bookings
+const checkForPaidBookings = async (sellerId) => {
+    const hasPaidEvents = await EventModel.exists({
+        seller: sellerId,
+        date: { $gte: new Date() },
+        isPaid: true
+    });
+
+    const hasPaidActivities = await ActivityModel.exists({
+        seller: sellerId,
+        date: { $gte: new Date() },
+        isPaid: true
+    });
+
+    const hasPaidItineraries = await ItineraryModel.exists({
+        seller: sellerId,
+        date: { $gte: new Date() },
+        isPaid: true
+    });
+
+    return hasPaidEvents || hasPaidActivities || hasPaidItineraries;
+};
+
+// Helper function to delete associated data if the seller account is deleted
+const deleteAssociatedData = async (sellerId) => {
+    await EventModel.deleteMany({ seller: sellerId });
+    await ActivityModel.deleteMany({ seller: sellerId });
+    await ItineraryModel.deleteMany({ seller: sellerId });
+};
+
+// Export all functions
+module.exports = { 
+    createSeller, 
+    getSeller, 
+    updateSeller, 
+    getAllSellers, 
+    changePassword, 
+    uploadSellerPicture, 
+    deleteSellerIfAllowed 
+};

@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const workoutRoutes = require('./routes/workouts');
 const touristRoutes = require('./routes/TouristRoute');
 const advertiserRoutes = require('./routes/AdvertiserRoute');
-const activityRoutes = require('./routes/activityRoute');
+//const activityRoutes = require('./routes/activityRoute');
 const tourGuideRoutes = require('./routes/tourguideRoutes');
 const adminRoutes = require('./routes/adminRoute');
 const sellerRoutes = require('./routes/sellerRoute');
@@ -28,6 +28,13 @@ const app = express();
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+const multer = require('multer');
+const path = require('path');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Middleware to handle static files for uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Middleware for logging requests
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);

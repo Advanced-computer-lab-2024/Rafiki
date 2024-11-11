@@ -27,6 +27,9 @@ const tourguideSchema = new Schema({
         type: String,
         required: false,
     },
+    termsAccepted: { type: Boolean, 
+        default: false }, 
+
 }, { timestamps: true }); 
 
 module.exports = mongoose.model('Tourguide', tourguideSchema);
