@@ -9,6 +9,7 @@ const ActivityDetails = ({ activity }) => {
     const [tourists, setTourists] = useState([]);
     const [error, setError] = useState(null);
     const [isCancelable, setIsCancelable] = useState(false);
+    const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
 
     // Fetch the list of tourists on component mount
     useEffect(() => {

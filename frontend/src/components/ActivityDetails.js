@@ -35,7 +35,6 @@ const ActivityDetails = ({ activity }) => {
     <div className="workout-details">
       <h4>Activity Details</h4>
       <p><strong>Date: </strong>{activity.date}</p>
-      <p>attwnd</p>
       <p><strong>Time: </strong>{activity.time}</p>
       <p><strong>Location: </strong> {activity.location}</p>
       <p><strong>Price: </strong>
@@ -53,7 +52,7 @@ const ActivityDetails = ({ activity }) => {
       {/* Copy Link Button */}
       <button onClick={copyLinkToClipboard}>Copy Activity Link</button>
       <button onClick={shareViaEmail}>Share via Email</button>
-      <p>attwnd</p>
+      
 
 
       

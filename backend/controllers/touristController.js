@@ -136,7 +136,6 @@ const attendActivity = async (req, res) => {
   }
 };
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword , attendActivity};
 const incrementBookedActivity = async (req, res) => {
   const { id } = req.params;
 
