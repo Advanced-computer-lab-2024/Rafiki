@@ -53,7 +53,7 @@ const itinerarySchema = new Schema({
         type: String,   
         required: true,
     },
-    ratings: [RatingSchema]
+    ratings: [RatingSchema],
     active: {
         type: Boolean,
         default: true, // Initializes with true
