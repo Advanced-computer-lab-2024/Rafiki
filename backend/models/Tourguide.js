@@ -28,7 +28,7 @@ const tourguideSchema = new Schema({
         required: false,
     },
     termsAccepted: { type: Boolean, 
-        default: false }, 
+        default: true }, 
 
 }, { timestamps: true }); 
 

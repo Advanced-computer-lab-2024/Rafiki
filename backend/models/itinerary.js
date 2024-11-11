@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const itinerarySchema = new Schema({
     tourGuideId: {
         type: Schema.Types.ObjectId,
+      
         required: true,
         ref: 'Tourguide', 
     },
@@ -47,10 +48,13 @@ const itinerarySchema = new Schema({
         type: String,   
         required: true,
     },
+    active: {
+        type: Boolean,
+        default: true, // Initializes with true
+    },
 }, { timestamps: true });
 
 // Conditionally define the model to prevent overwrite errors
-
 const Itinerary = mongoose.models.Itinerary || mongoose.model('Itinerary', itinerarySchema);
 
 module.exports = Itinerary;
