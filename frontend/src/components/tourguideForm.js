@@ -10,7 +10,6 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
     const [DOB, setDOB] = useState(existingTourguide ? existingTourguide.DOB : '');
     const [Job, setJob] = useState(existingTourguide ? existingTourguide.Job : '');
     const [Picture, setPicture] = useState(null);
-    const [termsAccepted, setTermsAccepted] = useState(false); // New state for terms acceptance
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -70,7 +69,6 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                 setDOB('');
                 setJob('');
                 setPicture(null);
-                setTermsAccepted(false); // Reset termsAccepted after successful submission
             }
             console.log(existingTourguide ? 'Tourguide updated:' : 'New tourguide added:', json);
             if (onUpdate) onUpdate();
@@ -152,16 +150,7 @@ const TourguideForm = ({ existingTourguide, onUpdate }) => {
                         onChange={(e) => setPicture(e.target.files[0])}
                     />
 
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={termsAccepted}
-                            onChange={(e) => setTermsAccepted(e.target.checked)}
-                        />
-                        I accept the terms and conditions
-                    </label>
-
-                    <button type="submit" disabled={!termsAccepted}>
+                    <button type="submit">
                         {existingTourguide ? 'Update' : 'Signup'}
                     </button>
                     {error && <div className="error">{error}</div>}

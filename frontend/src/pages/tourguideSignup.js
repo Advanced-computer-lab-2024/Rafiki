@@ -12,7 +12,6 @@ const TourguideSignup = () => {
   const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [itineraries, setItineraries] = useState(null);
   const [activities, setActivities] = useState(null);
-  const [termsAccepted, setTermsAccepted] = useState(false); // New state for terms acceptance
   const [visibleSections, setVisibleSections] = useState({
     tourguides: false,
     itineraries: false,
@@ -73,34 +72,23 @@ const TourguideSignup = () => {
     setSelectedItinerary(null);
   };
 
-  const handleTermsAccepted = (accepted) => {
-    setTermsAccepted(accepted); // Update the termsAccepted state
-  };
-
   return (
     <div>
       <h2>Tourguide Dashboard</h2>
 
-      {/* Show terms acceptance message if terms are not accepted */}
-      {!termsAccepted && (
-        <div style={{ color: "red", marginBottom: "10px" }}>
-          You must accept the terms and conditions to access the system.
-        </div>
-      )}
-
       {/* Toggle Buttons */}
-      <button onClick={() => toggleVisibility('tourguides')} disabled={!termsAccepted}>
+      <button onClick={() => toggleVisibility('tourguides')}>
         {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
       </button>
-      <button onClick={() => toggleVisibility('itineraries')} disabled={!termsAccepted}>
+      <button onClick={() => toggleVisibility('itineraries')}>
         {visibleSections.itineraries ? 'Hide' : 'Show'} Itinerary Details
       </button>
-      <button onClick={() => toggleVisibility('activities')} disabled={!termsAccepted}>
+      <button onClick={() => toggleVisibility('activities')}>
         {visibleSections.activities ? 'Hide' : 'Show'} Activities
       </button>
 
       {/* Tourguides Section */}
-      {visibleSections.tourguides && termsAccepted && (
+      {visibleSections.tourguides && (
         <div className="tourguides">
           {tourguides && tourguides.map(tourguide => (
             <div key={tourguide._id}>
@@ -112,7 +100,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Itineraries Section */}
-      {visibleSections.itineraries && termsAccepted && (
+      {visibleSections.itineraries && (
         <div className="itineraries">
           {itineraries && itineraries.map(itinerary => (
             <div key={itinerary._id}>
@@ -124,7 +112,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Activities Section */}
-      {visibleSections.activities && termsAccepted && (
+      {visibleSections.activities && (
         <div className="activities">
           {activities && activities.map(activity => (
             <ActivityDetails activity={activity} key={activity._id} />
@@ -136,7 +124,6 @@ const TourguideSignup = () => {
       <TourguideForm 
         existingTourguide={selectedTourguide} 
         onCreated={handleTourguideCreated} 
-        onTermsAccepted={handleTermsAccepted} // Pass terms acceptance handler to form
       />
       
       <ItineraryForm 
@@ -146,7 +133,6 @@ const TourguideSignup = () => {
       />
       
       <CreateTourguide />
-      <GuideChangePassword />
     </div>
   );
 };
