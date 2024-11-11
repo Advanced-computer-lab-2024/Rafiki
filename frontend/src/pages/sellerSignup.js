@@ -6,7 +6,8 @@ import ProductDetails from "../components/ProductDetails";
 import UpdateSeller from "../components/UpdateSeller";
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts';
-
+import TermsPopup from "../components/TermsPopup";
+import { useNavigate } from 'react-router-dom';
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]);
   const [isSellerVisible, setIsSellerVisible] = useState(false);
@@ -26,6 +27,12 @@ const SellerSignup = () => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [showPopup, setShowPopup] = useState(true); // Show the popup initially
+  const navigate = useNavigate();
+
+  const handleAccept = () => {
+    setShowPopup(false); // Hide the popup when terms are accepted
+  };
 
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
@@ -172,6 +179,14 @@ const SellerSignup = () => {
 
   return (
     <div>
+        {showPopup ? (
+        <TermsPopup onAccept={handleAccept} />
+      ) : (
+        <div>
+      
+          <p>You have accepted the terms and conditions.</p>
+        </div>
+      )}
       <h2>Seller Dashboard</h2>
 
       <SellerForm onSellerAdded={fetchSellers} />
