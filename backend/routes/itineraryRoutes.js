@@ -1,7 +1,6 @@
 const express = require('express');
 const { createItinerary, getItinerary, updateItinerary, deleteItinerary, getAllItinerary,getItinerariesSortedByPrice,getItinerariesByBudget,getItinerariesByAvailableDate
-    ,getItinerariesByLanguage,
-    addRatingToItinerary, getItineraryRatings} = require('../controllers/itineraryController');
+    ,getItinerariesByLanguage,  addRatingToItinerary, getItineraryRatings,toggleItineraryActiveState} = require('../controllers/itineraryController');
 const router = express.Router();
 
 router.post('/creatingitinerary', createItinerary);
@@ -17,6 +16,7 @@ router.post('/:id/ratings', addRatingToItinerary);
 router.get('/:id/ratings', getItineraryRatings);
 
 
+router.put('/itinerary/:id/toggle-active', toggleItineraryActiveState);
 
 
 module.exports = router;

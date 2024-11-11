@@ -3,7 +3,7 @@ const Tourguide = require('../models/Tourguide');
 
 // Create Itinerary
 const createItinerary = async (req, res) => {
-    const { tourGuideUsername, activities, locations, timeline, duration, language, price, availableDates, accessibility, pickupLocation, dropOffLocation } = req.body;
+    const { tourGuideUsername, activities, locations, timeline, duration, language, price, availableDates, accessibility, pickupLocation, dropOffLocation,active } = req.body;
 
     try {
         const tourGuide = await Tourguide.findOne({ Username: tourGuideUsername });
@@ -23,6 +23,7 @@ const createItinerary = async (req, res) => {
             accessibility,
             pickupLocation,
             dropOffLocation,
+            active,
         });
 
         res.status(201).json(newItinerary);
@@ -30,7 +31,30 @@ const createItinerary = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const toggleItineraryActiveState = async (req, res) => {
+    const { id } = req.params;
 
+    try {
+        // Find the itinerary by ID
+        const itinerary = await ItineraryModel.findById(id);
+        if (!itinerary) {
+            return res.status(404).json({ message: "Itinerary not found." });
+        }
+
+        // Toggle the active state
+        itinerary.active = !itinerary.active;
+
+        // Save the updated itinerary
+        const updatedItinerary = await itinerary.save();
+
+        res.status(200).json({
+            message: `Itinerary is now ${updatedItinerary.active ? "active" : "inactive"}.`,
+            itinerary: updatedItinerary
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 // Get Itinerary
 const getItinerary = async (req, res) => {
     const { id } = req.params;
@@ -223,4 +247,5 @@ const getItineraryRatings = async (req, res) => {
 
 
 module.exports = { createItinerary, getItinerary, getAllItinerary, updateItinerary, deleteItinerary,getItinerariesSortedByPrice,getItinerariesByBudget,getItinerariesByAvailableDate
-    ,getItinerariesByLanguage, addRatingToItinerary, getItineraryRatings };
+    ,getItinerariesByLanguage, addRatingToItinerary, getItineraryRatings 
+    ,toggleItineraryActiveState };

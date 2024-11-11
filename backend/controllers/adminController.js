@@ -96,7 +96,60 @@ const changePassword = async (req, res) => {
     }
 };
 
+const changeGovernorPassword = async (req, res) => {
+    const { username, oldPassword, newPassword } = req.body;
 
-module.exports = { addTourismGovernor,deleteAccount,addAdmin,getAdmin,changePassword };
+    try {
+        // Fetch the governor details from the database using Username
+        const governor = await TourismGovernor.findOne({ Username: username });
+        if (!governor) {
+            return res.status(404).json({ message: 'Governor not found.' });
+        }
+
+        // Compare old password with the stored password (plain-text comparison)
+        if (governor.Password !== oldPassword) {
+            return res.status(400).json({ message: 'Incorrect old password.' });
+        }
+
+        // Update the governor's password
+        governor.Password = newPassword;
+        await governor.save();
+
+        return res.status(200).json({ message: 'Password changed successfully.' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+// Admin: Get All Tourism Governors
+const getAllGovernors = async (req, res) => {
+    try {
+        // Fetch all governors from the database and sort them by creation date
+        const governors = await TourismGovernor.find({}).sort({ createdAt: -1 });
+
+        // If no governors are found, return a message or an empty array
+        if (!governors.length) {
+            return res.status(404).json({ message: "No governors found." });
+        }
+
+        res.status(200).json(governors); // Return the list of governors
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+module.exports = { 
+    addTourismGovernor, 
+    deleteAccount, 
+    addAdmin, 
+    getAdmin, 
+    changePassword, 
+    changeGovernorPassword, 
+    getAllGovernors 
+};
+
+
+
+
 
 

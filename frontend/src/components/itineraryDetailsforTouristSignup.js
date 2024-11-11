@@ -147,6 +147,8 @@ const ItineraryDetails = ({ itinerary }) => {
 
   return (
     <div className="workout-details">
+       {itinerary.active ? (
+      <>
       <h4>{itinerary.tourGuideUsername}</h4>
       <p><strong>Activities: </strong>{itinerary.activities}</p>
       <p><strong>Locations: </strong>{itinerary.locations}</p>
@@ -184,7 +186,10 @@ const ItineraryDetails = ({ itinerary }) => {
       {!isCancelable && (
         <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
       )}
-       
+        </>
+    ) : (
+      <p>This itinerary is no longer active.</p>
+    )}
     </div>
   );
 };

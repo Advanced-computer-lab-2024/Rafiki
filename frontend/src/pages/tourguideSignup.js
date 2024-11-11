@@ -6,7 +6,8 @@ import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails";
 import CreateTourguide from "../components/createTourguide";
 import ChangePasswordForm from '../components/ChangePasswordForm';
-
+import { useNavigate } from 'react-router-dom';
+import TermsPopup from '../components/TermsPopup'
 const TourguideSignup = () => {
   const [tourguides, setTourguides] = useState(null);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
@@ -18,7 +19,16 @@ const TourguideSignup = () => {
     activities: false
   });
   const [selectedItinerary, setSelectedItinerary] = useState(null);
+  const AdminChangePassword = () => (
+    <ChangePasswordForm apiEndpoint="/api/tourguideRoute/changePassword" />
+);
 
+const [showPopup, setShowPopup] = useState(true); // Show the popup initially
+const navigate = useNavigate();
+
+const handleAccept = () => {
+  setShowPopup(false); // Hide the popup when terms are accepted
+};
   useEffect(() => {
     const fetchTourguides = async () => {
       const response = await fetch('/api/tourguideRoute');
@@ -64,17 +74,24 @@ const TourguideSignup = () => {
     }
   };
 
-  const handleTourguideCreated = () => {
-    setSelectedTourguide(null);
-  };
-
+  
   const handleItineraryCreated = () => {
     setSelectedItinerary(null);
   };
 
   return (
     <div>
+
       <h2>Tourguide Dashboard</h2>
+
+      {showPopup ? (
+        <TermsPopup onAccept={handleAccept} />
+      ) : (
+        <div>
+          
+          <p>You have accepted the terms and conditions.</p>
+        </div>
+      )}
 
       {/* Toggle Buttons */}
       <button onClick={() => toggleVisibility('tourguides')}>
@@ -121,10 +138,7 @@ const TourguideSignup = () => {
       )}
 
       {/* Forms */}
-      <TourguideForm 
-        existingTourguide={selectedTourguide} 
-        onCreated={handleTourguideCreated} 
-      />
+      
       
       <ItineraryForm 
         existingItinerary={selectedItinerary} 
@@ -133,6 +147,8 @@ const TourguideSignup = () => {
       />
       
       <CreateTourguide />
+<br></br>
+      <AdminChangePassword/>
     </div>
   );
 };

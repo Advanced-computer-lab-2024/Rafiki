@@ -10,7 +10,8 @@ import UpdateAdvertiser from "../components/updateAdvertiser";
 import DeleteActivity from "../components/DeleteActivity";
 import UpdateActivity from "../components/UpdateActivity";
 import ChangePasswordForm from '../components/ChangePasswordForm';
-
+import TermsPopup from "../components/TermsPopup";
+import { useNavigate } from 'react-router-dom';
 const AdvChangePassword = () => (
   <ChangePasswordForm apiEndpoint="/api/AdvertiserRoute/changePassword" />
 );
@@ -101,7 +102,12 @@ const AdvertiserSignup = () => {
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [showPopup, setShowPopup] = useState(true); // Show the popup initially
+  const navigate = useNavigate();
 
+  const handleAccept = () => {
+    setShowPopup(false); // Hide the popup when terms are accepted
+  }
   useEffect(() => {
     const fetchAdvertisers = async () => {
       const response = await fetch('/api/AdvertiserRoute');
@@ -162,6 +168,14 @@ const AdvertiserSignup = () => {
 
   return (
     <div className="container">
+      {showPopup ? (
+        <TermsPopup onAccept={handleAccept} />
+      ) : (
+        <div>
+          
+          <p>You have accepted the terms and conditions.</p>
+        </div>
+      )}
       <h2>Advertiser Dashboard</h2>
 
       

@@ -369,22 +369,7 @@ const AdminSignup = () => {
 
 
 
-            {/* <AdminForm />
-            <br />
-            <GovernerForm />
-            <br />
-            <DeleteAdmin />
-            <br />
-            <CategoryForm />
-            <br/>
-            <AdminTagForm/>
-            <br/>
-            <ProductForm/>
-            <br/>
-            <AdminChangePassword/>
-
-        </div> */}
-    {/* ); */}
+   
 
     
 
