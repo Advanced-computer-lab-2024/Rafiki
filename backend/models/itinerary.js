@@ -1,4 +1,3 @@
-//itinerary   scheme
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -50,5 +49,7 @@ const itinerarySchema = new Schema({
     },
 }, { timestamps: true });
 
-const Itinerary = mongoose.model('Itinerary', itinerarySchema);
+// Conditionally define the model to prevent overwrite errors
+const Itinerary = mongoose.models.Itinerary || mongoose.model('Itinerary', itinerarySchema);
+
 module.exports = Itinerary;

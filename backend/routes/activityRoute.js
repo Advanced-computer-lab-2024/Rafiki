@@ -11,12 +11,12 @@ const {
     getActivitiesByBudget,
     getActivitiesByDate,
     getActivitiesSortedByPrice,
-    addRatingToActivity,    // Function to add a rating to an activity
-    getActivityRatings      // Function to get all ratings for an activity
+    addRatingToActivity,
+    getActivityRatings
 } = require('../controllers/activityController');
 
-// Existing routes
-//router.post('/', createActivity);
+// Define routes here
+router.post('/', createActivity);
 router.get('/', getAllActivities);
 router.get('/:id', getActivityById);
 router.put('/:id', updateActivity);
@@ -26,7 +26,7 @@ router.get('/searchC/:category', searchActivitiesByCategory);
 router.get('/filter/:budget', getActivitiesByBudget);
 router.get('/filterDate/:date', getActivitiesByDate);
 router.get('/sort/price', getActivitiesSortedByPrice);
+router.post('/:id/ratings', addRatingToActivity);
+router.get('/:id/ratings', getActivityRatings);
 
-// New routes for ratings
-router.post('/:id/ratings', addRatingToActivity); // Route to add a rating to an activity
-router.get('/:id/ratings', getActivityRatings);   // Route to get all ratings for an activity
+module.exports = router;
