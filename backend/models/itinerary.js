@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const RatingSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String, required: true }
+});
 
 const itinerarySchema = new Schema({
     tourGuideId: {
@@ -47,6 +52,7 @@ const itinerarySchema = new Schema({
         type: String,   
         required: true,
     },
+    ratings: [RatingSchema]
 }, { timestamps: true });
 
 // Conditionally define the model to prevent overwrite errors

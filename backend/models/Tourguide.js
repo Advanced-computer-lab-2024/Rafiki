@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+// Define the Rating schema
+const RatingSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String, required: true }
+});
 const tourguideSchema = new Schema({
     Username: {
         type: String,
@@ -29,7 +34,7 @@ const tourguideSchema = new Schema({
     },
     termsAccepted: { type: Boolean, 
         default: false }, 
-
+    ratings: [RatingSchema]  // Array of RatingSchema objects
 }, { timestamps: true }); 
 
 module.exports = mongoose.model('Tourguide', tourguideSchema);

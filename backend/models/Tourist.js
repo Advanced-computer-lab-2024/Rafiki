@@ -6,7 +6,6 @@ const touristSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-   
   },
   Email: {
     type: String,
@@ -36,37 +35,34 @@ const touristSchema = new Schema({
   },
   Wallet: {
     type: Number,
-    default:0, // Default wallet value
-    
+    default: 0, // Default wallet value
   },
-
   LoyaltyPoints: {
     type: Number,
     default: 0, // Default loyalty points value
   },
-
   BadgeLevel: {
     type: String,
     default: "Level 1" // Default badge level
   },
-
   TotalPoints: { 
     type: Number,
-     default: 0,
-  }, // Total points earned over time
+    default: 0,
+  },
   attendedActivities: [{ 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Activity' }]
-,
-  BookedActivity:{
-    type : Number,
-    
+    ref: 'Activity' 
+  }],
+  BookedActivity: {
+    type: Number,
     required: false,
   },
-
-
-
+  attendedItineraries: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Itinerary' 
+  }]
 }, { timestamps: true });
 
-const TouristModel = mongoose.model('Tourist', touristSchema);
+// Prevent re-compilation error by checking if the model already exists
+const TouristModel = mongoose.models.Tourist || mongoose.model('Tourist', touristSchema);
 module.exports = TouristModel;

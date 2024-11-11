@@ -183,10 +183,44 @@ const getItinerariesByLanguage = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+// Add a Rating to an itinerary
+const addRatingToItinerary = async (req, res) => {
+    const { id } = req.params;
+    const { name, rating, comment } = req.body;
 
+    try {
+        const itinerary = await ItineraryModel.findById(id);
+        if (!itinerary) {
+            return res.status(404).json({ message: "itinerary not found." });
+        }
+
+        itinerary.ratings.push({ name, rating, comment });
+        await itinerary.save();
+
+        res.status(200).json({ message: "Rating added successfully", itinerary });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get Ratings for an itinerary
+const getItineraryRatings = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const itinerary = await ItineraryModel.findById(id).select('ratings');
+        if (!itinerary) {
+            return res.status(404).json({ message: "Itinerary not found." });
+        }
+
+        res.status(200).json(itinerary.ratings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 
 
 module.exports = { createItinerary, getItinerary, getAllItinerary, updateItinerary, deleteItinerary,getItinerariesSortedByPrice,getItinerariesByBudget,getItinerariesByAvailableDate
-    ,getItinerariesByLanguage };
+    ,getItinerariesByLanguage, addRatingToItinerary, getItineraryRatings };

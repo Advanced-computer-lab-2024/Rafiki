@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import './Rating.css'; // Import CSS for styling
 
-const Rating = ({ activityId, onRate }) => {
+const Rating = ({ itemId, onRate }) => {  // Use a generic `itemId` prop
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (rating > 0) {
-            onRate(activityId, rating, comment);
+            onRate(itemId, rating, comment);  // Pass `itemId` to `onRate`
             setComment('');
             setRating(0);
         }
@@ -18,7 +18,7 @@ const Rating = ({ activityId, onRate }) => {
         <div className="rating-container">
             <form onSubmit={handleSubmit} className="rating-form">
                 <div className="rating-inputs">
-                    <label className="rating-label">Rate your purchase:</label>
+                    <label className="rating-label">Rate your experience:</label>
                     <div className="rating-stars">
                         {[...Array(5)].map((_, index) => (
                             <span key={index} className="star">

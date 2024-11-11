@@ -152,5 +152,41 @@ const uploadTourGuidePicture = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+// Add a Rating to a Tour Guide
+const addRatingToTourGuide = async (req, res) => {
+    const { id } = req.params; // Tour Guide ID
+    const { name, rating, comment } = req.body;
 
-module.exports = { createTourguide, getTourguide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture };
+    try {
+        // Find the tour guide by ID
+        const tourGuide = await TourguideModel.findById(id);
+        if (!tourGuide) {
+            return res.status(404).json({ message: "Tour guide not found." });
+        }
+
+        // Add the rating to the tour guide's ratings array
+        tourGuide.ratings.push({ name, rating, comment });
+        await tourGuide.save();
+
+        res.status(200).json({ message: "Rating added successfully", tourGuide });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get Ratings for a Tour Guide
+const getTourguideRatings = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const tourGuide = await TourguideModel.findById(id).select('ratings');
+        if (!tourGuide) {
+            return res.status(404).json({ message: "Tour guide not found." });
+        }
+
+        res.status(200).json(tourGuide.ratings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+module.exports = { createTourguide, getTourguide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture, addRatingToTourGuide,getTourguideRatings };

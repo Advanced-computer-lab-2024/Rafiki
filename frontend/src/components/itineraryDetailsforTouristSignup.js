@@ -8,9 +8,51 @@ const ItineraryDetails = ({ itinerary }) => {
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   const [error, setError] = useState(null);
   const [isCancelable, setIsCancelable] = useState(false);
+  const [tourists, setTourists] = useState([]);
 
   const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
+  useEffect(() => {
+    const fetchTourists = async () => {
+        try {
+            const response = await fetch('/api/TouristRoute');
+            if (response.ok) {
+                const data = await response.json();
+                setTourists(data);
+            }
+        } catch (error) {
+            console.error("Error fetching tourists:", error);
+        }
+    };
+    fetchTourists();
+}, []);
+  const attendItinerary = async () => {
+    const name = prompt("Please enter your name to attend the Itinerary:");
+    if (!name) {
+        alert("Name is required to attend the Itinerary.");
+        return;
+    }
 
+    const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+    if (!tourist) {
+        alert("Tourist not found. Please ensure your name is correct.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/TouristRoute/attendItinerary`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ touristId: tourist._id, itineraryId: itinerary._id })
+        });
+        if (response.ok) {
+            alert("Itinerary attended successfully!");
+        } else {
+            alert("Failed to attend itinerary.");
+        }
+    } catch (error) {
+        console.error("Error attending itinerary:", error);
+    }
+};
 
   const copyLinkToClipboard = () => {
     const link = `${window.location.origin}/itinerary/${itinerary._id}`;
@@ -136,6 +178,7 @@ const ItineraryDetails = ({ itinerary }) => {
         Cancel Booking
       </button>
       <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>
+      <button onClick={attendItinerary}>Attend This Itinerary</button>
       <button onClick={shareViaEmail}>Share via Email</button>
       {error && <p className="error">{error}</p>}
       {!isCancelable && (

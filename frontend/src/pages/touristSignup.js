@@ -9,8 +9,8 @@ import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import RedemptionForm from '../components/redemptionForm';
-
-// components
+import TourguideDetails from "../components/tourguideDetails";
+// componentsf
 import axios from 'axios';
 import HotelPopup from "./HotelPopup";
 import FlightPopup from "./FlightPopup";
@@ -18,6 +18,9 @@ import TransportationPopup from "./TransportationPopup";
 import ComplainCreateForm from "../components/complainCreateForm"
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { fetchActivities, fetchRatings, submitRating } from '../components/activityService';
+import { fetchItineraries, fetchItineraryRatings, submitItineraryRating } from '../components/itineraryService';
+
+
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
@@ -36,7 +39,11 @@ const TouristSignup = () => {
     const showHotelPopup = () => setIsHotelPopupVisible(true);
     const hideHotelPopup = () => setIsHotelPopupVisible(false);
     const [visibleRating, setVisibleRating] = useState({});
-
+    const [tourguides, setTourguides] = useState(null);
+    const [visibleSections, setVisibleSections] = useState({
+        tourguides: false,
+        
+      });
 
         // activities
         const [activities, setActivities] = useState([]);
@@ -109,6 +116,22 @@ const TouristSignup = () => {
                 console.error("Failed to submit rating:", error);
             }
         };
+        const handleRateItinerary = async (itineraryId, rating, comment) => {
+            console.log("Submitting rating for itinerary:", itineraryId, rating, comment); // Log details
+            try {
+                const newRating = await submitItineraryRating(itineraryId, rating, comment, nameBeforeRating);
+                setRatings(prevRatings => ({
+                    ...prevRatings,
+                    [itineraryId]: [...(prevRatings[itineraryId] || []), newRating],
+                }));
+                console.log("Rating submitted successfully for", nameBeforeRating);
+            } catch (error) {
+                console.error("Failed to submit rating:", error);
+            }
+        };
+        
+        
+        
         
         
         
@@ -135,6 +158,21 @@ const TouristSignup = () => {
         if (tourist && tourist.attendedActivities?.includes(activityId)) {
             setNameBeforeRating(name); // Set the entered name
             setVisibleRating(prev => ({ ...prev, [activityId]: true }));
+        } else {
+            alert("You must have attended this activity to rate it.");
+        }
+    };
+
+    const handleRateButtonClick1 = (itineraryId) => {
+        const name = prompt("Please enter your name to rate this itinerary:");
+        if (!name) {
+            alert("Name is required to rate the itinerary.");
+            return;
+        }
+        const tourist = tourists?.find(t => t.Username?.toLowerCase() === name.toLowerCase());
+        if (tourist && tourist.attendedItineraries?.includes(itineraryId)) {
+            setNameBeforeRating(name); // Set the entered name
+            setVisibleRating(prev => ({ ...prev, [itineraryId]: true }));
         } else {
             alert("You must have attended this activity to rate it.");
         }
@@ -324,7 +362,19 @@ const TouristSignup = () => {
     };
 
    
-    
+    useEffect(() => {
+        const fetchTourguides = async () => {
+            try {
+                const response = await axios.get('/api/tourguideRoute');
+                if (response.status === 200) {
+                    setTourguides(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching tour guides:", error);
+            }
+        };
+        fetchTourguides();
+    }, []);
 
     useEffect(() => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
@@ -358,7 +408,26 @@ const TouristSignup = () => {
     
         fetchInitialData();
     }, []);
+    useEffect(() => {
+        const fetchInitialData1 = async () => {
+            try {
+                const itineraries = await fetchItineraries();
+                setItineraries(itineraries);
     
+                // Fetch ratings for each activity
+                const allRatings = {};
+                for (const itinerary of itineraries) {
+                    const itineraryRatings = await fetchItineraryRatings(itinerary._id);
+                    allRatings[itinerary._id] = itineraryRatings;
+                }
+                setRatings(allRatings);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        };
+    
+        fetchInitialData1();
+    }, []);
     const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
 
 
@@ -477,6 +546,10 @@ const TouristSignup = () => {
         }
     };
 
+    const toggleVisibility = (section) => {
+    setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
     // Fetch tourists
     useEffect(() => {
         const fetchTourists = async () => {
@@ -494,7 +567,55 @@ const TouristSignup = () => {
     const handleUpdate = (tourguide) => {
         setSelectedTourguide(tourguide);
     };
-
+    const handleRateTourGuide = async (tourGuideId) => {
+        const touristName = prompt("Please enter your name to rate this tour guide:");
+        
+        if (!touristName) {
+            alert("Name is required to rate the tour guide.");
+            return;
+        }
+    
+        // Find the tourist by name
+        const tourist = tourists?.find(t => t.Username?.toLowerCase() === touristName.toLowerCase());
+    
+        if (!tourist) {
+            alert("Tourist not found. Please enter a valid tourist name.");
+            return;
+        }
+    
+        // Check if the tourist has attended any itinerary under this tour guide
+        const hasAttendedItineraryWithGuide = itineraries?.some(itinerary => 
+            itinerary.tourGuideId === tourGuideId && 
+            tourist.attendedItineraries.includes(itinerary._id)
+        );
+    
+        if (!hasAttendedItineraryWithGuide) {
+            alert("You can only rate a tour guide for itineraries you've attended with them.");
+            return;
+        }
+    
+        // Prompt for rating and comment
+        const rating = parseInt(prompt("Please enter your rating (1-5):"), 10);
+        const comment = prompt("Leave a comment for the tour guide:");
+    
+        try {
+            const response = await axios.post(`/api/tourguideRoute/${tourGuideId}/ratings`, {
+                name: touristName, // Use 'name' to match the schema
+                rating,
+                comment
+            });
+            
+            if (response.status === 200) {
+                alert("Thank you! Your rating has been submitted.");
+            } else {
+                alert(response.data.message);
+            }
+        } catch (error) {
+            alert("Error submitting rating: " + error.message);
+        }
+    };
+    
+    
     // Fetch activities with filters
     const fetchProducts = async () => {
         const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
@@ -536,6 +657,35 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
+ <button onClick={() => toggleVisibility('tourguides')}>
+    {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
+</button>
+{visibleSections.tourguides && (
+    <div className="tourguides">
+    {tourguides && tourguides.map(tourguide => (
+        <div key={tourguide._id}>
+            <TourguideDetails tourguide={tourguide} />
+
+            {/* Rate Button for Each Tour Guide */}
+            <button onClick={() => handleRateTourGuide(tourguide._id)}>Rate</button>
+
+            {/* Display Existing Ratings */}
+            <div>
+                <h5>Existing Ratings:</h5>
+                {tourguide.ratings && tourguide.ratings.length > 0 ? (
+                    tourguide.ratings.map((entry, index) => (
+                        <p key={index}>
+                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                        </p>
+                    ))
+                ) : (
+                    <p>No ratings available for this tour guide.</p>
+                )}
+            </div>
+        </div>
+    ))}
+</div>
+)}
 
              {/* Render RedemptionForm if visible */}
              {isRedemptionVisible && selectedTourist && (
@@ -779,7 +929,7 @@ const TouristSignup = () => {
               </button>
               {visibleRating[activity._id] && (
     <Rating
-        activityId={activity._id}
+        itemId={activity._id}
         onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
     />
 )}
@@ -918,11 +1068,30 @@ const TouristSignup = () => {
                     {itineraries && itineraries.map(itinerary => (
                         <div key={itinerary._id}>
                             <ItineraryDetails itinerary={itinerary} />
-                        </div>
-                    ))}
-                </div>
-            )}
+                            <button onClick={() => handleRateButtonClick1(itinerary._id)}>
+                  {visibleRating[itinerary._id] ? "Hide Rating" : "Rate"}
+              </button>
+              {visibleRating[itinerary._id] && (
+    <Rating
+    itemId={itinerary._id} // Ensure this prop is set correctly
+    onRate={(id, rating, comment) => handleRateItinerary(id, rating, comment)}
+/>
 
+)}
+
+             <div>
+    <h5>Existing Ratings:</h5>
+    {(ratings[itinerary._id] || []).map((entry, index) => (
+        <p key={index}>
+            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+        </p>
+    ))}
+</div>
+
+          </div>
+      ))}
+</div>
+)}
            
     
             <TouristChangePassword />
