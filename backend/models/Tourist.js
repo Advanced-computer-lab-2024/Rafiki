@@ -23,7 +23,7 @@ const touristSchema = new Schema({
   },
   Nationality: {
     type: String,
-    required: true,
+    required: false,
   },
   DOB: {
     type: Date,
@@ -61,7 +61,7 @@ const touristSchema = new Schema({
   BookedActivity:{
     type : Number,
     
-    required: true,
+    required: false,
   },
 
 
