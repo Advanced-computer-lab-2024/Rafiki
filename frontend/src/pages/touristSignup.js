@@ -830,7 +830,7 @@ const TouristSignup = () => {
 
                     {visibleRating[product._id] && (
                         <Rating
-                            productId={product._id}
+                            itemId={product._id}
                             onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
                         />
                     )}
