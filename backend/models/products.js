@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const RatingSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  rating: { type: Number, required: true },
+  comment: { type: String, required: true }
+});
 
 const userSchema = new Schema({
     Name:{
@@ -39,6 +44,8 @@ const userSchema = new Schema({
       type: Boolean,
       default: false,  // By default, products are not archived
     }
+    ,
+    ratings: [RatingSchema]
 
     }, { timestamps: true });
 

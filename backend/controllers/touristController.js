@@ -137,6 +137,30 @@ const attendActivity = async (req, res) => {
       res.status(400).json({ error: error.message });
   }
 };
+
+
+const PurchaseProduct = async (req, res) => {
+  const { touristId, ProductId } = req.body;
+  
+  try {
+      // Find the tourist and update their purchases list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $addToSet: { PurchasedProducts: ProductId } }, // Use $addToSet to avoid duplicates
+          { new: true }
+      ).populate('PurchasedProducts'); // Populate to see full details of attended activities if needed
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      res.status(200).json({ message: "Product Purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+
 const attendItinerary = async (req, res) => {
   const { touristId, itineraryId } = req.body;
   
@@ -157,6 +181,7 @@ const attendItinerary = async (req, res) => {
       res.status(400).json({ error: error.message });
   }
 };
+
 const incrementBookedActivity = async (req, res) => {
   const { id } = req.params;
 
@@ -193,4 +218,4 @@ const decrementBookedActivity = async (req, res) => {
 
 
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary};
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct};

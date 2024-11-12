@@ -9,6 +9,7 @@ import UpdateTourist from "../components/UpdateTourist";
 import Rating from '../components/Rating';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import RedemptionForm from '../components/redemptionForm';
+import { fetchProductss, fetchproductRatings, submitproductRating } from '../components/productService';
 import TourguideDetails from "../components/tourguideDetails";
 // componentsf
 import axios from 'axios';
@@ -18,6 +19,10 @@ import TransportationPopup from "./TransportationPopup";
 import ComplainCreateForm from "../components/complainCreateForm"
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { fetchActivities, fetchRatings, submitRating } from '../components/activityService';
+
+
+
+
 import { fetchItineraries, fetchItineraryRatings, submitItineraryRating } from '../components/itineraryService';
 
 
@@ -59,18 +64,8 @@ const TouristSignup = () => {
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
     const { flaggedActivities } = useFlaggedActivities();
-    const [isVisibleRating, setIsVisibleRating] = useState({}); // Initialize as an object
-
-    const toggleRatingForm = (id) => {
-        setIsVisibleRating(prevVisibility => ({
-            ...prevVisibility,
-            [id]: !prevVisibility[id]
-        }));
-    };
-    
-    
-        
-        
+   
+  
     
         //museums
         const [museums, setMuseums] = useState(null); 
@@ -92,7 +87,7 @@ const TouristSignup = () => {
         const [budgetItinerary, setBudgetItinerary] = useState('');
         const [dateItinerary, setDateItinerary] = useState('');
 
-
+        
         const [selectedTourist, setSelectedTourist] = useState(null);
         const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
 
@@ -101,6 +96,8 @@ const TouristSignup = () => {
             setSelectedTourist(tourist);
             setIsRedemptionVisible(!isRedemptionVisible);
         };
+
+        
     
 
         const handleRateActivity = async (activityId, rating, comment) => {
@@ -132,6 +129,26 @@ const TouristSignup = () => {
         
         
         
+
+        
+        
+
+        const handleRateProduct = async (productId, rating, comment) => {
+            try {
+                await submitproductRating(productId, rating, comment, nameBeforeRating); // Submit the rating
+                const updatedRatings = await fetchproductRatings(productId); // Fetch the updated ratings
+        
+                // Update state with the new ratings
+                setRatings(prevRatings => ({
+                    ...prevRatings,
+                    [productId]: updatedRatings,
+                }));
+        
+                console.log("Rating submitted successfully for", nameBeforeRating);
+            } catch (error) {
+                console.error("Failed to submit rating:", error);
+            }
+        };
         
         
         
@@ -148,12 +165,17 @@ const TouristSignup = () => {
     const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
     const [nameBeforeRating, setNameBeforeRating] = useState(''); // New state for the entered name
 
+
+    
+
     const handleRateButtonClick = (activityId) => {
         const name = prompt("Please enter your name to rate this activity:");
         if (!name) {
             alert("Name is required to rate the activity.");
             return;
         }
+
+        
         const tourist = tourists?.find(t => t.Username?.toLowerCase() === name.toLowerCase());
         if (tourist && tourist.attendedActivities?.includes(activityId)) {
             setNameBeforeRating(name); // Set the entered name
@@ -162,6 +184,8 @@ const TouristSignup = () => {
             alert("You must have attended this activity to rate it.");
         }
     };
+
+
 
     const handleRateButtonClick1 = (itineraryId) => {
         const name = prompt("Please enter your name to rate this itinerary:");
@@ -177,7 +201,25 @@ const TouristSignup = () => {
             alert("You must have attended this activity to rate it.");
         }
     };
-    
+
+
+
+    const handleRateProductButtonClick = (productId) => {
+        const name = prompt("Please enter your name to rate this product:");
+        if (!name) {
+            alert("Name is required to rate the product.");
+            return;
+        }
+        const tourist = tourists?.find(t => t.Username?.toLowerCase() === name.toLowerCase());
+        if (tourist && tourist.PurchasedProducts?.includes(productId)) {
+            setNameBeforeRating(name); // Set the entered name
+            setVisibleRating(prev => ({ ...prev, [productId]: true }));
+        } else {
+            alert("You must have purchased this product to rate it.");
+        }
+    };
+
+
     
 
     
@@ -386,7 +428,9 @@ const TouristSignup = () => {
             localStorage.setItem('ratings', JSON.stringify(ratings));
         }
     }, [ratings]);
-    
+
+
+   
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -408,6 +452,9 @@ const TouristSignup = () => {
     
         fetchInitialData();
     }, []);
+
+
+
     useEffect(() => {
         const fetchInitialData1 = async () => {
             try {
@@ -428,6 +475,40 @@ const TouristSignup = () => {
     
         fetchInitialData1();
     }, []);
+
+
+
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                // Make sure you are calling fetchProducts()
+                const fetchedProducts = await fetchProductss();
+                setProducts(fetchedProducts);
+    
+                const allRatings = {};
+                for (const product of fetchedProducts) {
+                    const productRatings = await fetchproductRatings(product._id);
+                    allRatings[product._id] = productRatings;
+                }
+                setRatings(allRatings);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        };
+        fetchInitialData();
+    }, []); // Runs once when the component mounts
+
+
+
+
+
+
+
+
+
+
+
     const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
 
 
@@ -640,6 +721,42 @@ const TouristSignup = () => {
         setIsProductVisible(!isProductVisible);
     };
 
+    const purchaseProduct = async (productId) => {
+        // Prompt the user for their name to identify them as the purchaser
+        const name = prompt("Please enter your name to purchase the product:");
+        if (!name) {
+            alert("Name is required to purchase the product.");
+            return;
+        }
+    
+        // Find the tourist based on the provided name
+        const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+        if (!tourist) {
+            alert("Tourist not found. Please ensure your name is correct.");
+            return;
+        }
+    
+        try {
+            // Send a POST request to the API endpoint to complete the purchase
+            const response = await fetch(`/api/TouristRoute/PurchaseProduct`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ touristId: tourist._id, ProductId: productId })
+            });
+    
+            // Check if the response is successful
+            if (response.ok) {
+                alert("Product purchased successfully!");
+            } else {
+                alert("Failed to purchase product.");
+            }
+        } catch (error) {
+            console.error("Error purchasing product:", error);
+        }
+    };
+    
+
+
     return (
         <div>
             <h2>Tourist Dashboard</h2>
@@ -699,29 +816,40 @@ const TouristSignup = () => {
 <button onClick={handleProductClick}>
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
-      {isProductVisible && (
-        <div className="products">
-          {products.length > 0 ? (
+     {isProductVisible && (
+    <div className="products">
+        {products.length > 0 ? (
             products.map((product) => (
-              <div key={product._id} className="product-item">
-                <ProductDetails product={product} />
+                <div key={product._id} className="product-item">
+                    <ProductDetails product={product} />
 
-                <button onClick={() => toggleRatingForm(product._id)} style={{ marginTop: '10px' }}>
-                  {isVisibleRating[product._id] ? 'Hide payment' : 'Pay for this product'}
-                </button>
+                    <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
+                    <button onClick={() => handleRateProductButtonClick(product._id)}>
+                        {visibleRating[product._id] ? "Hide Rating" : "Rate"}
+                    </button>
 
-                
-                <Rating 
-                    activityId={product._id} 
-                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)} 
-                />
-              </div>
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
+                    {visibleRating[product._id] && (
+                        <Rating
+                            productId={product._id}
+                            onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
+                        />
+                    )}
+
+                    {/* Existing Ratings Section */}
+                    <h5>Existing Ratings:</h5>
+                    {(ratings[product._id] || []).map((entry, index) => (
+                        <p key={index}>
+                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                        </p>
+                    ))}
                 </div>
-            )}
+            ))
+        ) : (
+            <p>No products found.</p>
+        )}
+    </div>
+)}
+
 
             {/* Tourist Signup Form */}
             <TouristForm />

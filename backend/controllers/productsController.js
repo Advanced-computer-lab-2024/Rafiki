@@ -2,6 +2,7 @@ const productsModel = require('../models/products');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const products = require('../models/products');
 
 // Ensure the uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
@@ -206,4 +207,41 @@ const getArchivedProducts = async (req, res) => {
   }
 };
 
-module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, archiveProduct, getArchivedProducts };
+
+const addRatingToProduct = async (req, res) => {
+  const { id } = req.params; // product ID
+  const { name, rating, comment } = req.body; // Rating details from request body
+
+  try {
+      // Find the product by ID
+      const product = await products.findById(id);
+      if (!product) {
+          return res.status(404).json({ message: "Product not found." });
+      }
+
+      // Add the new rating to the activity
+      product.ratings.push({ name, rating, comment });
+      await product.save(); // Save the updated activity
+
+      res.status(200).json({ message: "Rating added successfully", product });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+const getproductRating = async (req, res) => {
+  const { id } = req.params; // product ID
+
+  try {
+      const product = await products.findById(id).select('ratings'); // Get only ratings field
+      if (!product) {
+          return res.status(404).json({ message: "Product not found." });
+      }
+
+      res.status(200).json(product.ratings); // Return all ratings
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
+module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, archiveProduct, getArchivedProducts , getproductRating , addRatingToProduct};
