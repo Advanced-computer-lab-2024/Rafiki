@@ -1,8 +1,7 @@
 /* google font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap'); */
 
-/* layout */
-:root {
+/* :root {
   --primary: #1aac83;
   --error: #e7195a;
 }
@@ -30,10 +29,10 @@ header a {
   max-width: 1400px;
   padding: 20px;
   margin: 0 auto;
-}
+} */
 
-/* homepage */
-.home {
+
+/* .home {
   display: grid;
   grid-template-columns: 3fr 1fr;
   gap: 100px;
@@ -65,10 +64,10 @@ header a {
   padding: 6px;
   border-radius: 50%;
   color: #333;
-}
+} */
 
-/* new workout form */
-label, input {
+
+/* label, input {
   display: block;
 }
 input {
@@ -96,9 +95,9 @@ div.error {
   color: var(--error);
   border-radius: 4px;
   margin: 20px 0;
-}
+} */
 
-.popup-container {
+/* .popup-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -195,14 +194,20 @@ div.error {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
+} */
 
-.book-button:hover {
+/* .book-button:hover {
   background-color: #17a674;
-}
+} */
 
-.success-message {
-  color: #28a745; /* Green color for success */
+/* .success-message {
+  color: #28a745; 
   margin-top: 10px;
   font-size: 14px;
-}
+} 
+  */
+
+
+  @tailwind base;
+@tailwind components;
+@tailwind utilities;

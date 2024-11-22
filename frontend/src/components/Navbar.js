@@ -1,16 +1,25 @@
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Navbar = () => {
-
+function Navbar() {
   return (
-    <header>
-      <div className="container">
-        <Link to="/">
-          <h1>Rafiki</h1>
-        </Link>
+    <nav className="bg-blue-600 p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <a href="/" className="text-white text-2xl font-bold">Rafiki</a>
+        <ul className="flex space-x-4">
+          <li>
+            <Link to="/" className="text-white hover:underline">Home</Link>
+          </li>
+          <li>
+            <Link to="/about" className="text-white hover:underline">About Us</Link>
+          </li>
+          <li>
+            <Link to="/signup-paths" className="text-white hover:underline">Signup</Link> {/* New link */}
+          </li>
+        </ul>
       </div>
-    </header>
-  )
+    </nav>
+  );
 }
 
-export default Navbar
+export default Navbar;
