@@ -1,6 +1,8 @@
 //admin controller
 const { default: mongoose } = require('mongoose');
 const adminModel = require('../Models/admin');
+const TouristModel = require('../Models/Tourist');
+
 
 // Controller for Admin Functions
 
@@ -138,6 +140,38 @@ const getAllGovernors = async (req, res) => {
     }
 };
 
+const getTotalUsers = async (req, res) => {
+    try {
+        const totalUsers = await TouristModel.countDocuments(); 
+        res.status(200).json({ totalUsers });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Get New Users for the Current Month
+const getNewUsersPerMonth = async (req, res) => {
+    try {
+        // Get the current date
+        const currentDate = new Date();
+
+        // Set the start of the current month
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        
+        // Set the end of the current month
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+        
+        // Find all users who were created within the current month
+        const newUsers = await TouristModel.countDocuments({
+            createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+        });
+        
+        res.status(200).json({ newUsers });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 module.exports = { 
     addTourismGovernor, 
     deleteAccount, 
@@ -145,7 +179,9 @@ module.exports = {
     getAdmin, 
     changePassword, 
     changeGovernorPassword, 
-    getAllGovernors 
+    getAllGovernors ,
+    getTotalUsers,
+    getNewUsersPerMonth
 };
 
 

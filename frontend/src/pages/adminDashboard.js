@@ -24,8 +24,9 @@ const AdminSignup = () => {
   const [isProductVisible, setIsProductVisible] = useState(false); // For toggling product details visibility
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [isDocumentsVisible, setIsDocumentsVisible] = useState(false);
-  
-
+  const [totalUsers, setTotalUsers] = useState(null);
+  const [newUsersThisMonth, setNewUsersThisMonth] = useState(null);  
+  const [error, setError] = useState(null);
 
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
@@ -251,6 +252,34 @@ const AdminSignup = () => {
       console.error(`Error ${action}ing document:`, error.response?.data || error.message);
     }
   };
+
+  useEffect(() => {
+    // Function to fetch total number of users
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await fetch('/api/adminRoute/total-users');
+        const data = await response.json();
+        setTotalUsers(data.totalUsers);
+      } catch (err) {
+        setError('Error fetching total users.');
+      }
+    };
+
+    // Function to fetch new users this month
+    const fetchNewUsersThisMonth = async () => {
+      try {
+        const response = await fetch('/api/adminRoute/new-users-this-month');
+        const data = await response.json();
+        setNewUsersThisMonth(data.newUsers);
+      } catch (err) {
+        setError('Error fetching new users for this month.');
+      }
+    };
+
+    // Call the functions to fetch data
+    fetchTotalUsers();
+    fetchNewUsersThisMonth();
+  }, []);
   
   
 
@@ -264,6 +293,18 @@ const AdminSignup = () => {
   return (
     <div>
       <h2>Admin Dashboard</h2>
+
+        {error && <p style={{ color: 'red', textAlign: 'right' }}>{error}</p>}
+
+      {totalUsers !== null && newUsersThisMonth !== null ? (
+        <div style={{ textAlign: 'right' }}>
+          <p>Total Users: {totalUsers}</p>
+          <p>New Users This Month: {newUsersThisMonth}</p>
+        </div>
+      ) : (
+        <p style={{ textAlign: 'right' }}>Loading user data...</p>
+      )}
+    
 
       {/* Toggle Tags Visibility */}
       <button onClick={handleClick}>
