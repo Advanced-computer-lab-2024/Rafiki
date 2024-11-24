@@ -22,6 +22,7 @@ const complaintRoutes = require('./routes/complaintRoute');
 const paymentRoutes = require('./routes/paymentRoute'); 
 const redemptionRoutes = require('./routes/redemptionRoute'); 
 const transportationRoutes = require('./routes/transportationRoutes');
+const PromoCodeRoutes=require('./routes/PromoCodeRoute');
 // Create an Express application
 const app = express();
 
@@ -60,7 +61,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/complaintRoute', complaintRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/redemption', redemptionRoutes);
-
+app.use('/api/PromoCodeRoute', PromoCodeRoutes)
 app.use(transportationRoutes);
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)

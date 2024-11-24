@@ -12,6 +12,7 @@ import ProductForm from '../components/productForm';
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts'; // Import ArchivedProducts component
 import ComplaintDetails from '../components/complaintDetails';
+import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 
 const AdminSignup = () => {
@@ -482,6 +483,8 @@ const AdminSignup = () => {
       <DeleteAdmin />
       <br />
       <CategoryForm />
+      <br />
+      <CreatePromoCodes/>
       <br />
       <AdminTagForm />
       <br />
