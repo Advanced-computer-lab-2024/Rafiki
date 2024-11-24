@@ -47,7 +47,6 @@ const CreatePromoCodes = () => {
       </button>
     {isVisible && (
     <form className="create" onSubmit={handleSubmit}> 
-      <h3>Create Promo Tag</h3>
 
 <label>Code:</label>
       <input 
