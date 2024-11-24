@@ -19,8 +19,7 @@ import TransportationPopup from "./TransportationPopup";
 import ComplainCreateForm from "../components/complainCreateForm"
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { fetchActivities, fetchRatings, submitRating } from '../components/activityService';
-
-
+import WishlistDetails from "../components/WishlistDetails";
 
 
 import { fetchItineraries, fetchItineraryRatings, submitItineraryRating } from '../components/itineraryService';
@@ -90,7 +89,8 @@ const TouristSignup = () => {
         
         const [selectedTourist, setSelectedTourist] = useState(null);
         const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
-
+        const [isVisibleSearchWishlist, setIsVisibleSearchWishlist] = useState(false);
+        const [Wishlistusername, setWishlistUsername] = useState("");
 
         const toggleRedemptionForm = (tourist) => {
             setSelectedTourist(tourist);
@@ -755,6 +755,15 @@ const TouristSignup = () => {
         }
     };
     
+    const addProductToWishlist = async (username, productId) => {
+          const response = await fetch('/api/wishlistRoute', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, productId }),
+          });
+      };
 
 
     return (
@@ -817,12 +826,32 @@ const TouristSignup = () => {
         {isProductVisible ? 'Hide' : 'Show'} Product Details
       </button>
      {isProductVisible && (
-    <div className="products">
-        {products.length > 0 ? (
-            products.map((product) => (
-                <div key={product._id} className="product-item">
-                    <ProductDetails product={product} />
+        <div className="products">
+            {products.length > 0 ? (
+                products.map((product) => (
+                    <div key={product._id} className="product-item">
+                        <ProductDetails product={product} />
+                        <div>
+                        {/* Toggle Button */}
+                        <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
+                            {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
+                        </button>
 
+                        {/* Input Field and Search Button */}
+                        {isVisibleSearchWishlist && (
+                            <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Username"
+                                value={Wishlistusername}
+                                onChange={(e) => setWishlistUsername(e.target.value)}
+                            />
+                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
+                             Add to Wishlist
+                             </button> </div>
+                        )}
+                    </div>
+                    
                     <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
                     <button onClick={() => handleRateProductButtonClick(product._id)}>
                         {visibleRating[product._id] ? "Hide Rating" : "Rate"}
@@ -850,7 +879,8 @@ const TouristSignup = () => {
     </div>
 )}
 
-
+            <WishlistDetails />
+            <div></div>
             {/* Tourist Signup Form */}
             <TouristForm />
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
