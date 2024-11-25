@@ -10,6 +10,8 @@ const WishlistDetails = () => {
     const [username, setUsername] = useState(""); // State to store the entered username
     const [isFieldVisible, setIsFieldVisible] = useState(false); // Toggle field visibility
   
+    const [isVisibleSearchCart, setIsVisibleSearchCart] = useState(false);
+    const [Cartusername, setCartUsername] = useState("");
 
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [tourists, setTourists] = useState(null);
@@ -126,7 +128,15 @@ const WishlistDetails = () => {
         });
     };
 
-
+    const addProductToCart = async (username, productId, amount) => {
+        const response = await fetch('/api/cartRoute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, productId , amount}),
+        });
+    };
 
 
     return (
@@ -180,7 +190,27 @@ const WishlistDetails = () => {
                         <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
                       </p>
                     ))}
-      
+                        <div>
+                        {/* Toggle Button */}
+                        <button onClick={() => setIsVisibleSearchCart(!isVisibleSearchCart)}>
+                            {isVisibleSearchCart ? 'Hide' : 'Add to Cart by Username'}
+                        </button>
+
+                        {/* Input Field and Search Button */}
+                        {isVisibleSearchCart && (
+                            <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Username"
+                                value={Cartusername}
+                                onChange={(e) => setCartUsername(e.target.value)}
+                            />
+                            <button onClick={() => addProductToCart(Cartusername, product._id,1)}>
+                             Add to Cart
+                             </button> </div>
+                        )}
+                    </div>
+
                     <button onClick={() => removeProductFromWishlist(username, product._id)}>
                       Remove from Wishlist
                     </button>
