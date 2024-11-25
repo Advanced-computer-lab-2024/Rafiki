@@ -23,6 +23,7 @@ import WishlistDetails from "../components/WishlistDetails";
 
 
 import { fetchItineraries, fetchItineraryRatings, submitItineraryRating } from '../components/itineraryService';
+import BookmarkDetails from "../components/BookmarkDetails";
 
 
 
@@ -91,6 +92,11 @@ const TouristSignup = () => {
         const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
         const [isVisibleSearchWishlist, setIsVisibleSearchWishlist] = useState(false);
         const [Wishlistusername, setWishlistUsername] = useState("");
+
+        const [isVisibleActivityBookmark, setIsVisibleActivityBookmark] = useState(false);
+        const [isVisibleMuseumBookmark, setIsVisibleMuseumBookmark] = useState(false);
+        const [isVisibleItineraryBookmark, setIsVisibleItineraryBookmark] = useState(false);
+        const [bookmarkusername, setbookmarkUsername] = useState("");
 
         const toggleRedemptionForm = (tourist) => {
             setSelectedTourist(tourist);
@@ -765,6 +771,15 @@ const TouristSignup = () => {
           });
       };
 
+      const addItemToBookmark = async (username, itemId,type) => {
+        const response = await fetch('/api/bookmarkRoute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, itemId,type }),
+        });
+    };
 
     return (
         <div>
@@ -880,7 +895,7 @@ const TouristSignup = () => {
         )}
     </div>
 )}
-
+            <BookmarkDetails/>
             <WishlistDetails />
             <div></div>
             {/* Tourist Signup Form */}
@@ -1105,8 +1120,25 @@ const TouristSignup = () => {
                 ) : (
                     <p>No ratings available for this Activity.</p>
                 )}
-</div>
+</div>  
+                    {/* Toggle Button */}
+                        <button onClick={() => setIsVisibleActivityBookmark(!isVisibleActivityBookmark)}>
+                            {isVisibleActivityBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+                        </button>
 
+                        {/* Input Field and Search Button */}
+                        {isVisibleActivityBookmark && (
+                            <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Username"
+                                value={bookmarkusername}
+                                onChange={(e) => setbookmarkUsername(e.target.value)}
+                            />
+                            <button onClick={() => addItemToBookmark(bookmarkusername, activity._id, 'Activities')}>
+                             Add to Bookmark
+                             </button> </div>
+                        )}
           </div>
       ))}
 </div>
@@ -1156,6 +1188,26 @@ const TouristSignup = () => {
         {museums && museums.map(museum => (
             <div key={museum._id}>
                 <MuseumDetails museum={museum} />
+               <div>
+                {/* Toggle Button */}
+                <button onClick={() => setIsVisibleMuseumBookmark(!isVisibleMuseumBookmark)}>
+                    {isVisibleMuseumBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+                    </button>
+
+                 {/* Input Field and Search Button */}
+                    {isVisibleMuseumBookmark && (
+                        <div>
+                        <input
+                            type="text"
+                            placeholder="Enter Username"
+                            value={bookmarkusername}
+                            onChange={(e) => setbookmarkUsername(e.target.value)}
+                        />
+                        <button onClick={() => addItemToBookmark(bookmarkusername, museum._id, 'Museums')}>
+                         Add to Bookmark
+                         </button> </div>
+                )}
+                 </div>
             </div>
         ))}
     </div>
@@ -1243,22 +1295,54 @@ const TouristSignup = () => {
 
 )}
 
-             <div>
-             {itinerary.active ? ( 
     <div>
-        <h5>Existing Ratings:</h5>
-        {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
-            itinerary.ratings.map((entry, index) => (
-                <p key={index}>
-                    <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                </p>
-            ))
-        ) : (
-            <p>No ratings available for this Itinerary.</p>
-        )}  
+    {itinerary.active ? (
+  <div>
+    {/* Display Existing Ratings */}
+    <h5>Existing Ratings:</h5>
+    {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
+      itinerary.ratings.map((entry, index) => (
+        <p key={index}>
+          <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+        </p>
+      ))
+    ) : (
+      <p>No ratings available for this Itinerary.</p>
+    )}
+
+    {/* Toggle Button for Bookmarking */}
+    <div>
+      <button onClick={() => setIsVisibleItineraryBookmark(!isVisibleItineraryBookmark)}>
+        {isVisibleItineraryBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+      </button>
+
+      {/* Input Field and Add to Bookmark Button */}
+      {isVisibleItineraryBookmark && (
+        <div>
+          <input
+            type="text"
+            placeholder="Enter Username"
+            value={bookmarkusername}
+            onChange={(e) => setbookmarkUsername(e.target.value)} // Set username
+          />
+          <button
+            onClick={() => {
+              if (bookmarkusername.trim() !== "") {
+                addItemToBookmark(bookmarkusername, itinerary._id, 'Itineraries');
+              } else {
+                alert("Please enter a username.");
+              }
+            }}
+          >
+            Add to Bookmark
+          </button>
+        </div>
+      )}
     </div>
-        ) : null}
-</div>
+  </div>
+) : null}
+
+    </div>
 
           </div>
       ))}

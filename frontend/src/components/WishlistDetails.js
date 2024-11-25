@@ -49,6 +49,19 @@ const WishlistDetails = () => {
             alert("You must have purchased this product to rate it.");
         }
     };
+
+    useEffect(() => {
+        const fetchTourists = async () => {
+            const response = await fetch('/api/TouristRoute');
+            const json = await response.json();
+
+            if (response.ok) {
+                setTourists(json);
+            }
+        };
+
+        fetchTourists();
+    }, []);
     useEffect(() => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
         setRatings(savedRatings);

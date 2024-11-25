@@ -1,6 +1,6 @@
 const Bookmark = require('../models/bookmark'); // Replace with the correct path to your bookmark model
 const Activity = require('../models/activity'); // Replace with the correct path to your activity model
-const Itienary = require('../models/itinerary'); // Replace with the correct path to your itinerary model
+const Itienary = require('../models/Itinerary'); // Replace with the correct path to your itinerary model
 const Museum = require('../models/museum'); // Replace with the correct path to your museum model
 
 // Function to add an item to the bookmark
@@ -95,6 +95,26 @@ const removeFromBookmark = async (req, res) => {
     }
 };
 
+const removeCompleteBookmark = async (req, res) => {
+    const { username } = req.body; // Get the username from the request body
+
+    try {
+        // Find and delete the bookmark document by username
+        const deletedBookmark = await Bookmark.findOneAndDelete({ Username: username });
+
+        if (!deletedBookmark) {
+            return res.status(404).json({ message: 'Bookmark not found for the specified user' });
+        }
+
+        res.status(200).json({
+            message: 'Bookmark deleted successfully',
+        });
+    } catch (error) {
+        console.error('Error deleting bookmark:', error);
+        res.status(500).json({ message: 'An error occurred while deleting the bookmark' });
+    }
+};
+
 module.exports = {
-    addToBookmark, getBookmarks,removeFromBookmark
+    addToBookmark, getBookmarks,removeFromBookmark,removeCompleteBookmark
 };
