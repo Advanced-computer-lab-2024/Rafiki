@@ -9,7 +9,7 @@ const WishlistDetails = () => {
     const [wishlist, setWishlist] = useState(null); // State to store the wishlist
     const [username, setUsername] = useState(""); // State to store the entered username
     const [isFieldVisible, setIsFieldVisible] = useState(false); // Toggle field visibility
-  
+    const [amount, setAmount] = useState(1); // State to track the amount
     const [isVisibleSearchCart, setIsVisibleSearchCart] = useState(false);
     const [Cartusername, setCartUsername] = useState("");
 
@@ -205,7 +205,15 @@ const WishlistDetails = () => {
                                 value={Cartusername}
                                 onChange={(e) => setCartUsername(e.target.value)}
                             />
-                            <button onClick={() => addProductToCart(Cartusername, product._id,1)}>
+                            <input
+                            type="number"
+                            placeholder="Enter Amount"
+                            value={amount}
+                            onChange={(e) => setAmount(Number(e.target.value))}
+                            min="1"
+                            max="10"
+                            />
+                            <button onClick={() => addProductToCart(Cartusername, product._id,amount)}>
                              Add to Cart
                              </button> </div>
                         )}
