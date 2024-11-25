@@ -831,26 +831,7 @@ const TouristSignup = () => {
                 products.map((product) => (
                     <div key={product._id} className="product-item">
                         <ProductDetails product={product} />
-                        <div>
-                        {/* Toggle Button */}
-                        <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
-                            {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
-                        </button>
-
-                        {/* Input Field and Search Button */}
-                        {isVisibleSearchWishlist && (
-                            <div>
-                            <input
-                                type="text"
-                                placeholder="Enter Username"
-                                value={Wishlistusername}
-                                onChange={(e) => setWishlistUsername(e.target.value)}
-                            />
-                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
-                             Add to Wishlist
-                             </button> </div>
-                        )}
-                    </div>
+                   
                     
                     <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
                     <button onClick={() => handleRateProductButtonClick(product._id)}>
@@ -871,6 +852,27 @@ const TouristSignup = () => {
                             <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
                         </p>
                     ))}
+
+<div>
+                        {/* Toggle Button */}
+                        <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
+                            {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
+                        </button>
+
+                        {/* Input Field and Search Button */}
+                        {isVisibleSearchWishlist && (
+                            <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Username"
+                                value={Wishlistusername}
+                                onChange={(e) => setWishlistUsername(e.target.value)}
+                            />
+                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
+                             Add to Wishlist
+                             </button> </div>
+                        )}
+                    </div>
                 </div>
             ))
         ) : (

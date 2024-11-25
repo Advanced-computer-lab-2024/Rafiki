@@ -116,59 +116,70 @@ const WishlistDetails = () => {
 
 
 
-return (
-    <div>
-      <button onClick={() => setIsFieldVisible(!isFieldVisible)}>
-        {isFieldVisible ? "Hide" : "Enter Username to View Wishlist"}
-      </button>
-
-      {isFieldVisible && (
+    return (
         <div>
-          <input
-            type="text"
-            placeholder="Enter Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button onClick={fetchWishlist}>Show Wishlist</button>
-        </div>
-      )}
-
-      <div className="products">
-        {wishlist && wishlist.products && wishlist.products.length > 0 ? (
-          wishlist.products.map((product) => (
-            <div key={product._id} className="product-item">
-              <ProductDetails product={product} />
-
-                <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
-                <button onClick={() => handleRateProductButtonClick(product._id)}>
-                    {visibleRating[product._id] ? "Hide Rating" : "Rate"}
-                </button>
-
-                {visibleRating[product._id] && (
-                    <Rating
-                        itemId={product._id}
-                        onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
-                    />
-                )}
-
-                {/* Existing Ratings Section */}
-                <h5>Existing Ratings:</h5>
-                {(ratings[product._id] || []).map((entry, index) => (
-                    <p key={index}>
-                        <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                    </p>
-                ))}
-                <div></div>
-                <button onClick={() => removeProductFromWishlist(username, product._id)}>Remove from Wishlist</button>
+          {/* Button to toggle username input visibility */}
+          <button onClick={() => setIsFieldVisible(!isFieldVisible)}>
+            {isFieldVisible ? "Hide" : "Enter Username to View Wishlist"}
+          </button>
+      
+          {/* Username input and Show Wishlist button */}
+          {isFieldVisible && (
+            <div>
+              <input
+                type="text"
+                placeholder="Enter Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <button onClick={fetchWishlist}>Show Wishlist</button>
             </div>
-          ))
-        ) : wishlist && wishlist.Products ? (
-          <p>No products found in wishlist.</p>
-        ) : null}
-      </div>
-    </div>
-  );
-};
+          )}
+      
+          {/* Product details section */}
+          {isFieldVisible && (
+            <div className="products">
+              {wishlist && wishlist.products && wishlist.products.length > 0 ? (
+                wishlist.products.map((product) => (
+                  <div key={product._id} className="product-item">
+                    <ProductDetails product={product} />
+      
+                    <button onClick={() => purchaseProduct(product._id)}>
+                      Purchase This Product
+                    </button>
+                    <button onClick={() => handleRateProductButtonClick(product._id)}>
+                      {visibleRating[product._id] ? "Hide Rating" : "Rate"}
+                    </button>
+      
+                    {visibleRating[product._id] && (
+                      <Rating
+                        itemId={product._id}
+                        onRate={(id, rating, comment) =>
+                          handleRateProduct(id, rating, comment)
+                        }
+                      />
+                    )}
+      
+                    {/* Existing Ratings Section */}
+                    <h5>Existing Ratings:</h5>
+                    {(ratings[product._id] || []).map((entry, index) => (
+                      <p key={index}>
+                        <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                      </p>
+                    ))}
+      
+                    <button onClick={() => removeProductFromWishlist(username, product._id)}>
+                      Remove from Wishlist
+                    </button>
+                  </div>
+                ))
+              ) : wishlist && wishlist.Products ? (
+                <p>No products found in wishlist.</p>
+              ) : null}
+            </div>
+          )}
+        </div>
+      );
+    };   
 
 export default WishlistDetails;
