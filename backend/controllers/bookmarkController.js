@@ -1,4 +1,7 @@
 const Bookmark = require('../models/bookmark'); // Replace with the correct path to your bookmark model
+const Activity = require('../models/activity'); // Replace with the correct path to your activity model
+const Itienary = require('../models/itinerary'); // Replace with the correct path to your itinerary model
+const Museum = require('../models/museum'); // Replace with the correct path to your museum model
 
 // Function to add an item to the bookmark
 const addToBookmark = async (req, res) => {
@@ -53,7 +56,7 @@ const getBookmarks = async (req, res) => {
             return res.status(404).json({ message: 'No bookmarks found for this user' });
         }
 
-        res.status(200).json({ message: 'Bookmarks retrieved successfully', bookmark });
+        res.status(200).json({ bookmark });
     } catch (error) {
         console.error('Error retrieving bookmarks:', error);
         res.status(500).json({ message: 'Failed to retrieve bookmarks' });

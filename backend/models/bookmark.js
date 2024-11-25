@@ -10,19 +10,19 @@ const bookmarkSchema = new Schema({
     Activities: [
         {
             type: Schema.Types.ObjectId, // References another document
-            ref: 'activities' // Refers to the products model
+            ref: 'Activity' // Refers to the products model
         }
     ],
     Itineraries: [
         {
             type: Schema.Types.ObjectId, // References another document
-            ref: 'itineraries' // Refers to the products model
+            ref: 'Itinerary' // Refers to the products model
         }
     ],
     Museums: [
         {
             type: Schema.Types.ObjectId, // References another document
-            ref: 'museums' // Refers to the products model
+            ref: 'Museum' // Refers to the products model
         }
     ]
 }, { timestamps: true });
