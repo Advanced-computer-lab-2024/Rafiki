@@ -211,7 +211,7 @@ const WishlistDetails = () => {
                             value={amount}
                             onChange={(e) => setAmount(Number(e.target.value))}
                             min="1"
-                            max="10"
+                            max= {product.AvailableQuantity}
                             />
                             <button onClick={() => addProductToCart(Cartusername, product._id,amount)}>
                              Add to Cart
