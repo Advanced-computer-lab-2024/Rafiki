@@ -9,7 +9,9 @@ const WishlistDetails = () => {
     const [wishlist, setWishlist] = useState(null); // State to store the wishlist
     const [username, setUsername] = useState(""); // State to store the entered username
     const [isFieldVisible, setIsFieldVisible] = useState(false); // Toggle field visibility
-  
+    const [amount, setAmount] = useState(1); // State to track the amount
+    const [isVisibleSearchCart, setIsVisibleSearchCart] = useState(false);
+    const [Cartusername, setCartUsername] = useState("");
 
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
     const [tourists, setTourists] = useState(null);
@@ -126,7 +128,15 @@ const WishlistDetails = () => {
         });
     };
 
-
+    const addProductToCart = async (username, productId, amount) => {
+        const response = await fetch('/api/cartRoute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, productId , amount}),
+        });
+    };
 
 
     return (
@@ -180,7 +190,35 @@ const WishlistDetails = () => {
                         <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
                       </p>
                     ))}
-      
+                        <div>
+                        {/* Toggle Button */}
+                        <button onClick={() => setIsVisibleSearchCart(!isVisibleSearchCart)}>
+                            {isVisibleSearchCart ? 'Hide' : 'Add to Cart by Username'}
+                        </button>
+
+                        {/* Input Field and Search Button */}
+                        {isVisibleSearchCart && (
+                            <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Username"
+                                value={Cartusername}
+                                onChange={(e) => setCartUsername(e.target.value)}
+                            />
+                            <input
+                            type="number"
+                            placeholder="Enter Amount"
+                            value={amount}
+                            onChange={(e) => setAmount(Number(e.target.value))}
+                            min="1"
+                            max="10"
+                            />
+                            <button onClick={() => addProductToCart(Cartusername, product._id,amount)}>
+                             Add to Cart
+                             </button> </div>
+                        )}
+                    </div>
+
                     <button onClick={() => removeProductFromWishlist(username, product._id)}>
                       Remove from Wishlist
                     </button>
