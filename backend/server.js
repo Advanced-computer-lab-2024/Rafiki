@@ -24,6 +24,8 @@ const redemptionRoutes = require('./routes/redemptionRoute');
 const transportationRoutes = require('./routes/transportationRoutes');
 const wishlistRoutes = require('./routes/wishlistRoute');
 const PromoCodeRoutes=require('./routes/PromoCodeRoute');
+const bookmarkRoutes = require('./routes/bookmarkRoute');
+
 // Create an Express application
 const app = express();
 
@@ -65,6 +67,8 @@ app.use('/api/redemption', redemptionRoutes);
 app.use('/api/wishlistRoute', wishlistRoutes);
 app.use('/api/PromoCodeRoute', PromoCodeRoutes)
 app.use(transportationRoutes);
+app.use('/api/bookmarkRoute', bookmarkRoutes);
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

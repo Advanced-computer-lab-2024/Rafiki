@@ -1094,11 +1094,15 @@ const TouristSignup = () => {
 
              <div>
     <h5>Existing Ratings:</h5>
-    {(ratings[activity._id] || []).map((entry, index) => (
-        <p key={index}>
-            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-        </p>
-    ))}
+    {activity.ratings && activity.ratings.length > 0 ? (
+                    activity.ratings.map((entry, index) => (
+                        <p key={index}>
+                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                        </p>
+                    ))
+                ) : (
+                    <p>No ratings available for this Activity.</p>
+                )}
 </div>
 
           </div>
@@ -1238,12 +1242,20 @@ const TouristSignup = () => {
 )}
 
              <div>
-    <h5>Existing Ratings:</h5>
-    {(ratings[itinerary._id] || []).map((entry, index) => (
-        <p key={index}>
-            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-        </p>
-    ))}
+             {itinerary.active ? ( 
+    <div>
+        <h5>Existing Ratings:</h5>
+        {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
+            itinerary.ratings.map((entry, index) => (
+                <p key={index}>
+                    <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                </p>
+            ))
+        ) : (
+            <p>No ratings available for this Itinerary.</p>
+        )}  
+    </div>
+        ) : null}
 </div>
 
           </div>
