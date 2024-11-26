@@ -26,9 +26,15 @@ const getAllPromoCodes = async (req, res) => {
 const usePromoCode = async (req, res) => {
     const { code } = req.body;
     try {
-        // Find the promo code and ensure it's available
-        const promoCode = await PromoCode.findOne({ code, available: true });
-        
+        console.log("Searching for promo code:", code);
+
+        // Find the promo code (case-insensitive) and ensure it's available
+        const promoCode = await PromoCode.findOne({
+            code: { $regex: new RegExp(`^${code}$`, "i") }, // Case-insensitive
+            available: true,
+        });
+        console.log("Found promo code:", promoCode);
+
         if (!promoCode) {
             return res.status(404).json({ error: "Promo code not found or already used." });
         }
@@ -37,11 +43,16 @@ const usePromoCode = async (req, res) => {
         promoCode.available = false;
         await promoCode.save();
 
-        res.status(200).json({ message: "Promo code used successfully.", promoCode });
+        res.status(200).json({
+            message: "Promo code used successfully.",
+            promoCode,
+        });
     } catch (error) {
+        console.error("Error in usePromoCode:", error);
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 module.exports = { createPromoCode,getAllPromoCodes,usePromoCode

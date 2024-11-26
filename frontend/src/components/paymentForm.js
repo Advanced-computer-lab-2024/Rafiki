@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 
 const PaymentForm = ({ price, paymentType, referenceId, tourists }) => {
     const [touristId, setTouristId] = useState('');
-    const [amountPaid] = useState(price);
+    const [amountPaid, setAmountPaid] = useState(price); // Allow amountPaid to be updated
+    const [promoCode, setPromoCode] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [badgeLevel, setBadgeLevel] = useState('');
     const [newWalletBalance, setNewWalletBalance] = useState('');
     const [pointsEarned, setPointsEarned] = useState(0);
     const [totalPoints, setTotalPoints] = useState(0);
-
-
+    
 
     const handleTouristInput = () => {
         const name = prompt("Please enter your name to proceed with payment:");
@@ -28,6 +28,34 @@ const PaymentForm = ({ price, paymentType, referenceId, tourists }) => {
         setTouristId(tourist._id); // Set the tourist ID based on the found tourist
     };
 
+    const validatePromoCode = async () => {
+        try {
+            const response = await fetch('/api/PromoCodeRoute/use', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code: promoCode }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Invalid promo code.');
+            }
+
+            const { promoCode: usedPromoCode } = await response.json();
+            const discountAmount = (price * usedPromoCode.discount) / 100;
+            const newAmount = price - discountAmount;
+
+            setAmountPaid(newAmount.toFixed(2)); // Update amountPaid with the discounted value
+            setMessage(`Promo code applied! You saved ${discountAmount.toFixed(2)}.`);
+        } catch (err) {
+            setError(err.message);
+            setAmountPaid(price); // Reset to the original price if promo code is invalid
+        }
+    };
+
+        
 
      const handleSubmit = async (e) => {
         e.preventDefault();
@@ -102,6 +130,21 @@ const PaymentForm = ({ price, paymentType, referenceId, tourists }) => {
                         </button>
                     </div>
                     <label>Tourist ID: {touristId || 'Not entered yet'}</label>
+                </div>
+                <div>
+                    <label>Promo Code:</label>
+                    <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        placeholder="Enter promo code"
+                    />
+                    <button type="button" onClick={validatePromoCode}>
+                        Apply Promo Code
+                    </button>
+                </div>
+                <div>
+                    <label><strong>Final Amount to Pay:</strong> {amountPaid}</label>
                 </div>
                 
                 <button type="submit">Submit Payment</button>
