@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const paymentSchema = new Schema({
-  touristUsername: {
-    type: String,
+  touristId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tourist',
     required: true,
   },
   amountPaid: {
@@ -13,6 +14,17 @@ const paymentSchema = new Schema({
   pointsEarned: {
     type: Number,
     required: true,
+  },
+
+  paymentType: {
+    type: String,
+    enum: ['Activity', 'Itinerary', 'Museum'], // Specify the type of payment
+    required: true,
+  },
+  referenceId: {
+    type: mongoose.Schema.Types.ObjectId, // ID of the activity, itinerary, or museum
+    required: true,
+    refPath: 'paymentType', // Reference based on paymentType
   },
 }, { timestamps: true });
 

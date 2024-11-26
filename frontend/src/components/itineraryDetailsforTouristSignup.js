@@ -172,8 +172,13 @@ const ItineraryDetails = ({ itinerary }) => {
         Pay for this Itinerary
       </button>
       {isPaymentVisible && (
-        <PaymentForm price={(selectedItinerary.price * currencyMultiplier).toFixed(2)} />
-      )}
+                <PaymentForm 
+                    price={(selectedItinerary.price * currencyMultiplier).toFixed(2)} 
+                    tourists={tourists} 
+                    paymentType="Itinerary" 
+                    referenceId={itinerary._id}
+                />
+            )}
       {/* Increment and Decrement Buttons */}
       <button onClick={handleIncrement}>Book Itinerary</button>
       <button onClick={handleDecrement} disabled={!isCancelable}>

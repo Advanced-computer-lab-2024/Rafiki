@@ -1,5 +1,4 @@
-import React,{ useState } from 'react';
-import PaymentForm from '../components/paymentForm';
+import React, { useState, useEffect } from 'react';import PaymentForm from '../components/paymentForm';
 
 
 const MuseumDetails = ({ museum}) => {
@@ -7,6 +6,25 @@ const MuseumDetails = ({ museum}) => {
     const [selectedMuseum, setSelectedMuseum] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
+  const [tourists, setTourists] = useState([]); // To store the list of tourists
+
+
+
+  useEffect(() => {
+    const fetchTourists = async () => {
+        try {
+            const response = await fetch('/api/TouristRoute');
+            if (response.ok) {
+                const data = await response.json();
+                setTourists(data);
+            }
+        } catch (error) {
+            console.error("Error fetching tourists:", error);
+        }
+    };
+    fetchTourists();
+}, []);
+
 
   const copyLinkToClipboard = () => {
     const link = `${window.location.origin}/museums/${museum._id}`;
@@ -61,9 +79,14 @@ const MuseumDetails = ({ museum}) => {
         Pay for this Museum
         </button>
          {/* Render Payment Form if visible */}
-        {isPaymentVisible && (
-           <PaymentForm price={(selectedMuseum.ticketPrices * currencyMultiplier).toFixed(2)} />
-        )}
+         {isPaymentVisible && (
+                <PaymentForm
+                    price={(selectedMuseum.ticketPrices * currencyMultiplier).toFixed(2)}
+                    tourists={tourists} // Pass the tourists list here
+                    paymentType="Museum" // Set payment type as "Museum"
+                    referenceId={museum._id} // Pass the museum _id as referenceId
+                />
+            )}
         <button onClick={copyLinkToClipboard}>Copy museum Link</button>
         <button onClick={shareViaEmail}>Share via Email</button>
       </div>

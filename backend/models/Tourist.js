@@ -57,14 +57,24 @@ const touristSchema = new Schema({
     type: Number,
     required: false, },
 
-    PurchasedProducts: [{ 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'products' }],
+  PurchasedProducts: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'products' }],
 
   attendedItineraries: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Itinerary' 
-  }]
+  }],
+
+  paidActivities: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Activity' }],
+
+  paidItineraries: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Itinerary' 
+    }],
+  
 }, { timestamps: true });
 
 // Prevent re-compilation error by checking if the model already exists

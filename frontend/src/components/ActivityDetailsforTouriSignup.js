@@ -167,7 +167,12 @@ const ActivityDetails = ({ activity }) => {
             <button onClick={handlePaymentClickActivity}>Pay for this Activity</button>
             
             {isPaymentVisible && (
-                <PaymentForm price={(selectedActivity.price * currencyMultiplier).toFixed(2)} />
+                <PaymentForm 
+                    price={(selectedActivity.price * currencyMultiplier).toFixed(2)} 
+                    tourists={tourists} 
+                    paymentType="Activity" 
+                    referenceId={activity._id}
+                />
             )}
 
             <button onClick={handleIncrement}>Book Activity</button>

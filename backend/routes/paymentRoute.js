@@ -1,7 +1,9 @@
 const express = require('express');
-const { processPayment } = require('../controllers/paymentController');
+const { processActivityPayment,processItineraryPayment,processMuseumPayment } = require('../controllers/paymentController');
 const router = express.Router();
 
-router.post("/", processPayment);
+router.post("/ActivityPayment", processActivityPayment);
+router.post("/ItineraryPayment", processItineraryPayment);
+router.post("/MuseumPayment", processMuseumPayment);
 
 module.exports = router;

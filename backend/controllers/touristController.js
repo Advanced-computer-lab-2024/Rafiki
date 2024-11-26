@@ -279,5 +279,65 @@ const decrementBookedActivity = async (req, res) => {
 };
 
 
+const getUpcomingPaidActivities = async (req, res) => {
+  const { id } = req.params; // Tourist ID from the URL
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct};
+  try {
+    // Find the tourist by ID and populate their paid activities
+    const tourist = await TouristModel.findById(id).populate('paidActivities');
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    // Get the current date to filter activities
+    const currentDate = new Date();
+
+    // Filter the paid activities to only include upcoming ones
+    const upcomingActivities = tourist.paidActivities.filter(activity => new Date(activity.date) > currentDate);
+
+    if (upcomingActivities.length === 0) {
+      return res.status(200).json({ message: 'No upcoming activities found.' });
+    }
+
+    // Return the upcoming activities
+    res.status(200).json(upcomingActivities);
+  } catch (error) {
+    console.error('Error fetching upcoming paid activities:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+const getUpcomingPaidItineraries = async (req, res) => {
+  const { id } = req.params; // Tourist ID from the URL
+
+  try {
+    // Find the tourist by ID and populate their paid itineraries
+    const tourist = await TouristModel.findById(id).populate('paidItineraries');
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    // Get the current date to filter itineraries
+    const currentDate = new Date();
+
+    // Filter the paid itineraries to only include upcoming ones
+    const upcomingItineraries = tourist.paidItineraries.filter(itinerary => new Date(itinerary.date) > currentDate);
+
+    if (upcomingItineraries.length === 0) {
+      return res.status(200).json({ message: 'No upcoming itineraries found.' });
+    }
+
+    // Return the upcoming itineraries
+    res.status(200).json(upcomingItineraries);
+  } catch (error) {
+    console.error('Error fetching upcoming paid itineraries:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries};

@@ -11,6 +11,8 @@ import ChangePasswordForm from '../components/ChangePasswordForm';
 import RedemptionForm from '../components/redemptionForm';
 import { fetchProductss, fetchproductRatings, submitproductRating } from '../components/productService';
 import TourguideDetails from "../components/tourguideDetails";
+import UpcomingActivities from '../components/UpcomingActivities';
+import UpcomingItineraries from "../components/UpcomingItineraries";
 // componentsf
 import axios from 'axios';
 import HotelPopup from "./HotelPopup";
@@ -45,6 +47,7 @@ const TouristSignup = () => {
     const hideHotelPopup = () => setIsHotelPopupVisible(false);
     const [visibleRating, setVisibleRating] = useState({});
     const [tourguides, setTourguides] = useState(null);
+    const [touristId, setTouristId] = useState("67062f662447441db7434456"); //lazem login 3ashan yakhod el id lewahdo
     const [visibleSections, setVisibleSections] = useState({
         tourguides: false,
         
@@ -895,6 +898,9 @@ const TouristSignup = () => {
         )}
     </div>
 )}
+  <UpcomingActivities touristId={touristId} />
+  <UpcomingItineraries touristId={touristId} />
+
             <BookmarkDetails/>
             <WishlistDetails />
             <div></div>
