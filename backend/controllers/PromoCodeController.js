@@ -23,6 +23,8 @@ const getAllPromoCodes = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
 const usePromoCode = async (req, res) => {
     const { code } = req.body;
     try {
@@ -30,12 +32,11 @@ const usePromoCode = async (req, res) => {
 
         // Find the promo code (case-insensitive) and ensure it's available
         const promoCode = await PromoCode.findOne({
-            code: { $regex: new RegExp(`^${code}$`, "i") }, // Case-insensitive
-            available: true,
+            code:code, // Case-insensitive
         });
         console.log("Found promo code:", promoCode);
 
-        if (!promoCode) {
+        if (!promoCode || !promoCode.available) {
             return res.status(404).json({ error: "Promo code not found or already used." });
         }
 
