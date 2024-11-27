@@ -54,6 +54,64 @@ const ItineraryDetails = ({ itinerary }) => {
     }
 };
 
+const bookItinerary = async () => {
+  const name = prompt("Please enter your name to book the Itinerary:");
+  if (!name) {
+      alert("Name is required to book the Itinerary.");
+      return;
+  }
+
+  const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+  if (!tourist) {
+      alert("Tourist not found. Please ensure your name is correct.");
+      return;
+  }
+
+  try {
+      const response = await fetch(`/api/TouristRoute/bookItinerary`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ touristId: tourist._id, itineraryId: itinerary._id })
+      });
+      if (response.ok) {
+          alert("Itinerary booked successfully!");
+      } else {
+          alert("Failed to book itinerary.");
+      }
+  } catch (error) {
+      console.error("Error booking itinerary:", error);
+  }
+};
+
+const cancelItineraryBooking = async () => {
+  const name = prompt("Please enter your name to cancel the booking of the Itinerary:");
+  if (!name) {
+      alert("Name is required to cancel the booking of the Itinerary.");
+      return;
+  }
+
+  const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+  if (!tourist) {
+      alert("Tourist not found. Please ensure your name is correct.");
+      return;
+  }
+
+  try {
+      const response = await fetch(`/api/TouristRoute/cancelItineraryBooking`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ touristId: tourist._id, itineraryId: itinerary._id })
+      });
+      if (response.ok) {
+          alert("Canceled the booking of the Itinerary successfully!");
+      } else {
+          alert("Failed to cancel the booking of the Itinerary .");
+      }
+  } catch (error) {
+      console.error("Error canceling the booking of the Itinerary:", error);
+  }
+};
+
   const copyLinkToClipboard = () => {
     const link = `${window.location.origin}/itinerary/${itinerary._id}`;
     navigator.clipboard.writeText(link)
@@ -180,8 +238,8 @@ const ItineraryDetails = ({ itinerary }) => {
                 />
             )}
       {/* Increment and Decrement Buttons */}
-      <button onClick={handleIncrement}>Book Itinerary</button>
-      <button onClick={handleDecrement} disabled={!isCancelable}>
+      <button onClick={bookItinerary}>Book Itinerary</button>
+      <button onClick={cancelItineraryBooking} disabled={!isCancelable}>
         Cancel Booking
       </button>
       <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>

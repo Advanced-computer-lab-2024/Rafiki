@@ -1,4 +1,4 @@
-const TouristModel = require('../Models/Tourist'); // Import the Tourist model
+const TouristModel = require('../models/Tourist'); // Import the Tourist model
 const PaymentModel = require('../models/payment'); // Import the Payment model
 
 // Function to determine badge level based on total points

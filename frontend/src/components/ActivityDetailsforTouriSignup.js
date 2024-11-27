@@ -65,6 +65,65 @@ const ActivityDetails = ({ activity }) => {
         }
     };
 
+    const bookActivity = async () => {
+        const name = prompt("Please enter your name to book the activity:");
+        if (!name) {
+            alert("Name is required to book the activity.");
+            return;
+        }
+
+        const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+        if (!tourist) {
+            alert("Tourist not found. Please ensure your name is correct.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/TouristRoute/bookActivity`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ touristId: tourist._id, activityId: activity._id })
+            });
+            if (response.ok) {
+                alert("Activity booked successfully!");
+            } else {
+                alert("Failed to book activity.");
+            }
+        } catch (error) {
+            console.error("Error booking activity:", error);
+        }
+    };
+
+    const cancelActivityBooking = async () => {
+        const name = prompt("Please enter your name to cancel the booking of the activity:");
+        if (!name) {
+            alert("Name is required to cancel the booking of the activity.");
+            return;
+        }
+
+        const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+        if (!tourist) {
+            alert("Tourist not found. Please ensure your name is correct.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/TouristRoute/cancelActivityBooking`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ touristId: tourist._id, activityId: activity._id })
+            });
+            if (response.ok) {
+                alert("Canceled the booking of the activity successfully!");
+            } else {
+                alert("Failed to cancel the booking of the activity .");
+            }
+        } catch (error) {
+            console.error("Error canceling the booking of the activity:", error);
+        }
+    };
+    
+
     const handleIncrement = async () => {
         try {
             const response = await fetch(`/api/TouristRoute/${touristId}/inc`, {
@@ -175,8 +234,8 @@ const ActivityDetails = ({ activity }) => {
                 />
             )}
 
-            <button onClick={handleIncrement}>Book Activity</button>
-            <button onClick={handleDecrement} disabled={!isCancelable}>
+            <button onClick={bookActivity}>Book Activity</button>
+            <button onClick={cancelActivityBooking} disabled={!isCancelable}>
                 Cancel Booking
             </button>
             

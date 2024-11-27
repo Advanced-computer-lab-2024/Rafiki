@@ -1,5 +1,9 @@
 const express = require('express');
-const { createTourist,loginTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity, PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries} = require('../controllers/touristController'); // Update to your file structure
+const { createTourist, getTourist, getTourists, updateTourist,changePassword,
+    sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity,
+     PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
+      getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary
+    ,cancelActivityBooking,cancelItineraryBooking} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);
@@ -18,4 +22,9 @@ router.get('/:id/upcoming-paid-Itineraries', getUpcomingPaidItineraries);
 router.get('/:id/past-paid-Activities', getPastPaidActivities);
 router.get('/:id/past-paid-Itineraries', getPastPaidItineraries);
 router.post('/login', loginTourist);
+router.post('/bookActivity', bookActivity);
+router.post('/bookItinerary', bookItinerary);
+router.post('/cancelActivityBooking', cancelActivityBooking);
+router.post('/cancelItineraryBooking', cancelItineraryBooking);
+
 module.exports = router;

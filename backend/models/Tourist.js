@@ -55,7 +55,16 @@ const touristSchema = new Schema({
   }],
   BookedActivity: {
     type: Number,
-    required: false, },
+    required: false, 
+  },
+  BookedActivities: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Activity' }],
+  
+  BookedItineraries: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Itinerary' 
+  }],
 
   PurchasedProducts: [{ 
     type: mongoose.Schema.Types.ObjectId, 

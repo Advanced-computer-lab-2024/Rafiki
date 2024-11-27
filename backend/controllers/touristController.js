@@ -224,6 +224,49 @@ const attendActivity = async (req, res) => {
   }
 };
 
+const bookActivity = async (req, res) => {
+  const { touristId, activityId } = req.body;
+  
+  try {
+      // Find the tourist and update their attendedActivities list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
+          { new: true }
+      ).populate('BookedActivities'); // Populate to see full details of attended activities if needed
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+const cancelActivityBooking = async (req, res) => {
+  const { touristId, activityId } = req.body;
+  
+  try {
+      // Find the tourist and update their BookedActivities list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $pull: { BookedActivities: activityId } }, // Use $pull to remove activityId from the array
+          { new: true }
+      ).populate('BookedActivities'); // Populate to see full details of remaining activities if needed
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      res.status(200).json({ message: "Activity booking canceled successfully.", BookedActivities: tourist.BookedActivities });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+
 
 const PurchaseProduct = async (req, res) => {
   const { touristId, ProductId } = req.body;
@@ -268,6 +311,49 @@ const attendItinerary = async (req, res) => {
   }
 };
 
+const bookItinerary = async (req, res) => {
+  const { touristId, itineraryId } = req.body;
+  
+  try {
+      // Find the tourist and update their attendedActivities list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $addToSet: { BookedItineraries: itineraryId } }, // Use $addToSet to avoid duplicates
+          { new: true }
+      ).populate('BookedItineraries'); // Populate to see full details of attended activities if needed
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries});
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+const cancelItineraryBooking = async (req, res) => {
+  const { touristId, itineraryId } = req.body;
+  
+  try {
+      // Find the tourist and update their BookedItineraries list
+      const tourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { $pull: { BookedItineraries: itineraryId } }, // Use $pull to remove the itineraryId
+          { new: true }
+      ).populate('BookedItineraries'); // Populate to see full details of remaining itineraries if needed
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      res.status(200).json({ message: "Itinerary booking canceled successfully.", BookedItineraries: tourist.BookedItineraries });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+
 const incrementBookedActivity = async (req, res) => {
   const { id } = req.params;
 
@@ -277,9 +363,6 @@ const incrementBookedActivity = async (req, res) => {
       { $inc: { BookedActivity: 1 } },
       { new: true }
     );
-
-   
-
     res.status(200).json(updatedTourist);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -426,4 +509,7 @@ const getPastPaidItineraries = async (req, res) => {
 
 
 
-module.exports = { loginTourist, createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries};
+module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTourists, updateTourist,changePassword,
+  sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
+   getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
+   cancelActivityBooking,cancelItineraryBooking};
