@@ -2,7 +2,7 @@ const express = require('express');
 const { createTourist, getTourist, getTourists, updateTourist,changePassword,
     sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity,
      PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
-      getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary
+      getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary,sendUpcomingNotifications
     ,cancelActivityBooking,cancelItineraryBooking, getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
@@ -28,5 +28,6 @@ router.post('/cancelActivityBooking', cancelActivityBooking);
 router.post('/cancelItineraryBooking', cancelItineraryBooking);
 router.get('/:id/upcoming-booked-activities', getUpcomingBookedActivities);
 router.get('/:id/upcoming-booked-Itineraries', getUpcomingBookedItineraries);
+router.post('/sendUpcomingNotifications', sendUpcomingNotifications);
 
 module.exports = router;

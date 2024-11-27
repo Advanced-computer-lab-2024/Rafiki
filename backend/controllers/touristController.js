@@ -415,34 +415,51 @@ const getUpcomingPaidActivities = async (req, res) => {
   }
 };
 
-const getUpcomingBookedActivities = async (req, res) => {
-  const { id } = req.params; // Tourist ID from the URL
+const getUpcomingPaidActivitiesInternal = async (id) => {
+  //const { id } = req.params; // Tourist ID from the URL
 
   try {
     // Find the tourist by ID and populate their paid activities
-    const tourist = await TouristModel.findById(id).populate('BookedActivities');
+    const tourist = await TouristModel.findById(id).populate('paidActivities');
 
     if (!tourist) {
-      return res.status(404).json({ message: 'Tourist not found.' });
-    }
+      throw new Error('Tourist not found.');    }
 
     // Get the current date to filter activities
     const currentDate = new Date();
 
     // Filter the paid activities to only include upcoming ones
-    const upcomingActivities = tourist.BookedActivities.filter(activity => new Date(activity.date) > currentDate);
+    const upcomingActivities = tourist.paidActivities.filter(activity => new Date(activity.date) > currentDate);
 
-    if (upcomingActivities.length === 0) {
-      return res.status(200).json({ message: 'No upcoming activities found.' });
-    }
-
-    // Return the upcoming activities
-    res.status(200).json(upcomingActivities);
+    return upcomingActivities;
   } catch (error) {
     console.error('Error fetching upcoming paid activities:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
+
+const getUpcomingBookedActivities = async (id) => {
+  try {
+    // Find the tourist by ID and populate their booked activities
+    const tourist = await TouristModel.findById(id).populate('BookedActivities');
+
+    if (!tourist) {
+      throw new Error('Tourist not found.');
+    }
+
+    // Get the current date to filter activities
+    const currentDate = new Date();
+
+    // Filter the booked activities to only include upcoming ones
+    const upcomingActivities = tourist.BookedActivities.filter(activity => new Date(activity.date) > currentDate);
+
+    return upcomingActivities;
+  } catch (error) {
+    console.error('Error fetching upcoming booked activities:', error);
+    throw error; // Let the caller handle the error
+  }
+};
+
 
 
 const getUpcomingPaidItineraries = async (req, res) => {
@@ -474,16 +491,36 @@ const getUpcomingPaidItineraries = async (req, res) => {
   }
 };
 
-const getUpcomingBookedItineraries = async (req, res) => {
-  const { id } = req.params; // Tourist ID from the URL
+const getUpcomingPaidItinerariesInternal = async (id) => {
+  //const { id } = req.params; // Tourist ID from the URL
+
+  try {
+    // Find the tourist by ID and populate their paid itineraries
+    const tourist = await TouristModel.findById(id).populate('paidItineraries');
+
+    
+
+    // Get the current date to filter itineraries
+    const currentDate = new Date();
+
+    // Filter the paid itineraries to only include upcoming ones
+    const upcomingItineraries = tourist.paidItineraries.filter(itinerary => new Date(itinerary.availableDates) > currentDate);
+
+    return upcomingItineraries;
+  } catch (error) {
+    console.error('Error fetching upcoming paid itineraries:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+const getUpcomingBookedItineraries = async (id) => {
+  //const { id } = req.params; // Tourist ID from the URL
 
   try {
     // Find the tourist by ID and populate their paid itineraries
     const tourist = await TouristModel.findById(id).populate('BookedItineraries');
 
-    if (!tourist) {
-      return res.status(404).json({ message: 'Tourist not found.' });
-    }
+    
 
     // Get the current date to filter itineraries
     const currentDate = new Date();
@@ -491,12 +528,7 @@ const getUpcomingBookedItineraries = async (req, res) => {
     // Filter the paid itineraries to only include upcoming ones
     const upcomingItineraries = tourist.BookedItineraries.filter(itinerary => new Date(itinerary.availableDates) > currentDate);
 
-    if (upcomingItineraries.length === 0) {
-      return res.status(200).json({ message: 'No upcoming itineraries found.' });
-    }
-
-    // Return the upcoming itineraries
-    res.status(200).json(upcomingItineraries);
+    return upcomingItineraries;
   } catch (error) {
     console.error('Error fetching upcoming paid itineraries:', error);
     res.status(500).json({ error: 'Internal server error.' });
@@ -563,6 +595,70 @@ const getPastPaidItineraries = async (req, res) => {
   }
 };
 
+// Configure your email transporter securely
+const transporter = nodemailer.createTransport({
+  host: "live.smtp.mailtrap.io",
+  port: 587,
+  auth: {
+    user: "api",
+    pass: "0bdb8e05c96edd14df4abb34d87b0d26"
+  }
+});
+
+const sendNotificationEmail = (email, subject, message) => {
+  const mailOptions = {
+    from: 'info@demomailtrap.com',
+    to: email,
+    subject: subject,
+    text: message
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(`Error sending email to ${email}:`, error);
+    } else {
+      console.log(`Email sent to ${email}:`, info.response);
+    }
+  });
+};
+
+const sendUpcomingNotifications = async (req, res) => {
+  try {
+    // Step 1: Fetch all tourists
+    const tourists = await TouristModel.find(); // Assuming TouristModel is your Mongoose model
+
+    // Step 2: Loop through each tourist and send notifications
+    for (const tourist of tourists) {
+    const { _id: touristId, Email, Username } = tourist;
+
+      // Step 3: Fetch upcoming events for this tourist
+      const bookedActivities = await getUpcomingBookedActivities(touristId);
+      const paidActivities = await getUpcomingPaidActivitiesInternal(touristId);
+      const bookedItineraries = await getUpcomingBookedItineraries(touristId);
+      const paidItineraries = await getUpcomingPaidItinerariesInternal(touristId);
+
+      // Combine all events into one list (Optional: Customize message per event type)
+      const allEvents = [
+        ...bookedActivities,
+        ...paidActivities,
+        ...bookedItineraries,
+        ...paidItineraries,
+      ];
+
+      // Step 4: Send email notifications for each event
+      for (const event of allEvents) {
+        const subject = `Reminder: Upcoming Event - ${event.name || event.location}`;
+        const message = `Dear ${Username},\n\nThis is a reminder for your upcoming event at ${event.location || event.pickupLocation} on ${event.date || event.availableDates[0]}.\n\nThank you!`;
+        sendNotificationEmail(Email, subject, message);
+      }
+
+    }
+  res.status(200).json({ message: 'Notifications sent successfully.' });
+  } catch (error) {
+    console.error('Error fetching upcoming events or sending notifications:', error);
+  }
+};
+
 
 
 
@@ -570,4 +666,5 @@ const getPastPaidItineraries = async (req, res) => {
 module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTourists, updateTourist,changePassword,
   sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
-   cancelActivityBooking,cancelItineraryBooking, getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist};
+   cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist};
