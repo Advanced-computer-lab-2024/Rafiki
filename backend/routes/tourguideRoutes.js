@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTourguide, getTourguide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture ,addRatingToTourGuide,getTourguideRatings} = require('../controllers/tourguideController');
+const { createTourguide, getTourguide,acceptTerms,loginTourGuide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture ,addRatingToTourGuide,getTourguideRatings} = require('../controllers/tourguideController');
 const multer = require('multer'); // Import multer if not already imported
 const path = require('path');
 
@@ -21,7 +21,8 @@ router.get('/:id', getTourguide);
 router.put('/:id', updateTourguide);
 router.get('/', getAlltour);
 router.post('/changePassword', changePassword);
-
+router.post('/accept-terms', acceptTerms);
+router.post('/login', loginTourGuide);
 
 // Route for uploading Tour Guide picture
 router.post('/:id/upload-picture', upload.single('picture'), uploadTourGuidePicture);

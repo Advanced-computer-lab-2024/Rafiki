@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from 'axios';
 import TourguideForm from "../components/tourguideForm";
 import TourguideDetails from "../components/tourguideDetails";
 import ItineraryDetails from "../components/itineraryDetails";
@@ -26,9 +27,20 @@ const TourguideSignup = () => {
 const [showPopup, setShowPopup] = useState(true); // Show the popup initially
 const navigate = useNavigate();
 
-const handleAccept = () => {
-  setShowPopup(false); // Hide the popup when terms are accepted
+const handleAccept = async () => {
+  const username = localStorage.getItem("username"); // Get the username
+
+  try {
+      await axios.post('/api/tourguideRoute/accept-terms', {
+          username: username,
+      });
+      setShowPopup(false); // Hide the popup when terms are accepted
+  } catch (error) {
+      console.error("Error accepting terms:", error);
+      alert("Failed to accept terms. Please try again.");
+  }
 };
+
   useEffect(() => {
     const fetchTourguides = async () => {
       const response = await fetch('/api/tourguideRoute');

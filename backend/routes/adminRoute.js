@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { deleteAccount, addTourismGovernor, addAdmin,getAdmin, changePassword,changeGovernorPassword,getAllGovernors,getTotalUsers,getNewUsersPerMonth } = require('../controllers/adminController');
+const { deleteAccount, addTourismGovernor, addAdmin,getAdmin, tourismGovernorLogin, changePassword,changeGovernorPassword,getAllGovernors,getTotalUsers,getNewUsersPerMonth } = require('../controllers/adminController');
 
 // Route to delete an account by ID
 router.delete('/deleteAccount/:id', deleteAccount);
@@ -16,5 +16,5 @@ router.post('/changePassword', changePassword);
 router.post('/changeGovernorPassword',changeGovernorPassword) ;
 router.get('/total-users', getTotalUsers);
 router.get('/new-users-this-month', getNewUsersPerMonth);
-
+router.post('/login', tourismGovernorLogin);
 module.exports = router;
