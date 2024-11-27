@@ -43,13 +43,25 @@ const UpcomingItineraries = ({ touristId }) => {
       {/* Render upcoming activities when the button is clicked */}
       {showUpcoming && (
         <div>
-          <h5>Upcoming Paid Itineraries</h5>
+         
           {UpcomingItineraries.length > 0 ? (
             <ul>
               {UpcomingItineraries.map((upcomingItinerary) => (
                 <li key={upcomingItinerary._id}>
-                  <p><strong>{upcomingItinerary.name}</strong></p>
-                  <p>{new Date(upcomingItinerary.date).toLocaleString()}</p>
+                  <p><strong>Activities:</strong> {upcomingItinerary.activities.join(', ')}</p>
+          <p><strong>Locations:</strong> {upcomingItinerary.locations.join(', ')}</p>
+          <p><strong>Timeline:</strong> {upcomingItinerary.timeline}</p>
+          <p><strong>Duration:</strong> {upcomingItinerary.duration} hours</p>
+          <p><strong>Language:</strong> {upcomingItinerary.language}</p>
+          <p><strong>Price:</strong> ${upcomingItinerary.price.toFixed(2)}</p>
+          <p><strong>Available Dates:</strong> 
+            {upcomingItinerary.availableDates.map(date => (
+              <span key={date}>{new Date(date).toLocaleDateString()}, </span>
+            ))}
+          </p>
+          <p><strong>Accessibility:</strong> {upcomingItinerary.accessibility}</p>
+          <p><strong>Pickup Location:</strong> {upcomingItinerary.pickupLocation}</p>
+          <p><strong>Drop-off Location:</strong> {upcomingItinerary.dropOffLocation}</p>
                 </li>
               ))}
             </ul>

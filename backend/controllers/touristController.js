@@ -1,4 +1,4 @@
-const TouristModel = require('../Models/Tourist'); // Import the Tourist model
+const TouristModel = require('../models/Tourist'); // Import the Tourist model
 const bcrypt = require('bcrypt'); // Ensure you have this imported for password hashing
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model
 const nodemailer = require('nodemailer'); // Import nodemailer for email functionality
@@ -324,7 +324,7 @@ const getUpcomingPaidItineraries = async (req, res) => {
     const currentDate = new Date();
 
     // Filter the paid itineraries to only include upcoming ones
-    const upcomingItineraries = tourist.paidItineraries.filter(itinerary => new Date(itinerary.date) > currentDate);
+    const upcomingItineraries = tourist.paidItineraries.filter(itinerary => new Date(itinerary.availableDates) > currentDate);
 
     if (upcomingItineraries.length === 0) {
       return res.status(200).json({ message: 'No upcoming itineraries found.' });
@@ -339,5 +339,67 @@ const getUpcomingPaidItineraries = async (req, res) => {
 };
 
 
+const getPastPaidActivities = async (req, res) => {
+  const { id } = req.params; // Tourist ID from the URL
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries};
+  try {
+    // Find the tourist by ID and populate their paid activities
+    const tourist = await TouristModel.findById(id).populate('paidActivities');
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    // Get the current date to filter activities
+    const currentDate = new Date();
+
+    // Filter the paid activities to only include past ones
+    const pastActivities = tourist.paidActivities.filter(activity => new Date(activity.date) < currentDate);
+
+    if (pastActivities.length === 0) {
+      return res.status(200).json({ message: 'No past activities found.' });
+    }
+
+    // Return the past activities
+    res.status(200).json(pastActivities);
+  } catch (error) {
+    console.error('Error fetching past paid activities:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+const getPastPaidItineraries = async (req, res) => {
+  const { id } = req.params; // Tourist ID from the URL
+
+  try {
+    // Find the tourist by ID and populate their paid itineraries
+    const tourist = await TouristModel.findById(id).populate('paidItineraries');
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    // Get the current date to filter itineraries
+    const currentDate = new Date();
+
+    // Filter the paid itineraries to only include past ones
+    const pastItineraries = tourist.paidItineraries.filter(itinerary => new Date(itinerary.availableDates) < currentDate);
+
+    if (pastItineraries.length === 0) {
+      return res.status(200).json({ message: 'No past itineraries found.' });
+    }
+
+    // Return the past itineraries
+    res.status(200).json(pastItineraries);
+  } catch (error) {
+    console.error('Error fetching past paid itineraries:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+
+
+
+module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries};

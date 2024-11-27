@@ -43,13 +43,16 @@ const UpcomingActivities = ({ touristId }) => {
       {/* Render upcoming activities when the button is clicked */}
       {showUpcoming && (
         <div>
-          <h5>Upcoming Paid Activities</h5>
           {upcomingActivities.length > 0 ? (
             <ul>
               {upcomingActivities.map((upcomingActivity) => (
                 <li key={upcomingActivity._id}>
-                  <p><strong>{upcomingActivity.name}</strong></p>
-                  <p>{new Date(upcomingActivity.date).toLocaleString()}</p>
+
+                <p><strong>Date:</strong> {new Date(upcomingActivity.date).toLocaleDateString()}</p>
+                <p><strong>Time:</strong> {upcomingActivity.time}</p>
+                <p><strong>Location:</strong> {upcomingActivity.location}</p>
+                <p><strong>Price:</strong> ${upcomingActivity.price.toFixed(2)}</p>
+          
                 </li>
               ))}
             </ul>

@@ -13,6 +13,9 @@ import { fetchProductss, fetchproductRatings, submitproductRating } from '../com
 import TourguideDetails from "../components/tourguideDetails";
 import UpcomingActivities from '../components/UpcomingActivities';
 import UpcomingItineraries from "../components/UpcomingItineraries";
+import PastActivities from "../components/PastActivities";
+import PastItineraries from "../components/PastItineraries";
+
 // componentsf
 import axios from 'axios';
 import HotelPopup from "./HotelPopup";
@@ -900,6 +903,9 @@ const TouristSignup = () => {
 )}
   <UpcomingActivities touristId={touristId} />
   <UpcomingItineraries touristId={touristId} />
+  <PastActivities touristId={touristId} />
+  <PastItineraries touristId={touristId} />
+
 
             <BookmarkDetails/>
             <WishlistDetails />
