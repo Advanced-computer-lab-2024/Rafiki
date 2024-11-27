@@ -3,6 +3,29 @@ const sellerModel = require('../models/seller');
 const path = require('path');
 const fs = require('fs');
 
+const loginSeller = async (req, res) => {
+    const { Username, Password } = req.body;
+  
+    try {
+        const tourist = await sellerModel.findOne({ Username });
+        if (!tourist) {
+            return res.status(404).json({ message: "Seller not found." });
+        }
+  
+        // Check password
+        
+        if (tourist.Password !== Password) {
+            return res.status(400).json({ message: "Incorrect password." });
+        }
+  
+        res.status(200).json({
+            message: "Login successful",
+            tourist,
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+  };
 // Define each function as a standalone, outside of any other function
 const createSeller = async (req, res) => {
     const { Username, Email, Password, Name, Description } = req.body;
@@ -164,5 +187,6 @@ module.exports = {
     getAllSellers, 
     changePassword, 
     uploadSellerPicture, 
-    deleteSellerIfAllowed 
+    deleteSellerIfAllowed ,
+    loginSeller
 };

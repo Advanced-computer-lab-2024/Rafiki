@@ -3,7 +3,7 @@ const { createTourist, getTourist, getTourists, updateTourist,changePassword,
     sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity,
      PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
       getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary
-    ,cancelActivityBooking,cancelItineraryBooking} = require('../controllers/touristController'); // Update to your file structure
+    ,cancelActivityBooking,cancelItineraryBooking,loginTourist} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);

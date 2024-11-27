@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { deleteAccount, addTourismGovernor, addAdmin,getAdmin, tourismGovernorLogin, changePassword,changeGovernorPassword,getAllGovernors,getTotalUsers,getNewUsersPerMonth } = require('../controllers/adminController');
+const { deleteAccount,loginAdmin, addTourismGovernor, addAdmin,getAdmin, tourismGovernorLogin, changePassword,changeGovernorPassword,getAllGovernors,getTotalUsers,getNewUsersPerMonth } = require('../controllers/adminController');
 
 // Route to delete an account by ID
 router.delete('/deleteAccount/:id', deleteAccount);
@@ -9,6 +9,7 @@ router.delete('/deleteAccount/:id', deleteAccount);
 router.post('/addTourismGovernor', addTourismGovernor);
 
 // Route to add another admin
+router.post('/login', loginAdmin);
 router.post('/addAdmin', addAdmin);
 router.get('/',getAdmin);
 router.get('/g',getAllGovernors )

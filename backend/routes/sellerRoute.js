@@ -11,7 +11,8 @@ const {
     getAllSellers, 
     changePassword, 
     uploadSellerPicture, 
-    deleteSellerIfAllowed 
+    deleteSellerIfAllowed ,
+    loginSeller
 } = require('../controllers/sellerController');
 
 // Configure multer for file upload
@@ -26,6 +27,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
+router.post('/login', loginSeller);
 router.post('/', upload.single('picture'), createSeller); // Use multer middleware here for file upload
 router.get('/:id', getSeller);
 router.put('/:id', updateSeller);

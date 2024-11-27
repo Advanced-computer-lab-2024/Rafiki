@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 // pages & components
 import TouristLogin from './pages/TouristLogin';
+import AdminLogin from './pages/AdminLogin';
+import SellerLogin from './pages/SellerLogin';
 import AdvertiserLogin from './pages/AdvertiserLogin';
 import Home from './pages/Home'
 import Navbar from './components/Navbar'
@@ -50,6 +52,8 @@ function App() {
               <Route path="/itinerary/:itineraryId" element={<ItineraryDetailsPage />} />
               <Route path="/login/tourist" element={<TouristLogin />} />
               <Route path="/login/advertiser" element={<AdvertiserLogin />} />
+              <Route path="/login/seller" element={<SellerLogin />} />
+              <Route path="/login/admin" element={<AdminLogin />} />
               
             </Routes>
           </div>

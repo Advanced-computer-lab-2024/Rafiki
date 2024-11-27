@@ -10,7 +10,29 @@ const Seller = require('../models/seller'); // Assuming you're deleting sellers
 const TourismGovernor = require('../models/TourismGovernor');   // Assuming guests or tourists are stored separately
 const { admin } = require('mongodb');
 
-
+const loginAdmin = async (req, res) => {
+    const { Username, Password } = req.body;
+  
+    try {
+        const tourist = await adminModel.findOne({ Username });
+        if (!tourist) {
+            return res.status(404).json({ message: "Admin not found." });
+        }
+  
+        // Check password
+        
+        if (tourist.Password !== Password) {
+            return res.status(400).json({ message: "Incorrect password." });
+        }
+  
+        res.status(200).json({
+            message: "Login successful",
+            tourist,
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+  };
 const tourismGovernorLogin = async (req, res) => {
     const { Username, Password } = req.body;
   
@@ -202,6 +224,7 @@ module.exports = {
     getTotalUsers,
     getNewUsersPerMonth,
     tourismGovernorLogin,
+    loginAdmin 
 };
 
 
