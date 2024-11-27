@@ -16,6 +16,29 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage }).single('profilePicture');
 
+const loginAdvertiser = async (req, res) => {
+  const { Username, Password } = req.body;
+
+  try {
+      const tourist = await AdvertiserModel.findOne({ Username });
+      if (!tourist) {
+          return res.status(404).json({ message: "Adveriser not found." });
+      }
+
+      // Check password
+      
+      if (tourist.Password !== Password) {
+          return res.status(400).json({ message: "Incorrect password." });
+      }
+
+      res.status(200).json({
+          message: "Login successful",
+          tourist,
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
 // Controller to create a new advertiser
 const createAdvertiser = async (req, res) => {
   upload(req, res, async (err) => {
@@ -175,5 +198,6 @@ module.exports = {
   getAdvertisers,
   updateAdvertiser,
   changePassword,
-  requestAccountDeletion
+  requestAccountDeletion,
+  loginAdvertiser
 };

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 // pages & components
+import TouristLogin from './pages/TouristLogin';
+import AdvertiserLogin from './pages/AdvertiserLogin';
 import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import TouristSignup from './pages/touristSignup'
@@ -46,6 +48,8 @@ function App() {
               <Route path="/activities/:activityId" element={<ActivityDetailsPage />} />
               <Route path="/museums/:museumId" element={<MuseumDetailsPage />} />
               <Route path="/itinerary/:itineraryId" element={<ItineraryDetailsPage />} />
+              <Route path="/login/tourist" element={<TouristLogin />} />
+              <Route path="/login/advertiser" element={<AdvertiserLogin />} />
               
             </Routes>
           </div>

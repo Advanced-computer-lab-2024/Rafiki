@@ -5,7 +5,8 @@ const {
   getAdvertisers,
   updateAdvertiser,
   changePassword,
-  requestAccountDeletion
+  requestAccountDeletion,
+  loginAdvertiser
 } = require('../controllers/AdvertiserController');
 const multer = require('multer');
 
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-
+router.post('/login', loginAdvertiser);
 // Route to create a new advertiser with a profile picture upload
 router.post("/", upload.single('profilePicture'), createAdvertiser);
 

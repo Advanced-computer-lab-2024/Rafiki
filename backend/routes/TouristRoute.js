@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity, PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries} = require('../controllers/touristController'); // Update to your file structure
+const { createTourist,loginTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity, PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);
@@ -17,5 +17,5 @@ router.get('/:id/upcoming-paid-activities', getUpcomingPaidActivities);
 router.get('/:id/upcoming-paid-Itineraries', getUpcomingPaidItineraries);
 router.get('/:id/past-paid-Activities', getPastPaidActivities);
 router.get('/:id/past-paid-Itineraries', getPastPaidItineraries);
-
+router.post('/login', loginTourist);
 module.exports = router;

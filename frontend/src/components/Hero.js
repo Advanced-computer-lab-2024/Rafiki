@@ -14,7 +14,7 @@ function Hero() {
 
       {/* Content over the video */}
       <div className="bg-black bg-opacity-50 h-full flex flex-col items-center justify-center text-center text-white relative z-10">
-        <h1 className="text-4xl font-bold">Discover Your Next Adventure</h1>
+        <h1 className="text-4xl font-bold">Wonder With Aim</h1>
         <p className="mt-4 text-lg">
           Explore activities, book tours, and plan your dream journey.
         </p>

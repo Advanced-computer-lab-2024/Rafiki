@@ -3,6 +3,30 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model
 const nodemailer = require('nodemailer'); // Import nodemailer for email functionality
 
+const loginTourist = async (req, res) => {
+  const { Username, Password } = req.body;
+
+  try {
+      const tourist = await TouristModel.findOne({ Username });
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      // Check password
+      const isMatch = await bcrypt.compare(Password, tourist.Password);
+      if (!isMatch) {
+          return res.status(400).json({ message: "Incorrect password." });
+      }
+
+      res.status(200).json({
+          message: "Login successful",
+          tourist,
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
 const createTourist = async (req, res) => {
   const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
 
@@ -402,4 +426,4 @@ const getPastPaidItineraries = async (req, res) => {
 
 
 
-module.exports = { createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries};
+module.exports = { loginTourist, createTourist, getTourist, getTourists, updateTourist,changePassword,sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct , getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries};
