@@ -181,15 +181,16 @@ const sendBirthdayPromos = async (req, res) => {
 
             // Optional: Send the promo code via email
             const transporter = nodemailer.createTransport({
-                service: "gmail",
+                host: "smtp.mailgun.org",
+                port: 587,
                 auth: {
-                    user: "rafikiguc123@gmail.com",
-                    pass: "rafiki123@",
+                    user: "ali.seoudi@student.guc.edu.eg",
+                    pass: "Eloagamed153@",
                 },
             });
 
             await transporter.sendMail({
-                from: "rafikiguc123@gmail.com",
+                from: "ali.seoudi@student.guc.edu.eg",
                 to: tourist.Email,
                 subject: "Happy Birthday! Here's Your Promo Code 🎉",
                 text: `Happy Birthday, ${tourist.Username}! Use this promo code for a 20% discount: ${promoCode}.`,

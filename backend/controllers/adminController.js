@@ -1,7 +1,7 @@
 //admin controller
 const { default: mongoose } = require('mongoose');
 const adminModel = require('../Models/admin');
-const TouristModel = require('../Models/Tourist');
+const TouristModel = require('../models/Tourist');
 
 
 // Controller for Admin Functions
