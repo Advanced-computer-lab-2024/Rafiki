@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const cron = require("node-cron");
 const mongoose = require('mongoose');
 
 // Import routes
@@ -26,11 +27,14 @@ const wishlistRoutes = require('./routes/wishlistRoute');
 const PromoCodeRoutes=require('./routes/PromoCodeRoute');
 const bookmarkRoutes = require('./routes/bookmarkRoute');
 const cartRoutes = require('./routes/cartRoute');
+
 // Create an Express application
 const app = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+
 
 const multer = require('multer');
 const path = require('path');
