@@ -83,6 +83,10 @@ const touristSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Itinerary' 
     }],
+    lastBirthdayPromo: {
+      type: Date,
+      default: null, // Initially null
+    },
   
 }, { timestamps: true });
 

@@ -1,13 +1,12 @@
 const express = require('express');
-const { createTourist, getTourist, getTourists, updateTourist,changePassword,
-    sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity,attendActivity,
+const { createTourist, getTourist, getTourists, updateTourist,changePassword
+    ,incrementBookedActivity,decrementBookedActivity,attendActivity,
      PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
       getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary,sendUpcomingNotifications
     ,cancelActivityBooking,cancelItineraryBooking, getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);
-router.post('/sendBirthdayPromos', sendBirthdayPromos);
 router.put('/:id',updateTourist);
 router.get("/:id", getTourist);
 router.get("/", getTourists);

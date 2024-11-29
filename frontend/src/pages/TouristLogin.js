@@ -6,11 +6,13 @@ function TouristLogin() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [promoCode, setPromoCode] = useState(null);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError(null);
+        setPromoCode(null);
 
         try {
             const response = await axios.post('/api/touristRoute/login', {
@@ -20,7 +22,7 @@ function TouristLogin() {
 
             if (response.status === 200) {
                 alert("Login successful");
-                navigate('/tourist-signup'); // Redirect to dashboard
+                navigate('/tourist-signup', { state: { promoCode: response.data.promoCode } }); // Redirect to dashboard
             }
         } catch (error) {
             setError(error.response?.data?.message || "Login failed. Please try again.");
@@ -56,6 +58,15 @@ function TouristLogin() {
                     Login
                 </button>
             </form>
+            {/* Display promo code if available */}
+            {promoCode && (
+                <div className="mt-6 bg-green-100 p-4 rounded shadow-lg">
+                    <h3 className="text-lg font-bold text-green-700">🎉 Happy Birthday!</h3>
+                    <p className="text-green-700">Here's your special promo code:</p>
+                    <p className="text-green-900 font-bold text-xl">{promoCode.code}</p>
+                    <p className="text-green-700">Enjoy a {promoCode.discount}% discount!</p>
+                </div>
+            )}
         </div>
     );
 }

@@ -15,6 +15,7 @@ import UpcomingActivities from '../components/UpcomingActivities';
 import UpcomingItineraries from "../components/UpcomingItineraries";
 import PastActivities from "../components/PastActivities";
 import PastItineraries from "../components/PastItineraries";
+import { useLocation } from "react-router-dom";
 
 // componentsf
 import axios from 'axios';
@@ -70,6 +71,10 @@ const TouristSignup = () => {
     const [date, setDate] = useState('');
     const [transportationData, setTransportationData ] = useState([]);
     const { flaggedActivities } = useFlaggedActivities();
+
+
+    const location = useLocation();
+    const promoCode = location.state?.promoCode;
    
   
     
@@ -790,6 +795,15 @@ const TouristSignup = () => {
     return (
         <div>
             <h2>Tourist Dashboard</h2>
+            {/* Display promo code if available */}
+            {promoCode && (
+                <div className="mt-6 bg-green-100 p-4 rounded shadow-lg">
+                    <h3 className="text-lg font-bold text-green-700">🎉 Happy Birthday!</h3>
+                    <p className="text-green-700">Here's your special promo code:</p>
+                    <p className="text-green-900 font-bold text-xl">{promoCode.code}</p>
+                    <p className="text-green-700">Enjoy a {promoCode.discount}% discount!</p>
+                </div>
+            )}
             <button onClick={handleClick}>
                 {isVisible ? 'Hide' : 'Show'} Tourist Details
             </button>

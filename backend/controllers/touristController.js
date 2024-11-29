@@ -7,25 +7,59 @@ const loginTourist = async (req, res) => {
   const { Username, Password } = req.body;
 
   try {
-      const tourist = await TouristModel.findOne({ Username });
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
+    const tourist = await TouristModel.findOne({ Username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found." });
+    }
 
-      // Check password
-      const isMatch = await bcrypt.compare(Password, tourist.Password);
-      if (!isMatch) {
-          return res.status(400).json({ message: "Incorrect password." });
-      }
+    // Check password
+    const isMatch = await bcrypt.compare(Password, tourist.Password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect password." });
+    }
 
-      res.status(200).json({
-          message: "Login successful",
+    // Check if today is the tourist's birthday
+    const today = new Date();
+    const isBirthday = 
+      today.getDate() === tourist.DOB.getDate() && 
+      today.getMonth() === tourist.DOB.getMonth();
+
+    if (isBirthday) {
+      // Check if a promo code has already been generated for this birthday
+      const lastPromoDate = tourist.lastBirthdayPromo;
+      const isNewPromo = !lastPromoDate || 
+                         lastPromoDate.getFullYear() !== today.getFullYear();
+
+      if (isNewPromo) {
+        // Generate a promo code
+        const promoCode = await PromoCode.create({
+          code: `BDAY${tourist.Username}${Date.now()}`, // Unique code
+          discount: 20, // Example: 20% discount
+        });
+
+        // Update the tourist's lastBirthdayPromo field
+        tourist.lastBirthdayPromo = today;
+        await tourist.save();
+
+        res.status(200).json({
+          message: "Login successful. Happy Birthday! Here's your promo code.",
           tourist,
-      });
+          promoCode,
+        });
+        return;
+      }
+    }
+
+    res.status(200).json({
+      message: "Login successful",
+      tourist,
+    });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
+
 const createTourist = async (req, res) => {
   const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
 
@@ -144,55 +178,7 @@ const changePassword = async (req, res) => {
   }
 };
 
-const sendBirthdayPromos = async (req, res) => {
-  try {
-      // Get today's date
-      const today = new Date();
-      const todayMonth = today.getMonth() + 1; // Months are 0-indexed, so add 1
-      const todayDay = today.getDate();
 
-      console.log("Today's Month:", todayMonth, "Today's Day:", todayDay);
-
-      // Find all tourists with today's birthday
-      const tourists = await TouristModel.find({
-          $expr: {
-              $and: [
-                  { $eq: [{ $month: "$DOB" }, todayMonth] },
-                  { $eq: [{ $dayOfMonth: "$DOB" }, todayDay] }
-              ]
-          }
-      });
-
-      console.log("Tourists with today's birthday:", tourists);
-
-      if (!tourists.length) {
-          return res.status(200).json({ message: "No tourists have a birthday today." });
-      }
-
-      const promoCodes = [];
-
-      for (const tourist of tourists) {
-          const promoCode = `BDAY-${tourist.Username}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-
-          try {
-              const newPromo = await PromoCode.create({
-                  code: promoCode,
-                  discount: 20,
-                  available: true,
-              });
-
-              promoCodes.push(newPromo);
-              console.log("Created promo code:", newPromo);
-          } catch (error) {
-              console.error("Error creating promo code for", tourist.Username, ":", error.message);
-          }
-      }
-
-      res.status(200).json({ message: "Promo codes sent successfully.", promoCodes });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-};
 
 
 
@@ -657,7 +643,7 @@ const sendUpcomingNotifications = async (req, res) => {
 
 
 module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTourists, updateTourist,changePassword,
-  sendBirthdayPromos,incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
+  incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
     getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist};
