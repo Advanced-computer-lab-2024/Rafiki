@@ -19,8 +19,9 @@ function AdminLogin() {
             });
 
             if (response.status === 200) {
+               // const { outOfStockProducts } = response.data;
                 alert("Login successful");
-                navigate('/adminDashboard'); // Redirect to dashboard
+                navigate('/adminDashboard');//, { state: { outOfStockProducts } }); // Redirect to dashboard
             }
         } catch (error) {
             setError(error.response?.data?.message || "Login failed. Please try again.");

@@ -14,6 +14,7 @@ import ArchivedProducts from '../components/ArchivedProducts'; // Import Archive
 import ComplaintDetails from '../components/complaintDetails';
 import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
+import { useLocation } from 'react-router-dom';
 
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
@@ -38,6 +39,11 @@ const AdminSignup = () => {
   const [isVisibleStatusSearch, setIsVisibleStatusSearch] = useState(false);
   const [isVisibleDateSort, setIsVisibleDateSort] = useState(false);
   const [status, setStatus] = useState('');
+  const [outOfStockProducts, setOutOfStockProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showNotification, setShowNotification] = useState(false);
+  //const location = useLocation();
+  //const outOfStockProducts = location.state?.outOfStockProducts || [];
     //         if (response.ok) {
     //             setCategories(json);
     //         }
@@ -45,6 +51,36 @@ const AdminSignup = () => {
 
     //     fetchCategories();
     // }, []);
+
+    const fetchOutOfStockProducts = async () => {
+      try {
+        setLoading(true); // Start loading state
+        const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
+        const products = response.data.products;
+        setOutOfStockProducts(products);
+        setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+        setError(null); // Clear previous errors
+      } catch (err) {
+        console.error('Error fetching out-of-stock products:', err);
+        setError('Failed to fetch out-of-stock products.');
+      } finally {
+        setLoading(false); // Stop loading state
+      }
+    };
+  
+    useEffect(() => {
+      fetchOutOfStockProducts();
+  
+      // Optional: Poll for updates every 30 seconds
+      //const interval = setInterval(fetchOutOfStockProducts, 30000);
+      //return () => clearInterval(interval); // Clean up interval
+    }, []);
+  
+    // Close the pop-up
+    const handleCloseNotification = () => {
+      setShowNotification(false);
+    };
+  
 
     const AdminChangePassword = () => (
         <ChangePasswordForm apiEndpoint="/api/adminRoute/changePassword" />
@@ -296,7 +332,33 @@ const AdminSignup = () => {
       <h2>Admin Dashboard</h2>
 
         {error && <p style={{ color: 'red', textAlign: 'right' }}>{error}</p>}
-
+        {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          {/* Pop-up Notification */}
+          {showNotification && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                  onClick={handleCloseNotification}
+                >
+                  &times; {/* Close button */}
+                </button>
+                <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
+                <ul className="mt-4 space-y-2">
+                  {outOfStockProducts.map(product => (
+                    <li key={product._id} className="text-gray-700">
+                      {product.Name} is out of stock!
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {totalUsers !== null && newUsersThisMonth !== null ? (
         <div style={{ textAlign: 'right' }}>
           <p>Total Users: {totalUsers}</p>

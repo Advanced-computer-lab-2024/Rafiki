@@ -19,8 +19,9 @@ function SellerLogin() {
             });
 
             if (response.status === 200) {
+                //const { outOfStockProducts } = response.data;
                 alert("Login successful");
-                navigate('/seller-signup'); // Redirect to dashboard
+                navigate('/seller-signup');// { state: { outOfStockProducts } }); // Redirect to dashboard
             }
         } catch (error) {
             setError(error.response?.data?.message || "Login failed. Please try again.");

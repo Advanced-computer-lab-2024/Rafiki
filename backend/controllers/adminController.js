@@ -33,6 +33,8 @@ const loginAdmin = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
   };
+
+
 const tourismGovernorLogin = async (req, res) => {
     const { Username, Password } = req.body;
   
@@ -224,7 +226,8 @@ module.exports = {
     getTotalUsers,
     getNewUsersPerMonth,
     tourismGovernorLogin,
-    loginAdmin 
+    loginAdmin
+    
 };
 
 

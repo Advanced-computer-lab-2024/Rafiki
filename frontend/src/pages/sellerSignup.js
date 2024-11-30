@@ -8,6 +8,8 @@ import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts';
 import TermsPopup from "../components/TermsPopup";
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+import axios from 'axios';
 const SellerSignup = () => {
   const [sellers, setSellers] = useState([]);
   const [isSellerVisible, setIsSellerVisible] = useState(false);
@@ -29,7 +31,9 @@ const SellerSignup = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [showPopup, setShowPopup] = useState(true); // Show the popup initially
   const navigate = useNavigate();
-
+  const [outOfStockProducts, setOutOfStockProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showNotification, setShowNotification] = useState(false);
   const handleAccept = () => {
     setShowPopup(false); // Hide the popup when terms are accepted
   };
@@ -37,6 +41,35 @@ const SellerSignup = () => {
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
+
+  const fetchOutOfStockProducts = async () => {
+    try {
+      setLoading(true); // Start loading state
+      const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
+      const products = response.data.products;
+      setOutOfStockProducts(products);
+      setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+      setError(null); // Clear previous errors
+    } catch (err) {
+      console.error('Error fetching out-of-stock products:', err);
+      setError('Failed to fetch out-of-stock products.');
+    } finally {
+      setLoading(false); // Stop loading state
+    }
+  };
+
+  useEffect(() => {
+    fetchOutOfStockProducts();
+
+    // Optional: Poll for updates every 30 seconds
+    //const interval = setInterval(fetchOutOfStockProducts, 30000);
+    //return () => clearInterval(interval); // Clean up interval
+  }, []);
+
+  // Close the pop-up
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
 
   // Function to fetch sellers from the backend
   const fetchSellers = async () => {
@@ -190,7 +223,29 @@ const SellerSignup = () => {
       <h2>Seller Dashboard</h2>
 
       <SellerForm onSellerAdded={fetchSellers} />
-
+      <div>
+          {/* Pop-up Notification */}
+          {showNotification && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+              <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                  onClick={handleCloseNotification}
+                >
+                  &times; {/* Close button */}
+                </button>
+                <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
+                <ul className="mt-4 space-y-2">
+                  {outOfStockProducts.map(product => (
+                    <li key={product._id} className="text-gray-700">
+                      {product.Name} is out of stock!
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+          </div>
       {/* Button for requesting account deletion under the upload picture section */}
       <div style={{ marginTop: "10px" }}>
         <button
