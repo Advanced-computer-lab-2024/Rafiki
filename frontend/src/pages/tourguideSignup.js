@@ -158,7 +158,6 @@ const handleAccept = async () => {
         onDeleted={handleItineraryDelete} 
       />
       
-      <CreateTourguide />
 <br></br>
       <AdminChangePassword/>
     </div>

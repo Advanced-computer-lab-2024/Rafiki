@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 // pages & components
+import SellerForm from './components/sellerForm';
+import GovernerForm from './components/governerForm';
 import TouristLogin from './pages/TouristLogin';
 import AdminLogin from './pages/AdminLogin';
 import SellerLogin from './pages/SellerLogin';
@@ -25,6 +27,10 @@ import SignupPaths from './pages/SignupPaths';
 import LoginPage from './pages/LoginPage';
 import TourismGovernorLogin from './pages/TourismGovernorLogin';
 import TourGuideLogin from './components/TourGuideLogin';
+import AdminForm from './components/adminForm';
+import TourguideForm from './components/tourguideForm';
+import AdvertiserForm from './components/advertiserForm';
+import TouristForm from './components/touristForm';
 function App() {
   return (
     <div className="App">
@@ -34,8 +40,13 @@ function App() {
           {/* Wrap provider around routes */}
           <div className="pages">
             <Routes>
+              
+            <Route path="/signup/seller" element={<SellerForm />} />
               <Route path="/" element={<><Hero /></>} /> 
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/touristForm" element={<TouristForm />} />
+              <Route path="/advertiserForm" element={<AdvertiserForm />} />
+              <Route path="/tourguideForm" element={<TourguideForm />} />
               <Route path="/login/tourguide"element={<TourGuideLogin />}/>
               <Route path="/login/tourism-governor" element={<TourismGovernorLogin />} />
               <Route path="/about" element={<AboutUs />} />
@@ -54,7 +65,8 @@ function App() {
               <Route path="/login/advertiser" element={<AdvertiserLogin />} />
               <Route path="/login/seller" element={<SellerLogin />} />
               <Route path="/login/admin" element={<AdminLogin />} />
-              
+              <Route path="/signup/governor" element={<GovernerForm />} />
+              <Route path="/signup/admin" element={<AdminForm />} />
             </Routes>
           </div>
         </FlaggedActivitiesProvider>

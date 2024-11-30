@@ -925,7 +925,7 @@ const TouristSignup = () => {
             <WishlistDetails />
             <div></div>
             {/* Tourist Signup Form */}
-            <TouristForm />
+           
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
             <h4>Complaint:</h4>
             <ComplainCreateForm />

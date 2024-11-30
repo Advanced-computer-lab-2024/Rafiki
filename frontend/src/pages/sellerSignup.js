@@ -222,7 +222,7 @@ const SellerSignup = () => {
       )}
       <h2>Seller Dashboard</h2>
 
-      <SellerForm onSellerAdded={fetchSellers} />
+   
       <div>
           {/* Pop-up Notification */}
           {showNotification && (

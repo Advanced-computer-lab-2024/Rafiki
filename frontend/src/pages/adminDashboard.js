@@ -538,10 +538,8 @@ const AdminSignup = () => {
 
       
       {/* Admin Forms */}
-      <AdminForm />
-      <br />
-      <GovernerForm />
-      <br />
+     
+     
       <DeleteAdmin />
       <br />
       <CategoryForm />

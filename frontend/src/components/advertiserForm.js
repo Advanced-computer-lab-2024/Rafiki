@@ -3,7 +3,7 @@ import { useState } from 'react';
 const AdvertiserForm = () => {
   // Form visibility
   const [isVisible, setIsVisible] = useState(false);
-  
+
   // Form fields
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -14,27 +14,25 @@ const AdvertiserForm = () => {
   const [job, setJob] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-  
+
   // Feedback messages
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [advertiserId, setAdvertiserId] = useState(null); // Store advertiser ID for deletion
-  
+
   // Toggle form visibility
   const handleClick = () => {
     setIsVisible(!isVisible);
   };
 
-  // Handle form submission for account creation
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!isTermsAccepted) {
-      setError("You must accept the terms and conditions.");
+      setError('You must accept the terms and conditions.');
       return;
     }
 
-    // Prepare form data for submission
     const formData = new FormData();
     formData.append('Username', username);
     formData.append('Email', email);
@@ -52,14 +50,15 @@ const AdvertiserForm = () => {
         method: 'POST',
         body: formData,
       });
+
       const json = await response.json();
 
       if (!response.ok) {
         setError(json.error);
+        setSuccessMessage(null);
       } else {
         setError(null);
-        setSuccessMessage("Account created successfully!");
-        
+        setSuccessMessage('Account created successfully!');
         // Reset form fields
         setUsername('');
         setEmail('');
@@ -70,122 +69,151 @@ const AdvertiserForm = () => {
         setJob('');
         setProfilePicture(null);
         setIsTermsAccepted(false);
-
-        setAdvertiserId(json._id); // Store advertiser ID for potential deletion
         console.log('New advertiser added:', json);
       }
     } catch (err) {
-      setError("An error occurred during account creation. Please try again.");
-      console.error("Error during signup:", err);
-    }
-  };
-
-  // Handle account deletion request
-  const handleDeleteAccount = async () => {
-    if (!advertiserId) {
-      setError("Account deletion is only possible after account creation.");
-      return;
-    }
-
-    const confirmation = window.confirm("Are you sure you want to delete your account?");
-    if (!confirmation) return;
-
-    try {
-      const response = await fetch(`/api/AdvertiserRoute/deleteAccount/${advertiserId}`, {
-        method: 'DELETE',
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        setSuccessMessage("Account deleted successfully.");
-        setAdvertiserId(null); // Clear advertiser ID after deletion
-      } else {
-        setError(result.error);
-      }
-    } catch (error) {
-      console.error("Error deleting account:", error);
-      setError("An error occurred. Please try again.");
+      setError('An error occurred during account creation. Please try again.');
+      setSuccessMessage(null);
+      console.error('Error during signup:', err);
     }
   };
 
   return (
-    <div>
-      <button onClick={handleClick}>Sign up</button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6">
+      <button
+        onClick={handleClick}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+      >
+        {isVisible ? 'Hide Signup Form' : 'Sign up as Advertiser'}
+      </button>
+
       {isVisible && (
-        <form className="create" onSubmit={handleSubmit}>
-          <h3>Advertiser Signup</h3>
+        <form
+          className="bg-white rounded-lg shadow-lg p-8 mt-6 w-full max-w-md"
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+        >
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Advertiser Signup</h3>
 
-          <label>Username:</label>
-          <input
-            type="text"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
-          />
+          {/* Input Fields */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-700 font-medium">Username</label>
+              <input
+                type="text"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Email:</label>
-          <input
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Email</label>
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Password:</label>
-          <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Password</label>
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Mobile Number:</label>
-          <input
-            type="text"
-            onChange={(e) => setMobileNumber(e.target.value)}
-            value={mobileNumber}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Mobile Number</label>
+              <input
+                type="text"
+                onChange={(e) => setMobileNumber(e.target.value)}
+                value={mobileNumber}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Job:</label>
-          <input
-            type="text"
-            onChange={(e) => setJob(e.target.value)}
-            value={job}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Job</label>
+              <input
+                type="text"
+                onChange={(e) => setJob(e.target.value)}
+                value={job}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Nationality:</label>
-          <input
-            type="text"
-            onChange={(e) => setNationality(e.target.value)}
-            value={nationality}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Nationality</label>
+              <input
+                type="text"
+                onChange={(e) => setNationality(e.target.value)}
+                value={nationality}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            onChange={(e) => setDOB(e.target.value)}
-            value={dob}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Date of Birth</label>
+              <input
+                type="date"
+                onChange={(e) => setDOB(e.target.value)}
+                value={dob}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                required
+              />
+            </div>
 
-          <label>Profile Picture:</label>
-          <input
-            type="file"
-            onChange={(e) => setProfilePicture(e.target.files[0])}
-          />
+            <div>
+              <label className="block text-gray-700 font-medium">Profile Picture</label>
+              <input
+                type="file"
+                onChange={(e) => setProfilePicture(e.target.files[0])}
+                className="w-full px-4 py-2 border rounded-lg"
+              />
+            </div>
 
-          <label>
-            <input
-              type="checkbox"
-              checked={isTermsAccepted}
-              onChange={(e) => setIsTermsAccepted(e.target.checked)}
-            />
-            Accept terms and conditions
-          </label>
+            <div>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isTermsAccepted}
+                  onChange={(e) => setIsTermsAccepted(e.target.checked)}
+                  className="mr-2"
+                />
+                <span className="text-gray-700">Accept terms and conditions</span>
+              </label>
+            </div>
+          </div>
 
-          <button type="submit">Signup</button>
+          <button
+            type="submit"
+            className="w-full py-2 mt-6 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+          >
+            Signup
+          </button>
 
-          {/* Display error or success messages */}
-          {error && <div className="error" style={{ color: 'red' }}>{error}</div>}
-          {successMessage && <div className="success" style={{ color: 'green' }}>{successMessage}</div>}
-
-          
+          {/* Feedback Messages */}
+          {error && (
+            <div className="text-red-500 mt-4 text-center">
+              {error}
+            </div>
+          )}
+          {successMessage && (
+            <div className="text-green-500 mt-4 text-center">
+              {successMessage}
+            </div>
+          )}
         </form>
       )}
     </div>

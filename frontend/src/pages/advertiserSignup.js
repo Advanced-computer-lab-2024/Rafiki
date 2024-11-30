@@ -208,7 +208,7 @@ const AdvertiserSignup = () => {
 
       {/* Other components and form toggles */}
       <UpdateAdvertiser existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
-      <AdvertiserForm />
+     
       <button onClick={() => setIsVisible2(!isVisible2)}>
         {isVisible2 ? 'Hide' : 'Show'} Activities
       </button>

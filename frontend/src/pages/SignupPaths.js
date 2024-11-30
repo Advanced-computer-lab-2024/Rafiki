@@ -14,18 +14,17 @@ function SignupPaths() {
         </p>
 
         {/* Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Tourist Signup */}
           <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">
               Register as a Tourist
             </h3>
             <p className="text-gray-600 mb-6">
-              Discover exciting activities, plan your itineraries, and explore
-              destinations with ease.
+              Discover exciting activities, plan your itineraries, and explore destinations with ease.
             </p>
             <Link
-              to="/tourist-signup"
+              to="/touristForm"
               className="text-blue-600 font-semibold hover:underline"
             >
               Get Started →
@@ -38,11 +37,10 @@ function SignupPaths() {
               Register as an Advertiser
             </h3>
             <p className="text-gray-600 mb-6">
-              Promote your services, attract tourists, and grow your brand with
-              our platform.
+              Promote your services, attract tourists, and grow your brand with our platform.
             </p>
             <Link
-              to="/advertiser-signup"
+              to="/advertiserForm"
               className="text-blue-600 font-semibold hover:underline"
             >
               Join Now →
@@ -55,31 +53,29 @@ function SignupPaths() {
               Register as a Tour Guide
             </h3>
             <p className="text-gray-600 mb-6">
-              Connect with travelers, share your expertise, and create
-              memorable experiences.
+              Connect with travelers, share your expertise, and create memorable experiences.
             </p>
             <Link
-              to="/tourguide-signup"
+              to="/tourguideForm"
               className="text-blue-600 font-semibold hover:underline"
             >
               Start Now →
             </Link>
           </div>
 
-          {/* Admin Dashboard */}
+          {/* Admin Signup */}
           <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">
               Admin Dashboard
             </h3>
             <p className="text-gray-600 mb-6">
-              Manage users, oversee platform activities, and ensure a smooth
-              experience for everyone.
+              Manage users, oversee platform activities, and ensure a smooth experience for everyone.
             </p>
             <Link
-              to="/adminDashboard"
+              to="/signup/admin"
               className="text-blue-600 font-semibold hover:underline"
             >
-              Admin Access →
+              Admin Registration →
             </Link>
           </div>
 
@@ -92,7 +88,7 @@ function SignupPaths() {
               Showcase and sell your products to a global audience effortlessly.
             </p>
             <Link
-              to="/seller-signup"
+              to="/signup/seller"
               className="text-blue-600 font-semibold hover:underline"
             >
               Register Now →
@@ -105,14 +101,13 @@ function SignupPaths() {
               Governor Dashboard
             </h3>
             <p className="text-gray-600 mb-6">
-              Monitor regional activities, manage tourism growth, and make
-              informed decisions.
+              Monitor regional activities, manage tourism growth, and make informed decisions.
             </p>
             <Link
-              to="/GovernorDashboard"
+              to="/signup/governor"
               className="text-blue-600 font-semibold hover:underline"
             >
-              Access Now →
+              Join Now →
             </Link>
           </div>
 
@@ -122,8 +117,7 @@ function SignupPaths() {
               Guest Dashboard
             </h3>
             <p className="text-gray-600 mb-6">
-              Browse as a guest, explore activities, and experience our platform
-              without registration.
+              Browse as a guest, explore activities, and experience our platform without registration.
             </p>
             <Link
               to="/guestDashboard"
