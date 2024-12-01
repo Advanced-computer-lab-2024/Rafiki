@@ -1,4 +1,3 @@
-// TermsPopup.js
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,82 +17,39 @@ const TermsPopup = ({ onAccept }) => {
   }, []);
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.popup}>
-        <h2>Terms and Conditions</h2>
-        <p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Terms and Conditions
+        </h2>
+        <p className="text-gray-600 text-justify mb-4">
           Welcome to our website. By accessing or using our platform, you agree
           to the following terms and conditions:
         </p>
-        <ul>
-          <li>
-            You must be at least 18 years old to register and use our services.
-          </li>
-          <li>
-            Your use of the platform must comply with all applicable laws and
-            regulations.
-          </li>
-          <li>
-            You are responsible for maintaining the confidentiality of your
-            account information.
-          </li>
-          <li>
-            We reserve the right to modify or discontinue our services at any
-            time.
-          </li>
-          <li>
-            Your data may be used in accordance with our privacy policy.
-          </li>
+        <ul className="list-disc list-inside text-left text-gray-600 space-y-2 mb-4">
+          <li>You must be at least 18 years old to register and use our services.</li>
+          <li>Your use of the platform must comply with all applicable laws and regulations.</li>
+          <li>You are responsible for maintaining the confidentiality of your account information.</li>
+          <li>We reserve the right to modify or discontinue our services at any time.</li>
+          <li>Your data may be used in accordance with our privacy policy.</li>
         </ul>
-        <div style={styles.buttons}>
-          <button onClick={onAccept} style={styles.button}>
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={onAccept}
+            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-all"
+          >
             Accept
           </button>
-          <button onClick={handleDecline} style={styles.button}>
+          <button
+            onClick={handleDecline}
+            className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition-all"
+          >
             Decline
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-// Styles for the pop-up
-const styles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  popup: {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '8px',
-    maxWidth: '500px',
-    width: '100%',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-    textAlign: 'center',
-  },
-  buttons: {
-    marginTop: '20px',
-    display: 'flex',
-    justifyContent: 'space-around',
-  },
-  button: {
-    padding: '10px 20px',
-    borderRadius: '4px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#007BFF',
-    color: 'white',
-  },
 };
 
 export default TermsPopup;

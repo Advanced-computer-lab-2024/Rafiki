@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// components
-import AdvertiserForm from "../components/advertiserForm";
+// Components
 import AdvertiserDetails from "../components/AdvertiserDetails";
 import ActivityDetails from "../components/ActivityDetails";
 import ActivityForm from "../components/activityForm";
 import UpdateAdvertiser from "../components/updateAdvertiser";
 import DeleteActivity from "../components/DeleteActivity";
 import UpdateActivity from "../components/UpdateActivity";
-import ChangePasswordForm from '../components/ChangePasswordForm';
+import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
-import { useNavigate } from 'react-router-dom';
+
 const AdvChangePassword = () => (
   <ChangePasswordForm apiEndpoint="/api/AdvertiserRoute/changePassword" />
 );
@@ -26,30 +26,33 @@ const CreateTransportationAd = ({ isVisible, onClose }) => {
     arrivalLocation: "",
     price: "",
     vehicleType: "",
-    seatsAvailable: ""
+    seatsAvailable: "",
   });
 
-  const [errors, setErrors] = useState({}); // Only use if needed
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleChange = (e) => { // Only use if needed
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setTransportation(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    setTransportation({ ...transportation, [name]: value });
   };
 
   const validateForm = () => {
-    const newErrors = {};
-    if (!transportation.departureDate) newErrors.departureDate = "Please enter departure date";
-    if (!transportation.departureTime) newErrors.departureTime = "Please enter departure time";
-    if (!transportation.arrivalDate) newErrors.arrivalDate = "Please enter arrival date";
-    if (!transportation.arrivalTime) newErrors.arrivalTime = "Please enter arrival time";
-    if (!transportation.departureLocation) newErrors.departureLocation = "Please enter departure location";
-    if (!transportation.arrivalLocation) newErrors.arrivalLocation = "Please enter arrival location";
-    if (!transportation.price || isNaN(parseFloat(transportation.price))) newErrors.price = "Please enter valid price";
-    if (!transportation.vehicleType) newErrors.vehicleType = "Please select vehicle type";
-    if (!transportation.seatsAvailable || isNaN(parseInt(transportation.seatsAvailable))) newErrors.seatsAvailable = "Please enter valid number of seats available";
+    const requiredFields = [
+      "departureDate",
+      "departureTime",
+      "arrivalDate",
+      "arrivalTime",
+      "departureLocation",
+      "arrivalLocation",
+      "price",
+      "vehicleType",
+      "seatsAvailable",
+    ];
+    const newErrors = requiredFields.reduce((acc, field) => {
+      if (!transportation[field]) acc[field] = "This field is required";
+      return acc;
+    }, {});
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -58,188 +61,234 @@ const CreateTransportationAd = ({ isVisible, onClose }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await axios.post('/createTransportation', transportation);
-        console.log('Transportation advertisement created:', response.data);
-        setTransportation({
-          departureDate: "",
-          departureTime: "",
-          arrivalDate: "",
-          arrivalTime: "",
-          departureLocation: "",
-          arrivalLocation: "",
-          price: "",
-          vehicleType: "",
-          seatsAvailable: ""
-        });
-        setErrors({});
-        onClose();
+        const response = await axios.post("/api/transportationRoute/create", transportation);
+        if (response.status === 200) {
+          setSuccessMessage("Transportation advertisement created successfully!");
+          setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
+          onClose();
+        } else {
+          console.error("Error:", response.data);
+        }
       } catch (error) {
-        console.error('Error creating transportation advertisement:', error);
+        console.error("Error creating transportation ad:", error.response?.data || error.message);
       }
     }
   };
 
   return isVisible ? (
-    <div>
-      <h2>Create Transportation Advertisement</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Form fields for transportation details */}
-        <button type="submit">Create Transportation Advertisement</button>
-        <button type="button" onClick={onClose}>Cancel</button>
-      </form>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-screen">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Create Transportation Ad</h2>
+        {successMessage && (
+          <div className="mb-4 p-2 bg-green-100 text-green-800 rounded-md">{successMessage}</div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {[
+            { label: "Departure Date", type: "date", name: "departureDate" },
+            { label: "Departure Time", type: "time", name: "departureTime" },
+            { label: "Arrival Date", type: "date", name: "arrivalDate" },
+            { label: "Arrival Time", type: "time", name: "arrivalTime" },
+            { label: "Departure Location", type: "text", name: "departureLocation" },
+            { label: "Arrival Location", type: "text", name: "arrivalLocation" },
+            { label: "Price", type: "number", name: "price" },
+            { label: "Vehicle Type", type: "text", name: "vehicleType" },
+            { label: "Seats Available", type: "number", name: "seatsAvailable" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium text-gray-700">{field.label}</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={transportation[field.name] || ""}
+                onChange={handleChange}
+                className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                  errors[field.name] ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
+            </div>
+          ))}
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Create Ad
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   ) : null;
 };
 
 const AdvertiserSignup = ({ loggedInAdvertiser }) => {
   const [advertiser, setAdvertiser] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [activity, setActivity] = useState(null);
   const [isVisible2, setIsVisible2] = useState(false);
-  const [isTransportFormVisible, setIsTransportFormVisible] = useState(false);
-  const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
-  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [showPopup, setShowPopup] = useState(true); // Show the popup initially
+  const [activeContent, setActiveContent] = useState("description"); // Default to welcome message
+
   const navigate = useNavigate();
 
-  const handleAccept = () => {
-    setShowPopup(false); // Hide the popup when terms are accepted
-  }
   useEffect(() => {
     const fetchAdvertisers = async () => {
-      const response = await fetch('/api/AdvertiserRoute');
+      const response = await fetch("/api/AdvertiserRoute");
       const json = await response.json();
-
-      if (response.ok) {
-        setAdvertiser(json);
-      }
+      if (response.ok) setAdvertiser(json);
     };
-
     fetchAdvertisers();
   }, []);
 
   useEffect(() => {
     const fetchActivities = async () => {
-      const response = await fetch('/api/ActivityRoute');
+      const response = await fetch("/api/ActivityRoute");
       const json = await response.json();
-
-      if (response.ok) {
-        setActivity(json);
-      }
+      if (response.ok) setActivity(json);
     };
-
     fetchActivities();
   }, []);
 
-  const handleTermsChange = (e) => {
-    setIsTermsAccepted(e.target.checked);
-  };
-
   const handleDeleteAccount = async () => {
-    if (!isTermsAccepted) {
-      setError("You must accept the terms and conditions to delete your account.");
-      return;
-    }
-
+    if (!advertiser) return;
     const confirmation = window.confirm("Are you sure you want to delete your account?");
     if (!confirmation) return;
-
     try {
       const response = await axios.delete(`/api/AdvertiserRoute/deleteAccount/${advertiser._id}`);
       if (response.status === 200) {
         setSuccessMessage("Account deleted successfully.");
-        setAdvertiser(null); // Clear advertiser data after deletion
+        setAdvertiser(null); // Clear advertiser data
+        setTimeout(() => setSuccessMessage(null), 5000);
       } else {
-        setError("Account cannot be deleted due to upcoming paid bookings.");
+        setError("Account cannot be deleted due to upcoming bookings.");
+        setTimeout(() => setError(null), 5000);
       }
     } catch (error) {
-      console.error("Error deleting account:", error);
+      console.error("Error deleting account:", error.message);
       setError("An error occurred while deleting the account.");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
-  // Define the missing function `handleTransportButtonClick`
-  const handleTransportButtonClick = () => {
-    setIsTransportFormVisible(!isTransportFormVisible);
-  };
-  const [showDetails, setShowDetails] = useState(false);
-
-  const toggleDetails = () => {
-      setShowDetails(!showDetails);
-  };
-
   return (
-    <div className="container">
-      {showPopup ? (
-        <TermsPopup onAccept={handleAccept} />
-      ) : (
-        <div>
-          
-          <p>You have accepted the terms and conditions.</p>
-        </div>
-      )}
-      <h2>Advertiser Dashboard</h2>
-
-      
-
-      {/* Delete Account Button */}
-      <button
-        onClick={handleDeleteAccount}
-        style={{ marginTop: "10px", backgroundColor: "red", color: "white" }}
-      >
-        Delete Account
-      </button>
-
-      {/* Display error or success messages */}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
-      <button
-  onClick={() => setIsVisible(!isVisible)}
-  className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition-all duration-200"
->
-  {isVisible ? "Hide" : "Show"} Advertiser Details
-</button>
-
-{isVisible && (
-  <div className="mt-4 flex justify-center">
-    {loggedInAdvertiser ? (
-      <AdvertiserDetails advertiser={loggedInAdvertiser} />
-    ) : (
-      <div className="text-center text-gray-500">
-        <p>No advertiser details available. Please log in again.</p>
+    <div className="flex h-screen">
+      {/* Sidebar Menu */}
+      <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
+        <h3 className="text-xl font-bold mb-4">Advertiser Dashboard</h3>
+        <ul className="space-y-4">
+          <li>
+            <button
+              onClick={() => setActiveContent("details")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Show Advertiser Details
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("activities")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Show Activities
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("createActivity")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Create Activity
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("updateActivity")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Update Activity
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("createTransportation")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Create Transportation Ad
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("changePassword")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Change Password
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleDeleteAccount}
+              className="text-lg text-red-500 hover:text-red-700"
+            >
+              Delete Account
+            </button>
+          </li>
+        </ul>
       </div>
-    )}
-  </div>
-)}
 
+      {/* Main Content */}
+      <div className="w-3/4 p-6">
+        {activeContent === "description" && (
+          <div className="text-center">
+            <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+              Welcome to the Advertiser Dashboard
+            </h3>
+            <p className="text-lg text-gray-600">
+              Manage your details, activities, advertisements, and account settings. Choose an
+              option from the menu to get started.
+            </p>
+          </div>
+        )}
 
-      {/* Other components and form toggles */}
-      <UpdateAdvertiser existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
-     
-      <button onClick={() => setIsVisible2(!isVisible2)}>
-        {isVisible2 ? 'Hide' : 'Show'} Activities
-      </button>
-      {isVisible2 && (
-        <div className="workouts">
-          {activity && activity.map((activity) => (
-            <div key={activity._id}>
-              <ActivityDetails activity={activity} />
-              <button onClick={() => setSelectedActivity(activity)}>Update</button>
-            </div>
-          ))}
-        </div>
-      )}
-      <UpdateActivity existingTourguide={selectedActivity} onUpdate={() => setSelectedActivity(null)} />
-      <ActivityForm />
-      <DeleteActivity />
-      <button onClick={handleTransportButtonClick}>
-        {isTransportFormVisible ? 'Hide' : 'Show'} Create Transportation Advertisement
-      </button>
-      <CreateTransportationAd isVisible={isTransportFormVisible} onClose={() => setIsTransportFormVisible(false)} />
-      <AdvChangePassword />
+        {activeContent === "details" && (
+          <AdvertiserDetails advertiser={loggedInAdvertiser} />
+        )}
+
+        {activeContent === "activities" && (
+          <div>
+            <h3 className="text-2xl font-semibold text-gray-800">Activities</h3>
+            {activity &&
+              activity.map((act) => (
+                <ActivityDetails key={act._id} activity={act} />
+              ))}
+          </div>
+        )}
+
+        {activeContent === "createActivity" && <ActivityForm />}
+        {activeContent === "updateActivity" && (
+          <UpdateActivity
+            existingTourguide={selectedActivity}
+            onUpdate={() => setSelectedActivity(null)}
+          />
+        )}
+
+        {activeContent === "createTransportation" && (
+          <CreateTransportationAd
+            isVisible={true}
+            onClose={() => setActiveContent("description")}
+          />
+        )}
+
+        {activeContent === "changePassword" && <AdvChangePassword />}
+      </div>
     </div>
   );
 };
