@@ -3,43 +3,8 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
-const oAuth2Client = new google.auth.OAuth2(
-  '578731025092-kj129g3mc8ul19kuu3kuh0jgvibo8sva.apps.googleusercontent.com', // Replace with your client ID
-  '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', // Replace with your client secret
-  'http://localhost' // Replace with your redirect URI
-);
-oAuth2Client.setCredentials({
-  refresh_token: 'https://oauth2.googleapis.com/token', // Replace with your refresh token
-});
-async function sendBirthdayPromoEmail(tourist, promoCode) {
-  try {
-    const accessToken = await oAuth2Client.getAccessToken();
 
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: 'alimahmoudsalah153@gmail.com', // Replace with your email
-        clientId: '578731025092-kj129g3mc8ul19kuu3kuh0jgvibo8sva.apps.googleusercontent.com',
-        clientSecret: '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',
-        refreshToken: 'https://oauth2.googleapis.com/token',
-        accessToken: accessToken.token,
-      },
-    });
 
-    const mailOptions = {
-      from: '"Rafiki" <alimahmoudsalah153@gmail.com>', // Replace with your email
-      to: tourist.Email, // Tourist's email
-      subject: 'Happy Birthday! 🎉 Here’s Your Promo Code!',
-      text: `Dear ${tourist.Username},\n\nHappy Birthday! 🎂 To celebrate, we’re giving you an exclusive promo code: ${promoCode.code}.\n\nEnjoy a ${promoCode.discount}% discount on your next purchase!\n\nBest wishes,\nYour App Team`,
-    };
-
-    await transport.sendMail(mailOptions);
-    console.log('Promo email sent successfully!');
-  } catch (error) {
-    console.error('Failed to send email:', error.message);
-  }
-}
 
 
 const loginTourist = async (req, res) => {
@@ -79,8 +44,8 @@ const loginTourist = async (req, res) => {
         // Update the tourist's lastBirthdayPromo field
         tourist.lastBirthdayPromo = today;
         await tourist.save();
-        await sendBirthdayPromoEmail(tourist, promoCode);
-
+        await sendBirthdayPromoEmail(tourist,promoCode);
+      
         res.status(200).json({
           message: "Login successful. Happy Birthday! Here's your promo code.",
           tourist,
@@ -98,7 +63,6 @@ const loginTourist = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const createTourist = async (req, res) => {
   const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
@@ -614,19 +578,23 @@ const getPastPaidItineraries = async (req, res) => {
   }
 };
 
-// Configure your email transporter securely
-const transporter = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: 587,
-  auth: {
-    user: "api",
-    pass: "0bdb8e05c96edd14df4abb34d87b0d26"
-  }
-});
+
+
+
+  
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rafiki.info1@gmail.com', // Replace with your Gmail address
+        pass: 'hsyotajsdxtetmbw',    // Replace with the generated App Password
+      },
+    });
+
+
 
 const sendNotificationEmail = (email, subject, message) => {
   const mailOptions = {
-    from: 'info@demomailtrap.com',
+    from: 'rafiki.info@gmail.com',
     to: email,
     subject: subject,
     text: message
