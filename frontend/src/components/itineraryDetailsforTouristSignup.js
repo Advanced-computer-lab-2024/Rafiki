@@ -9,6 +9,7 @@ const ItineraryDetails = ({ itinerary }) => {
   const [error, setError] = useState(null);
   const [isCancelable, setIsCancelable] = useState(false);
   const [tourists, setTourists] = useState([]);
+  const [walletBalance, setWalletBalance] = useState(null);
 
   const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
   useEffect(() => {
@@ -84,9 +85,9 @@ const bookItinerary = async () => {
 };
 
 const cancelItineraryBooking = async () => {
-  const name = prompt("Please enter your name to cancel the booking of the Itinerary:");
+  const name = prompt("Please enter your name to cancel the booking of the itinerary:");
   if (!name) {
-      alert("Name is required to cancel the booking of the Itinerary.");
+      alert("Name is required to cancel the booking of the itinerary.");
       return;
   }
 
@@ -102,13 +103,20 @@ const cancelItineraryBooking = async () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ touristId: tourist._id, itineraryId: itinerary._id })
       });
+
       if (response.ok) {
-          alert("Canceled the booking of the Itinerary successfully!");
+          const updatedTourist = await response.json();
+          console.log("Updated Tourist:", updatedTourist);  // Log the response to check the returned data
+          
+          alert("Canceled the booking of the itinerary successfully!");
+
+          // Ensure this field is correct (check the backend response structure)
+          setWalletBalance(updatedTourist.newWalletBalance);  // Adjust this if the field name is different
       } else {
-          alert("Failed to cancel the booking of the Itinerary .");
+          alert("Failed to cancel the booking of the itinerary.");
       }
   } catch (error) {
-      console.error("Error canceling the booking of the Itinerary:", error);
+      console.error("Error canceling the booking of the itinerary:", error);
   }
 };
 
@@ -240,8 +248,13 @@ const cancelItineraryBooking = async () => {
       {/* Increment and Decrement Buttons */}
       <button onClick={bookItinerary}>Book Itinerary</button>
       <button onClick={cancelItineraryBooking} disabled={!isCancelable}>
-        Cancel Booking
-      </button>
+                Cancel Booking
+            </button>
+
+            {walletBalance !== null && (
+    <p><strong>Updated Wallet Balance: </strong>{walletBalance}</p>
+)}
+      
       <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>
       <button onClick={attendItinerary}>Attend This Itinerary</button>
       <button onClick={shareViaEmail}>Share via Email</button>
