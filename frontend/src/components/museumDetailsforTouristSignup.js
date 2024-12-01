@@ -7,6 +7,9 @@ const MuseumDetails = ({ museum}) => {
   const [currency, setCurrency] = useState('USD');
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
   const [tourists, setTourists] = useState([]); // To store the list of tourists
+  const [walletBalance, setWalletBalance] = useState(null);
+  const [error, setError] = useState(null);
+  const [isCancelable, setIsCancelable] = useState(false);
 
 
 
@@ -53,6 +56,52 @@ const MuseumDetails = ({ museum}) => {
           setCurrencyMultiplier(1);
       }
     };
+
+
+    const cancelMuseumBooking = async () => {
+      const name = prompt("Please enter your name to cancel the booking of the Museum:");
+      if (!name) {
+          alert("Name is required to cancel the booking of the museum.");
+          return;
+      }
+  
+      const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
+      if (!tourist) {
+          alert("Tourist not found. Please ensure your name is correct.");
+          return;
+      }
+  
+      try {
+          const response = await fetch(`/api/TouristRoute/cancelMuseumBooking`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ touristId: tourist._id, museumId: museum._id })
+          });
+  
+          if (response.ok) {
+              const updatedTourist = await response.json();
+              console.log("Updated Tourist:", updatedTourist);  // Log the response to check the returned data
+              
+              alert("Canceled the booking of the museum successfully!");
+  
+              // Ensure this field is correct (check the backend response structure)
+              setWalletBalance(updatedTourist.newWalletBalance);  // Adjust this if the field name is different
+          } else {
+              alert("Failed to cancel the booking of the museum.");
+          }
+      } catch (error) {
+          console.error("Error canceling the booking of the museum:", error);
+      }
+  };
+  
+
+
+
+
+
+
+
+
     const handlePaymentClickMuseum = (museum) => {
         setSelectedMuseum(museum);
         setIsPaymentVisible(prev => !prev);
@@ -87,9 +136,24 @@ const MuseumDetails = ({ museum}) => {
                     referenceId={museum._id} // Pass the museum _id as referenceId
                 />
             )}
+             <button onClick={cancelMuseumBooking} >
+                Cancel Booking
+            </button>
+
+            {walletBalance !== null && (
+    <p><strong>Updated Wallet Balance: </strong>{walletBalance}</p>
+)}
+
+            {error && <p className="error">{error}</p>}
+            {!isCancelable && (
+                <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
+            )}
+        
         <button onClick={copyLinkToClipboard}>Copy museum Link</button>
         <button onClick={shareViaEmail}>Share via Email</button>
       </div>
+
+      
     );
   };
   

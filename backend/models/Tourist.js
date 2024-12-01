@@ -83,6 +83,12 @@ const touristSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Itinerary' 
     }],
+
+  BookedMuseums:[{
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Museum' 
+  }],
+
     lastBirthdayPromo: {
       type: Date,
       default: null, // Initially null

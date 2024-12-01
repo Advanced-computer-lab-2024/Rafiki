@@ -9,6 +9,8 @@ const ActivityDetails = ({ activity }) => {
     const [tourists, setTourists] = useState([]);
     const [error, setError] = useState(null);
     const [isCancelable, setIsCancelable] = useState(false);
+    const [walletBalance, setWalletBalance] = useState(null);
+
     const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
 
     // Fetch the list of tourists on component mount
@@ -100,23 +102,30 @@ const ActivityDetails = ({ activity }) => {
             alert("Name is required to cancel the booking of the activity.");
             return;
         }
-
+    
         const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
         if (!tourist) {
             alert("Tourist not found. Please ensure your name is correct.");
             return;
         }
-
+    
         try {
             const response = await fetch(`/api/TouristRoute/cancelActivityBooking`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ touristId: tourist._id, activityId: activity._id })
             });
+    
             if (response.ok) {
+                const updatedTourist = await response.json();
+                console.log("Updated Tourist:", updatedTourist);  // Log the response to check the returned data
+                
                 alert("Canceled the booking of the activity successfully!");
+    
+                // Ensure this field is correct (check the backend response structure)
+                setWalletBalance(updatedTourist.newWalletBalance);  // Adjust this if the field name is different
             } else {
-                alert("Failed to cancel the booking of the activity .");
+                alert("Failed to cancel the booking of the activity.");
             }
         } catch (error) {
             console.error("Error canceling the booking of the activity:", error);
@@ -238,7 +247,11 @@ const ActivityDetails = ({ activity }) => {
             <button onClick={cancelActivityBooking} disabled={!isCancelable}>
                 Cancel Booking
             </button>
-            
+
+            {walletBalance !== null && (
+    <p><strong>Updated Wallet Balance: </strong>{walletBalance}</p>
+)}
+
             {error && <p className="error">{error}</p>}
             {!isCancelable && (
                 <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
