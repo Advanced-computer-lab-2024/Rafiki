@@ -29,7 +29,6 @@ const AdminSignup = () => {
   const [totalUsers, setTotalUsers] = useState(null);
   const [newUsersThisMonth, setNewUsersThisMonth] = useState(null);  
   const [error, setError] = useState(null);
-
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
   const [isVisibleActivities, setIsVisibleActivities] = useState(false);
@@ -51,6 +50,10 @@ const AdminSignup = () => {
 
     //     fetchCategories();
     // }, []);
+
+   
+
+
 
     const fetchOutOfStockProducts = async () => {
       try {
@@ -330,6 +333,7 @@ const AdminSignup = () => {
   return (
     <div>
       <h2>Admin Dashboard</h2>
+  
 
         {error && <p style={{ color: 'red', textAlign: 'right' }}>{error}</p>}
         {loading ? (
