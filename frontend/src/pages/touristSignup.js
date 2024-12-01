@@ -15,7 +15,7 @@ import UpcomingActivities from '../components/UpcomingActivities';
 import UpcomingItineraries from "../components/UpcomingItineraries";
 import PastActivities from "../components/PastActivities";
 import PastItineraries from "../components/PastItineraries";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 // componentsf
 import axios from 'axios';
@@ -30,8 +30,6 @@ import WishlistDetails from "../components/WishlistDetails";
 
 import { fetchItineraries, fetchItineraryRatings, submitItineraryRating } from '../components/itineraryService';
 import BookmarkDetails from "../components/BookmarkDetails";
-
-
 
 const TouristSignup = () => {
     const [ratings, setRatings] = useState({}); // To hold ratings for each activity
@@ -54,11 +52,11 @@ const TouristSignup = () => {
     const [touristId, setTouristId] = useState("67062f662447441db7434456"); //lazem login 3ashan yakhod el id lewahdo
     const [visibleSections, setVisibleSections] = useState({
         tourguides: false,
-        
-      });
 
-        // activities
-        const [activities, setActivities] = useState([]);
+    });
+
+    // activities
+    const [activities, setActivities] = useState([]);
     const [isVisibleActivities, setIsVisibleActivities] = useState(false);
     const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
     const [isVisibleCategorySearch, setIsVisibleCategorySearch] = useState(false);
@@ -69,121 +67,109 @@ const TouristSignup = () => {
     const [category, setCategory] = useState('');
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
-    const [transportationData, setTransportationData ] = useState([]);
+    const [transportationData, setTransportationData] = useState([]);
     const { flaggedActivities } = useFlaggedActivities();
 
 
     const location = useLocation();
     const promoCode = location.state?.promoCode;
-   
-  
-    
-        //museums
-        const [museums, setMuseums] = useState(null); 
-        const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
-        const [isVisibleTagSearchMuseums, setIsVisibleTagSearchMuseums] = useState(false);
-        const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
-        const [tagMuseum, setTagMuseum] = useState('');
-        const [nameMuseum, setNameMuseum] = useState('');
 
-    
-        //itineraries
-        const [itineraries, setItineraries] = useState(null);
-        const [isVisibleItineraries, setIsVisibleItineraries] = useState(false);
-        const [isVisibleLanguageFilter, setIsVisibleLanguageFilter] = useState(false);
-        const [isVisibleBudgetFilterItinerary, setIsVisibleBudgetFilterItinerary] = useState(false);
-        const [isVisibleDateFilterItinerary, setIsVisibleDateFilterItinerary] = useState(false);
-        const [isVisiblePriceSortItinerary, setIsVisiblePriceSortItinerary] = useState(false);
-        const [languageItinerary, setLanguageItinerary] = useState('');
-        const [budgetItinerary, setBudgetItinerary] = useState('');
-        const [dateItinerary, setDateItinerary] = useState('');
 
-        
-        const [selectedTourist, setSelectedTourist] = useState(null);
-        const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
-        const [isVisibleSearchWishlist, setIsVisibleSearchWishlist] = useState(false);
-        const [Wishlistusername, setWishlistUsername] = useState("");
 
-        const [isVisibleActivityBookmark, setIsVisibleActivityBookmark] = useState(false);
-        const [isVisibleMuseumBookmark, setIsVisibleMuseumBookmark] = useState(false);
-        const [isVisibleItineraryBookmark, setIsVisibleItineraryBookmark] = useState(false);
-        const [bookmarkusername, setbookmarkUsername] = useState("");
+    //museums
+    const [museums, setMuseums] = useState(null);
+    const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
+    const [isVisibleTagSearchMuseums, setIsVisibleTagSearchMuseums] = useState(false);
+    const [isVisibleSearchMuseums, setIsVisibleSearchMuseums] = useState(false);
+    const [tagMuseum, setTagMuseum] = useState('');
+    const [nameMuseum, setNameMuseum] = useState('');
 
-        const toggleRedemptionForm = (tourist) => {
-            setSelectedTourist(tourist);
-            setIsRedemptionVisible(!isRedemptionVisible);
-        };
 
-        
-    
+    //itineraries
+    const [itineraries, setItineraries] = useState(null);
+    const [isVisibleItineraries, setIsVisibleItineraries] = useState(false);
+    const [isVisibleLanguageFilter, setIsVisibleLanguageFilter] = useState(false);
+    const [isVisibleBudgetFilterItinerary, setIsVisibleBudgetFilterItinerary] = useState(false);
+    const [isVisibleDateFilterItinerary, setIsVisibleDateFilterItinerary] = useState(false);
+    const [isVisiblePriceSortItinerary, setIsVisiblePriceSortItinerary] = useState(false);
+    const [languageItinerary, setLanguageItinerary] = useState('');
+    const [budgetItinerary, setBudgetItinerary] = useState('');
+    const [dateItinerary, setDateItinerary] = useState('');
 
-        const handleRateActivity = async (activityId, rating, comment) => {
-            try {
-                await submitRating(activityId, rating, comment, nameBeforeRating); // Pass nameBeforeRating here
-                const updatedRatings = await fetchRatings(activityId); // Fetch the latest ratings after submitting
-                setRatings(prevRatings => ({
-                    ...prevRatings,
-                    [activityId]: updatedRatings,
-                }));
-                console.log("Rating submitted successfully for", nameBeforeRating);
-            } catch (error) {
-                console.error("Failed to submit rating:", error);
-            }
-        };
-        const handleRateItinerary = async (itineraryId, rating, comment) => {
-            console.log("Submitting rating for itinerary:", itineraryId, rating, comment); // Log details
-            try {
-                const newRating = await submitItineraryRating(itineraryId, rating, comment, nameBeforeRating);
-                setRatings(prevRatings => ({
-                    ...prevRatings,
-                    [itineraryId]: [...(prevRatings[itineraryId] || []), newRating],
-                }));
-                console.log("Rating submitted successfully for", nameBeforeRating);
-            } catch (error) {
-                console.error("Failed to submit rating:", error);
-            }
-        };
-        
-        
-        
 
-        
-        
+    const [selectedTourist, setSelectedTourist] = useState(null);
+    const [isRedemptionVisible, setIsRedemptionVisible] = useState(false);
+    const [isVisibleSearchWishlist, setIsVisibleSearchWishlist] = useState(false);
+    const [Wishlistusername, setWishlistUsername] = useState("");
 
-        const handleRateProduct = async (productId, rating, comment) => {
-            try {
-                await submitproductRating(productId, rating, comment, nameBeforeRating); // Submit the rating
-                const updatedRatings = await fetchproductRatings(productId); // Fetch the updated ratings
-        
-                // Update state with the new ratings
-                setRatings(prevRatings => ({
-                    ...prevRatings,
-                    [productId]: updatedRatings,
-                }));
-        
-                console.log("Rating submitted successfully for", nameBeforeRating);
-            } catch (error) {
-                console.error("Failed to submit rating:", error);
-            }
-        };
-        
-        
-        
-        
-        
-        
-        const TouristChangePassword = () => (
-            <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
-          );
+    const [isVisibleActivityBookmark, setIsVisibleActivityBookmark] = useState(false);
+    const [isVisibleMuseumBookmark, setIsVisibleMuseumBookmark] = useState(false);
+    const [isVisibleItineraryBookmark, setIsVisibleItineraryBookmark] = useState(false);
+    const [bookmarkusername, setbookmarkUsername] = useState("");
+    const [username, setUsername] = useState('');
+
+    const [isCartVisible, setIsCartVisible] = useState(false);
+    const [cartItems, setCartItems] = useState([]);
+    const [name, setName] = useState('');
+
+    const toggleRedemptionForm = (tourist) => {
+        setSelectedTourist(tourist);
+        setIsRedemptionVisible(!isRedemptionVisible);
+    };
+
+    const handleRateActivity = async (activityId, rating, comment) => {
+        try {
+            await submitRating(activityId, rating, comment, nameBeforeRating); // Pass nameBeforeRating here
+            const updatedRatings = await fetchRatings(activityId); // Fetch the latest ratings after submitting
+            setRatings(prevRatings => ({
+                ...prevRatings,
+                [activityId]: updatedRatings,
+            }));
+            console.log("Rating submitted successfully for", nameBeforeRating);
+        } catch (error) {
+            console.error("Failed to submit rating:", error);
+        }
+    };
+    const handleRateItinerary = async (itineraryId, rating, comment) => {
+        console.log("Submitting rating for itinerary:", itineraryId, rating, comment); // Log details
+        try {
+            const newRating = await submitItineraryRating(itineraryId, rating, comment, nameBeforeRating);
+            setRatings(prevRatings => ({
+                ...prevRatings,
+                [itineraryId]: [...(prevRatings[itineraryId] || []), newRating],
+            }));
+            console.log("Rating submitted successfully for", nameBeforeRating);
+        } catch (error) {
+            console.error("Failed to submit rating:", error);
+        }
+    };
+
+    const handleRateProduct = async (productId, rating, comment) => {
+        try {
+            await submitproductRating(productId, rating, comment, nameBeforeRating); // Submit the rating
+            const updatedRatings = await fetchproductRatings(productId); // Fetch the updated ratings
+
+            // Update state with the new ratings
+            setRatings(prevRatings => ({
+                ...prevRatings,
+                [productId]: updatedRatings,
+            }));
+
+            console.log("Rating submitted successfully for", nameBeforeRating);
+        } catch (error) {
+            console.error("Failed to submit rating:", error);
+        }
+    };
+
+    const TouristChangePassword = () => (
+        <ChangePasswordForm apiEndpoint="/api/TouristRoute/changePassword" />
+    );
     const showFlightPopup = () => setIsFlightPopupVisible(true);
     const hideFlightPopup = () => setIsFlightPopupVisible(false);
     const [isTransportationPopupVisible, setIsTransportationPopupVisible] = useState(false);
     const showTransportationPopup = () => setIsTransportationPopupVisible(true);
     const hideTransportationPopup = () => setIsTransportationPopupVisible(false);
     const [nameBeforeRating, setNameBeforeRating] = useState(''); // New state for the entered name
-
-
-    
 
     const handleRateButtonClick = (activityId) => {
         const name = prompt("Please enter your name to rate this activity:");
@@ -192,7 +178,7 @@ const TouristSignup = () => {
             return;
         }
 
-        
+
         const tourist = tourists?.find(t => t.Username?.toLowerCase() === name.toLowerCase());
         if (tourist && tourist.attendedActivities?.includes(activityId)) {
             setNameBeforeRating(name); // Set the entered name
@@ -201,8 +187,6 @@ const TouristSignup = () => {
             alert("You must have attended this activity to rate it.");
         }
     };
-
-
 
     const handleRateButtonClick1 = (itineraryId) => {
         const name = prompt("Please enter your name to rate this itinerary:");
@@ -219,8 +203,6 @@ const TouristSignup = () => {
         }
     };
 
-
-
     const handleRateProductButtonClick = (productId) => {
         const name = prompt("Please enter your name to rate this product:");
         if (!name) {
@@ -235,11 +217,6 @@ const TouristSignup = () => {
             alert("You must have purchased this product to rate it.");
         }
     };
-
-
-    
-
-    
 
     // axios get request for transportation
     const fetchTransportationData = async () => {
@@ -279,7 +256,7 @@ const TouristSignup = () => {
                 console.error("Departure date and time are required.");
                 return;
             }
-    
+
             // Step 2: Get access token
             const tokenResponse = await axios.post(
                 'https://test.api.amadeus.com/v1/security/oauth2/token',
@@ -292,10 +269,10 @@ const TouristSignup = () => {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }
             );
-    
+
             const accessToken = tokenResponse.data.access_token;
             console.log("Access Token:", accessToken);
-    
+
             // Step 3: Configure Axios with access token
             const amadeus = axios.create({
                 baseURL: 'https://test.api.amadeus.com/v2',
@@ -304,14 +281,14 @@ const TouristSignup = () => {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-    
+
             // Step 4: Format travelers data
             const travelersData = flightData.travelers.map((traveler, index) => ({
                 id: `${index + 1}`,
                 travelerType: "ADULT",  // Adjust as needed for different traveler types
                 name: { firstName: traveler.name.split(" ")[0], lastName: traveler.name.split(" ")[1] || '' }
             }));
-    
+
             // Step 5: Make the API request to fetch flight offers
             const response = await amadeus.post('/shopping/flight-offers', {
                 originDestinations: [
@@ -328,7 +305,7 @@ const TouristSignup = () => {
                 sources: ["GDS"],
                 travelers: travelersData
             });
-    
+
             // Step 6: Check if response data is as expected
             if (response.data && response.data.data) {
                 setFlightPopupData(response.data.data);
@@ -337,7 +314,7 @@ const TouristSignup = () => {
             } else {
                 console.error("Unexpected response format:", response.data);
             }
-    
+
         } catch (error) {
             // Enhanced error logging
             console.error('Request failed:', error.message || 'An error occurred');
@@ -348,7 +325,6 @@ const TouristSignup = () => {
             console.error('Request config:', error.config);
         }
     }
-    
 
     const handleSearchForFlight = async (e) => {
         e.preventDefault();
@@ -420,7 +396,6 @@ const TouristSignup = () => {
         }
     };
 
-   
     useEffect(() => {
         const fetchTourguides = async () => {
             try {
@@ -439,22 +414,19 @@ const TouristSignup = () => {
         const savedRatings = JSON.parse(localStorage.getItem('ratings')) || {};
         setRatings(savedRatings);
     }, []); // Runs only on mount
-    
+
     useEffect(() => {
         if (Object.keys(ratings).length) {
             localStorage.setItem('ratings', JSON.stringify(ratings));
         }
     }, [ratings]);
 
-
-   
-
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 const activities = await fetchActivities();
                 setActivities(activities);
-    
+
                 // Fetch ratings for each activity
                 const allRatings = {};
                 for (const activity of activities) {
@@ -466,18 +438,16 @@ const TouristSignup = () => {
                 console.error('Error loading data:', error);
             }
         };
-    
+
         fetchInitialData();
     }, []);
-
-
 
     useEffect(() => {
         const fetchInitialData1 = async () => {
             try {
                 const itineraries = await fetchItineraries();
                 setItineraries(itineraries);
-    
+
                 // Fetch ratings for each activity
                 const allRatings = {};
                 for (const itinerary of itineraries) {
@@ -489,12 +459,9 @@ const TouristSignup = () => {
                 console.error('Error loading data:', error);
             }
         };
-    
+
         fetchInitialData1();
     }, []);
-
-
-
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -502,7 +469,7 @@ const TouristSignup = () => {
                 // Make sure you are calling fetchProducts()
                 const fetchedProducts = await fetchProductss();
                 setProducts(fetchedProducts);
-    
+
                 const allRatings = {};
                 for (const product of fetchedProducts) {
                     const productRatings = await fetchproductRatings(product._id);
@@ -516,18 +483,7 @@ const TouristSignup = () => {
         fetchInitialData();
     }, []); // Runs once when the component mounts
 
-
-
-
-
-
-
-
-
-
-
     const visibleActivities = activities.filter(activity => !flaggedActivities.includes(activity._id));
-
 
     const handleTagSearch = async () => {
         const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
@@ -597,9 +553,6 @@ const TouristSignup = () => {
         }
     };
 
-
-
-
     //itineraries
     useEffect(() => {
         const fetchItinerary = async () => {
@@ -645,8 +598,8 @@ const TouristSignup = () => {
     };
 
     const toggleVisibility = (section) => {
-    setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
-  };
+        setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
+    };
 
     // Fetch tourists
     useEffect(() => {
@@ -667,42 +620,42 @@ const TouristSignup = () => {
     };
     const handleRateTourGuide = async (tourGuideId) => {
         const touristName = prompt("Please enter your name to rate this tour guide:");
-        
+
         if (!touristName) {
             alert("Name is required to rate the tour guide.");
             return;
         }
-    
+
         // Find the tourist by name
         const tourist = tourists?.find(t => t.Username?.toLowerCase() === touristName.toLowerCase());
-    
+
         if (!tourist) {
             alert("Tourist not found. Please enter a valid tourist name.");
             return;
         }
-    
+
         // Check if the tourist has attended any itinerary under this tour guide
-        const hasAttendedItineraryWithGuide = itineraries?.some(itinerary => 
-            itinerary.tourGuideId === tourGuideId && 
+        const hasAttendedItineraryWithGuide = itineraries?.some(itinerary =>
+            itinerary.tourGuideId === tourGuideId &&
             tourist.attendedItineraries.includes(itinerary._id)
         );
-    
+
         if (!hasAttendedItineraryWithGuide) {
             alert("You can only rate a tour guide for itineraries you've attended with them.");
             return;
         }
-    
+
         // Prompt for rating and comment
         const rating = parseInt(prompt("Please enter your rating (1-5):"), 10);
         const comment = prompt("Leave a comment for the tour guide:");
-    
+
         try {
             const response = await axios.post(`/api/tourguideRoute/${tourGuideId}/ratings`, {
                 name: touristName, // Use 'name' to match the schema
                 rating,
                 comment
             });
-            
+
             if (response.status === 200) {
                 alert("Thank you! Your rating has been submitted.");
             } else {
@@ -712,8 +665,7 @@ const TouristSignup = () => {
             alert("Error submitting rating: " + error.message);
         }
     };
-    
-    
+
     // Fetch activities with filters
     const fetchProducts = async () => {
         const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
@@ -745,14 +697,14 @@ const TouristSignup = () => {
             alert("Name is required to purchase the product.");
             return;
         }
-    
+
         // Find the tourist based on the provided name
         const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
         if (!tourist) {
             alert("Tourist not found. Please ensure your name is correct.");
             return;
         }
-    
+
         try {
             // Send a POST request to the API endpoint to complete the purchase
             const response = await fetch(`/api/TouristRoute/PurchaseProduct`, {
@@ -760,7 +712,7 @@ const TouristSignup = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ touristId: tourist._id, ProductId: productId })
             });
-    
+
             // Check if the response is successful
             if (response.ok) {
                 alert("Product purchased successfully!");
@@ -771,25 +723,100 @@ const TouristSignup = () => {
             console.error("Error purchasing product:", error);
         }
     };
-    
+
     const addProductToWishlist = async (username, productId) => {
-          const response = await fetch('/api/wishlistRoute', {
+        const response = await fetch('/api/wishlistRoute', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({ username, productId }),
-          });
-      };
-
-      const addItemToBookmark = async (username, itemId,type) => {
-        const response = await fetch('/api/bookmarkRoute', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, itemId,type }),
         });
+    };
+
+    const addItemToBookmark = async (username, itemId, type) => {
+        const response = await fetch('/api/bookmarkRoute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, itemId, type }),
+        });
+    };
+
+    const handleAddToCart = async (productId, username) => {
+        try {
+            // alert to add username to username field
+            if (!username) {
+                alert("Please enter your username to add the product to cart.");
+                return;
+            }
+
+            console.log('Adding product to cart...', productId, username);
+
+            const response = await axios.post('/api/cartRoute', {
+                productId,
+                username,
+                amount: 1, // Default amount to add
+            });
+
+            alert(response.data.message); // Show success message
+        } catch (error) {
+            console.error('Error adding product to cart:', error.response?.data || error.message);
+            alert('Failed to add product to cart.');
+        }
+    };
+
+    const handleShowCart = async () => {
+        console.log('Fetching cart items for:', name);
+        if (name) {
+            try {
+                const response = await axios.get(`/api/cartRoute/${name}`);
+                console.log('Cart items:', response.data);
+
+                // Assuming response.data.products contains the cart items
+                setCartItems(response.data.products || []);  // Update state with cart items or empty array if no products
+                setIsCartVisible(true);  // Show the cart section
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
+                // Handle error appropriately
+            }
+        } else {
+            alert('Please enter a name.');
+        }
+    };
+
+    // Increase item amount
+    const handleIncreaseAmount = async (productId) => {
+        try {
+            await axios.post('/api/cartRoute/updateAmount', { username: name, productId, amount: 1 });
+            // Re-fetch cart after updating the amount
+            handleShowCart();
+        } catch (error) {
+            console.error('Error increasing amount:', error);
+        }
+    };
+
+    // Decrease item amount
+    const handleDecreaseAmount = async (productId) => {
+        try {
+            await axios.post('/api/cartRoute/updateAmount', { username: name, productId, amount: -1 });
+            // Re-fetch cart after updating the amount
+            handleShowCart();
+        } catch (error) {
+            console.error('Error decreasing amount:', error);
+        }
+    };
+
+    // Remove item from cart
+    const handleRemoveItem = async (productId, amount) => {
+        try {
+            await axios.post('/api/cartRoute/remove', { username: name, productId, amount });
+            // Re-fetch cart after removing the product
+            handleShowCart();
+        } catch (error) {
+            console.error('Error removing item from cart:', error);
+        }
     };
 
     return (
@@ -818,119 +845,162 @@ const TouristSignup = () => {
                     ))}
                 </div>
             )}
- <button onClick={() => toggleVisibility('tourguides')}>
-    {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
-</button>
-{visibleSections.tourguides && (
-    <div className="tourguides">
-    {tourguides && tourguides.map(tourguide => (
-        <div key={tourguide._id}>
-            <TourguideDetails tourguide={tourguide} />
+            <button onClick={() => toggleVisibility('tourguides')}>
+                {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
+            </button>
+            {visibleSections.tourguides && (
+                <div className="tourguides">
+                    {tourguides && tourguides.map(tourguide => (
+                        <div key={tourguide._id}>
+                            <TourguideDetails tourguide={tourguide} />
 
-            {/* Rate Button for Each Tour Guide */}
-            <button onClick={() => handleRateTourGuide(tourguide._id)}>Rate</button>
+                            {/* Rate Button for Each Tour Guide */}
+                            <button onClick={() => handleRateTourGuide(tourguide._id)}>Rate</button>
 
-            {/* Display Existing Ratings */}
-            <div>
-                <h5>Existing Ratings:</h5>
-                {tourguide.ratings && tourguide.ratings.length > 0 ? (
-                    tourguide.ratings.map((entry, index) => (
-                        <p key={index}>
-                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                        </p>
-                    ))
-                ) : (
-                    <p>No ratings available for this tour guide.</p>
-                )}
-            </div>
-        </div>
-    ))}
-</div>
-)}
+                            {/* Display Existing Ratings */}
+                            <div>
+                                <h5>Existing Ratings:</h5>
+                                {tourguide.ratings && tourguide.ratings.length > 0 ? (
+                                    tourguide.ratings.map((entry, index) => (
+                                        <p key={index}>
+                                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p>No ratings available for this tour guide.</p>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
-             {/* Render RedemptionForm if visible */}
-             {isRedemptionVisible && selectedTourist && (
+            {/* Render RedemptionForm if visible */}
+            {isRedemptionVisible && selectedTourist && (
                 <RedemptionForm
                     tourist={selectedTourist}
                     onClose={() => setIsRedemptionVisible(false)}
                 />
             )}
 
+            <button onClick={handleProductClick}>
+                {isProductVisible ? 'Hide' : 'Show'} Product Details
+            </button>
+            {isProductVisible && (
+                <div className="products">
+                    {products.length > 0 ? (
+                        products.map((product) => (
+                            <div key={product._id} className="product-item">
+                                <ProductDetails product={product} />
+                                <input
+                                    type="text"
+                                    placeholder="Enter Username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
 
-<button onClick={handleProductClick}>
-        {isProductVisible ? 'Hide' : 'Show'} Product Details
-      </button>
-     {isProductVisible && (
-        <div className="products">
-            {products.length > 0 ? (
-                products.map((product) => (
-                    <div key={product._id} className="product-item">
-                        <ProductDetails product={product} />
-                   
-                    
-                    <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
-                    <button onClick={() => handleRateProductButtonClick(product._id)}>
-                        {visibleRating[product._id] ? "Hide Rating" : "Rate"}
-                    </button>
+                                <button type="button" onClick={() => handleAddToCart(product._id, username)}>
+                                    Add to cart
+                                </button>
 
-                    {visibleRating[product._id] && (
-                        <Rating
-                            itemId={product._id}
-                            onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
-                        />
+                                <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
+                                <button onClick={() => handleRateProductButtonClick(product._id)}>
+                                    {visibleRating[product._id] ? "Hide Rating" : "Rate"}
+                                </button>
+
+                                {visibleRating[product._id] && (
+                                    <Rating
+                                        itemId={product._id}
+                                        onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
+                                    />
+                                )}
+
+                                {/* Existing Ratings Section */}
+                                <h5>Existing Ratings:</h5>
+                                {(ratings[product._id] || []).map((entry, index) => (
+                                    <p key={index}>
+                                        <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                                    </p>
+                                ))}
+
+                                <div>
+                                    {/* Toggle Button */}
+                                    <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
+                                        {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
+                                    </button>
+
+                                    {/* Input Field and Search Button */}
+                                    {isVisibleSearchWishlist && (
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Enter Username"
+                                                value={Wishlistusername}
+                                                onChange={(e) => setWishlistUsername(e.target.value)}
+                                            />
+                                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
+                                                Add to Wishlist
+                                            </button> </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No products found.</p>
                     )}
-
-                    {/* Existing Ratings Section */}
-                    <h5>Existing Ratings:</h5>
-                    {(ratings[product._id] || []).map((entry, index) => (
-                        <p key={index}>
-                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                        </p>
-                    ))}
-
-<div>
-                        {/* Toggle Button */}
-                        <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
-                            {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
-                        </button>
-
-                        {/* Input Field and Search Button */}
-                        {isVisibleSearchWishlist && (
-                            <div>
-                            <input
-                                type="text"
-                                placeholder="Enter Username"
-                                value={Wishlistusername}
-                                onChange={(e) => setWishlistUsername(e.target.value)}
-                            />
-                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
-                             Add to Wishlist
-                             </button> </div>
-                        )}
-                    </div>
                 </div>
-            ))
-        ) : (
-            <p>No products found.</p>
-        )}
-    </div>
-)}
-  <UpcomingActivities touristId={touristId} />
-  <UpcomingItineraries touristId={touristId} />
-  <PastActivities touristId={touristId} />
-  <PastItineraries touristId={touristId} />
+            )}
 
-
-            <BookmarkDetails/>
+            <UpcomingActivities touristId={touristId} />
+            <UpcomingItineraries touristId={touristId} />
+            <PastActivities touristId={touristId} />
+            <PastItineraries touristId={touristId} />
+            <BookmarkDetails />
             <WishlistDetails />
             <div></div>
             {/* Tourist Signup Form */}
-           
+            <TouristForm />
             <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
             <h4>Complaint:</h4>
             <ComplainCreateForm />
 
             <h4>Activities:</h4>
+
+            <div>
+                <button onClick={() => setIsCartVisible(!isCartVisible)}>
+                    {isCartVisible ? 'Hide' : 'Show'} Cart
+                </button>
+
+                {isCartVisible && (
+                    <div className="cart">
+                        <input
+                            type="text"
+                            placeholder="Enter name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <button onClick={handleShowCart}>Show Cart</button>
+
+                        {cartItems.length > 0 ? (
+                            <div className="cart-items">
+                                {cartItems.map((item) => (
+                                    <div key={item._id} className="cart-item">
+                                        <p>{item.product.Name} - ${item.product.Price} (Amount: {item.amount})</p>
+                                        <button onClick={() => handleIncreaseAmount(item.product._id)}>+</button>
+                                        <button onClick={() => handleDecreaseAmount(item.product._id)}>-</button>
+                                        <button onClick={() => handleRemoveItem(item.product._id, item.amount)}>Remove</button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p>No items in cart.</p>
+                        )}
+
+                        { /* this button must redirect us to checkout page */}
+                        <button>checkout</button>
+                    </div>
+                )}
+            </div>
 
             {/* Search for transportaion */}
 
@@ -1121,55 +1191,55 @@ const TouristSignup = () => {
 
 
             {isVisibleActivities && (
-      <div className="activities">
-      {visibleActivities.map(activity => (
-          <div key={activity._id}>
-              <ActivityDetails activity={activity} />
-              <button onClick={() => handleRateButtonClick(activity._id)}>
-                  {visibleRating[activity._id] ? "Hide Rating" : "Rate"}
-              </button>
-              {visibleRating[activity._id] && (
-    <Rating
-        itemId={activity._id}
-        onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
-    />
-)}
+                <div className="activities">
+                    {visibleActivities.map(activity => (
+                        <div key={activity._id}>
+                            <ActivityDetails activity={activity} />
+                            <button onClick={() => handleRateButtonClick(activity._id)}>
+                                {visibleRating[activity._id] ? "Hide Rating" : "Rate"}
+                            </button>
+                            {visibleRating[activity._id] && (
+                                <Rating
+                                    itemId={activity._id}
+                                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
+                                />
+                            )}
 
-             <div>
-    <h5>Existing Ratings:</h5>
-    {activity.ratings && activity.ratings.length > 0 ? (
-                    activity.ratings.map((entry, index) => (
-                        <p key={index}>
-                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                        </p>
-                    ))
-                ) : (
-                    <p>No ratings available for this Activity.</p>
-                )}
-</div>  
-                    {/* Toggle Button */}
-                        <button onClick={() => setIsVisibleActivityBookmark(!isVisibleActivityBookmark)}>
-                            {isVisibleActivityBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-                        </button>
-
-                        {/* Input Field and Search Button */}
-                        {isVisibleActivityBookmark && (
                             <div>
-                            <input
-                                type="text"
-                                placeholder="Enter Username"
-                                value={bookmarkusername}
-                                onChange={(e) => setbookmarkUsername(e.target.value)}
-                            />
-                            <button onClick={() => addItemToBookmark(bookmarkusername, activity._id, 'Activities')}>
-                             Add to Bookmark
-                             </button> </div>
-                        )}
-          </div>
-      ))}
-</div>
-)}
- 
+                                <h5>Existing Ratings:</h5>
+                                {activity.ratings && activity.ratings.length > 0 ? (
+                                    activity.ratings.map((entry, index) => (
+                                        <p key={index}>
+                                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p>No ratings available for this Activity.</p>
+                                )}
+                            </div>
+                            {/* Toggle Button */}
+                            <button onClick={() => setIsVisibleActivityBookmark(!isVisibleActivityBookmark)}>
+                                {isVisibleActivityBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+                            </button>
+
+                            {/* Input Field and Search Button */}
+                            {isVisibleActivityBookmark && (
+                                <div>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Username"
+                                        value={bookmarkusername}
+                                        onChange={(e) => setbookmarkUsername(e.target.value)}
+                                    />
+                                    <button onClick={() => addItemToBookmark(bookmarkusername, activity._id, 'Activities')}>
+                                        Add to Bookmark
+                                    </button> </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <br />
             <h4>Museums:</h4>
 
@@ -1210,36 +1280,34 @@ const TouristSignup = () => {
             </button>
 
             {isVisibleMuseums && (
-    <div className="museums">
-        {museums && museums.map(museum => (
-            <div key={museum._id}>
-                <MuseumDetails museum={museum} />
-               <div>
-                {/* Toggle Button */}
-                <button onClick={() => setIsVisibleMuseumBookmark(!isVisibleMuseumBookmark)}>
-                    {isVisibleMuseumBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-                    </button>
+                <div className="museums">
+                    {museums && museums.map(museum => (
+                        <div key={museum._id}>
+                            <MuseumDetails museum={museum} />
+                            <div>
+                                {/* Toggle Button */}
+                                <button onClick={() => setIsVisibleMuseumBookmark(!isVisibleMuseumBookmark)}>
+                                    {isVisibleMuseumBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+                                </button>
 
-                 {/* Input Field and Search Button */}
-                    {isVisibleMuseumBookmark && (
-                        <div>
-                        <input
-                            type="text"
-                            placeholder="Enter Username"
-                            value={bookmarkusername}
-                            onChange={(e) => setbookmarkUsername(e.target.value)}
-                        />
-                        <button onClick={() => addItemToBookmark(bookmarkusername, museum._id, 'Museums')}>
-                         Add to Bookmark
-                         </button> </div>
-                )}
-                 </div>
-            </div>
-        ))}
-    </div>
- )}
-
-
+                                {/* Input Field and Search Button */}
+                                {isVisibleMuseumBookmark && (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter Username"
+                                            value={bookmarkusername}
+                                            onChange={(e) => setbookmarkUsername(e.target.value)}
+                                        />
+                                        <button onClick={() => addItemToBookmark(bookmarkusername, museum._id, 'Museums')}>
+                                            Add to Bookmark
+                                        </button> </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             <br />
             <h4>Itineraries:</h4>
@@ -1290,8 +1358,6 @@ const TouristSignup = () => {
                 </div>
             )}
 
-
-
             {/* Sort by Price */}
             <button onClick={() => setIsVisiblePriceSortItinerary(!isVisiblePriceSortItinerary)}>
                 {isVisiblePriceSortItinerary ? 'Hide' : 'Sort by Price'}
@@ -1311,71 +1377,71 @@ const TouristSignup = () => {
                         <div key={itinerary._id}>
                             <ItineraryDetails itinerary={itinerary} />
                             <button onClick={() => handleRateButtonClick1(itinerary._id)}>
-                  {visibleRating[itinerary._id] ? "Hide Rating" : "Rate"}
-              </button>
-              {visibleRating[itinerary._id] && (
-    <Rating
-    itemId={itinerary._id} // Ensure this prop is set correctly
-    onRate={(id, rating, comment) => handleRateItinerary(id, rating, comment)}
-/>
+                                {visibleRating[itinerary._id] ? "Hide Rating" : "Rate"}
+                            </button>
+                            {visibleRating[itinerary._id] && (
+                                <Rating
+                                    itemId={itinerary._id} // Ensure this prop is set correctly
+                                    onRate={(id, rating, comment) => handleRateItinerary(id, rating, comment)}
+                                />
 
-)}
+                            )}
 
-    <div>
-    {itinerary.active ? (
-  <div>
-    {/* Display Existing Ratings */}
-    <h5>Existing Ratings:</h5>
-    {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
-      itinerary.ratings.map((entry, index) => (
-        <p key={index}>
-          <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-        </p>
-      ))
-    ) : (
-      <p>No ratings available for this Itinerary.</p>
-    )}
+                            <div>
+                                {itinerary.active ? (
+                                    <div>
+                                        {/* Display Existing Ratings */}
+                                        <h5>Existing Ratings:</h5>
+                                        {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
+                                            itinerary.ratings.map((entry, index) => (
+                                                <p key={index}>
+                                                    <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                                                </p>
+                                            ))
+                                        ) : (
+                                            <p>No ratings available for this Itinerary.</p>
+                                        )}
 
-    {/* Toggle Button for Bookmarking */}
-    <div>
-      <button onClick={() => setIsVisibleItineraryBookmark(!isVisibleItineraryBookmark)}>
-        {isVisibleItineraryBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-      </button>
+                                        {/* Toggle Button for Bookmarking */}
+                                        <div>
+                                            <button onClick={() => setIsVisibleItineraryBookmark(!isVisibleItineraryBookmark)}>
+                                                {isVisibleItineraryBookmark ? 'Hide' : 'Add to Bookmark by Username'}
+                                            </button>
 
-      {/* Input Field and Add to Bookmark Button */}
-      {isVisibleItineraryBookmark && (
-        <div>
-          <input
-            type="text"
-            placeholder="Enter Username"
-            value={bookmarkusername}
-            onChange={(e) => setbookmarkUsername(e.target.value)} // Set username
-          />
-          <button
-            onClick={() => {
-              if (bookmarkusername.trim() !== "") {
-                addItemToBookmark(bookmarkusername, itinerary._id, 'Itineraries');
-              } else {
-                alert("Please enter a username.");
-              }
-            }}
-          >
-            Add to Bookmark
-          </button>
-        </div>
-      )}
-    </div>
-  </div>
-) : null}
+                                            {/* Input Field and Add to Bookmark Button */}
+                                            {isVisibleItineraryBookmark && (
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter Username"
+                                                        value={bookmarkusername}
+                                                        onChange={(e) => setbookmarkUsername(e.target.value)} // Set username
+                                                    />
+                                                    <button
+                                                        onClick={() => {
+                                                            if (bookmarkusername.trim() !== "") {
+                                                                addItemToBookmark(bookmarkusername, itinerary._id, 'Itineraries');
+                                                            } else {
+                                                                alert("Please enter a username.");
+                                                            }
+                                                        }}
+                                                    >
+                                                        Add to Bookmark
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : null}
 
-    </div>
+                            </div>
 
-          </div>
-      ))}
-</div>
-)}
-           
-    
+
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <TouristChangePassword />
             {isHotelPopupVisible && <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />}
             {isFlightPopupVisible && <FlightPopup flights={flightPopupData} onClose={hideFlightPopup} />}
