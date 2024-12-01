@@ -1,6 +1,7 @@
 const TouristModel = require('../models/Tourist'); // Import the Tourist model
 const ActivityModel = require('../models/activity')
 const ItineraryModel = require('../models/itinerary')
+const MuseumModel = require('../models/museum')
 const bcrypt = require('bcrypt'); // Ensure you have this imported for password hashing
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
@@ -436,6 +437,49 @@ const cancelItineraryBooking = async (req, res) => {
 };
 
 
+const cancelMuseumBooking = async (req, res) => {
+  const { touristId, museumId } = req.body;
+
+  try {
+      // Find the tourist
+      const tourist = await TouristModel.findById(touristId);
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      // Find the museum to get the amount paid
+      const museum = await MuseumModel.findById(museumId);
+      if (!museum) {
+          return res.status(404).json({ message: "museum not found." });
+      }
+
+      // Refund the tourist's wallet
+      tourist.Wallet += museum.ticketPrices;  // Add the museum's price back to the wallet
+
+      // Remove the museum from the tourist's paidmuseum
+      const updatedTourist = await TouristModel.findByIdAndUpdate(
+          touristId,
+          { 
+              $pull: { 
+                BookedMuseums: museumId 
+              }, 
+              Wallet: tourist.Wallet  // Update the wallet balance
+          },
+          { new: true }
+      ).populate('BookedMuseums'); // Populate BookedMuseums to show updated list
+
+      res.status(200).json({
+          message: "Museum booking canceled successfully. ",
+          newWalletBalance: updatedTourist.Wallet,  // Return the updated wallet balance
+          BookedMuseums: updatedTourist.BookedMuseums  // Return updated list of booked museums
+      });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+
+
 const incrementBookedActivity = async (req, res) => {
   const { id } = req.params;
 
@@ -749,4 +793,4 @@ module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTour
   incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
-    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance};
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking};

@@ -204,7 +204,12 @@ const processMuseumPayment = async (req, res) => {
         // Save updated tourist data
         await tourist.save();
 
-
+        await TouristModel.findByIdAndUpdate(
+            touristId,
+            { $addToSet: { BookedMuseums: museumId } }, // Add the activity to the list
+            { new: true }
+          );
+      
         
   
         // Respond with success message and payment details
