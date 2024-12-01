@@ -42,6 +42,42 @@ const addProductToCart = async (req, res) => {
     }
 };
 
+const updateProductAmount = async (req, res) => {
+    console.log(req.body);
+    const { username, productId, amount } = req.body;
+
+    try {
+        const cart = await Cart.findOne({ Username: username });
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found for the specified user' });
+        }
+
+        const productIndex = cart.Products.findIndex(p => p.product.toString() === productId);
+        if (productIndex === -1) {
+            return res.status(404).json({ message: 'Product not found in the cart' });
+        }
+
+        const updatedAmount = cart.Products[productIndex].amount + amount;
+        if (updatedAmount <= 0) {
+            // If amount is zero or less, remove the product
+            cart.Products.splice(productIndex, 1);
+        } else {
+            // Update the product amount
+            cart.Products[productIndex].amount = updatedAmount;
+        }
+
+        await cart.save();
+
+        res.status(200).json({
+            message: 'Cart updated successfully',
+            cart: cart
+        });
+    } catch (error) {
+        console.error('Error updating cart:', error);
+        res.status(500).json({ message: 'An error occurred while updating the cart' });
+    }
+};
+
 
 // Controller to get all products in a user's cart
 const getCartProducts = async (req, res) => {
@@ -59,42 +95,35 @@ const getCartProducts = async (req, res) => {
 };
 
 const removeProductFromCart = async (req, res) => {
-    const { username, productId, amount } = req.body; // Extract username, product ID, and amount from the request body
+    console.log(req.body);
+    const { username, productId } = req.body; // Remove the amount field since it's not necessary for complete removal
 
     try {
-        // Find the cart by username
         const cart = await Cart.findOne({ Username: username });
         if (!cart) {
             return res.status(404).json({ message: 'Cart not found for the specified user' });
         }
 
-        // Find the product in the cart
         const productIndex = cart.Products.findIndex(p => p.product.toString() === productId);
         if (productIndex === -1) {
             return res.status(404).json({ message: 'Product not found in the cart' });
         }
 
-        // Reduce the amount or remove the product entirely
-        if (cart.Products[productIndex].amount > amount) {
-            // Reduce the amount
-            cart.Products[productIndex].amount -= amount;
-        } else {
-            // Remove the product if the amount to remove is greater than or equal to the current amount
-            cart.Products.splice(productIndex, 1);
-        }
+        // Remove the product completely from the cart
+        cart.Products.splice(productIndex, 1);
 
-        // Save the updated cart
         await cart.save();
 
         res.status(200).json({
-            message: 'Product updated/removed from cart successfully',
+            message: 'Product completely removed from cart successfully',
             cart: cart
         });
     } catch (error) {
         console.error('Error removing product from cart:', error);
-        res.status(500).json({ message: 'An error occurred while updating the product in the cart' });
+        res.status(500).json({ message: 'An error occurred while removing the product from the cart' });
     }
 };
+
 
 
 const removeCompleteCart = async (req, res) => {
@@ -118,7 +147,7 @@ const removeCompleteCart = async (req, res) => {
 };
 
 module.exports = {
-    getCartProducts,addProductToCart,removeProductFromCart,removeCompleteCart
+    getCartProducts,addProductToCart,removeProductFromCart,removeCompleteCart, updateProductAmount
 };
 
 
