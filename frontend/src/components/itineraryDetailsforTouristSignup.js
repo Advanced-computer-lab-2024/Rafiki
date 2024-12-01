@@ -105,20 +105,33 @@ const cancelItineraryBooking = async () => {
       });
 
       if (response.ok) {
-          const updatedTourist = await response.json();
-          console.log("Updated Tourist:", updatedTourist);  // Log the response to check the returned data
-          
-          alert("Canceled the booking of the itinerary successfully!");
+        const result = await response.json();
+        console.log("Response:", result);
 
-          // Ensure this field is correct (check the backend response structure)
-          setWalletBalance(updatedTourist.newWalletBalance);  // Adjust this if the field name is different
-      } else {
-          alert("Failed to cancel the booking of the itinerary.");
-      }
-  } catch (error) {
-      console.error("Error canceling the booking of the itinerary:", error);
-  }
+        // Handle each case based on the backend response
+        if (result.message.includes("Refund issued")) {
+            alert(`${result.message}\nNew Wallet Balance: ${result.newWalletBalance}`);
+            setWalletBalance(result.newWalletBalance); // Update wallet balance in the UI
+        } else if (result.message.includes("Itinerary booking canceled successfully")) {
+            alert(result.message); // Booked but not paid
+        } else if (result.message.includes("This itinerary is neither booked nor paid for")) {
+            alert(result.message); // Not booked or paid
+        } else {
+            alert("Unexpected response: " + result.message);
+        }
+    } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to cancel the booking of the itinerary.");
+    }
+} catch (error) {
+    console.error("Error canceling the booking of the itinerary:", error);
+    alert("An error occurred while trying to cancel the itinerary booking.");
+}
+
+
+
 };
+
 
   const copyLinkToClipboard = () => {
     const link = `${window.location.origin}/itinerary/${itinerary._id}`;
