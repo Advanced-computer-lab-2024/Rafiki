@@ -6,10 +6,6 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
-<<<<<<< Updated upstream
-
-
-=======
 
 async function sendBirthdayPromoEmail(tourist, promoCode) {
   try {
@@ -35,7 +31,6 @@ async function sendBirthdayPromoEmail(tourist, promoCode) {
     console.error('Failed to send email:', error.message);
   }
 }
->>>>>>> Stashed changes
 
 
 const loginTourist = async (req, res) => {
