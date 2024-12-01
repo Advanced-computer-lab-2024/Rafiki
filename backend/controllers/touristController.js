@@ -6,8 +6,36 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
+<<<<<<< Updated upstream
 
 
+=======
+
+async function sendBirthdayPromoEmail(tourist, promoCode) {
+  try {
+
+    const transport = nodemailer.createTransport({
+      service: 'gmail', // Use the email service you're working with
+      auth: {
+        user: 'rafiki.info1@gmail.com', 
+        pass: 'hsyotajsdxtetmbw',
+      },
+    });
+
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com', // Replace with your email
+      to: tourist.Email, // Tourist's email
+      subject: 'Happy Birthday! 🎉 Here’s Your Promo Code!',
+      text: `Dear ${tourist.Username},\n\nHappy Birthday! 🎂 To celebrate, we’re giving you an exclusive promo code: ${promoCode.code}.\n\nEnjoy a ${promoCode.discount}% discount on your next purchase!\n\nBest wishes,\nYour App Team`,
+    };
+
+    await transport.sendMail(mailOptions);
+    console.log('Promo email sent successfully!');
+  } catch (error) {
+    console.error('Failed to send email:', error.message);
+  }
+}
+>>>>>>> Stashed changes
 
 
 const loginTourist = async (req, res) => {
