@@ -20,25 +20,27 @@ const loginAdvertiser = async (req, res) => {
   const { Username, Password } = req.body;
 
   try {
-      const tourist = await AdvertiserModel.findOne({ Username });
-      if (!tourist) {
-          return res.status(404).json({ message: "Adveriser not found." });
-      }
+    // Find advertiser by username
+    const advertiser = await AdvertiserModel.findOne({ Username });
 
-      // Check password
-      
-      if (tourist.Password !== Password) {
-          return res.status(400).json({ message: "Incorrect password." });
-      }
+    // Check if advertiser exists
+    if (!advertiser) {
+      return res.status(404).json({ message: "Advertiser not found" });
+    }
 
-      res.status(200).json({
-          message: "Login successful",
-          tourist,
-      });
+    // Compare plain-text password directly
+    if (advertiser.Password !== Password) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    // Send back advertiser data (excluding the password)
+    const { Password: _, ...advertiserData } = advertiser.toObject();
+    res.status(200).json({ advertiser: advertiserData });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 // Controller to create a new advertiser
 const createAdvertiser = async (req, res) => {
   upload(req, res, async (err) => {

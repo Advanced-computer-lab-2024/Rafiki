@@ -91,7 +91,7 @@ const CreateTransportationAd = ({ isVisible, onClose }) => {
   ) : null;
 };
 
-const AdvertiserSignup = () => {
+const AdvertiserSignup = ({ loggedInAdvertiser }) => {
   const [advertiser, setAdvertiser] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [activity, setActivity] = useState(null);
@@ -165,6 +165,11 @@ const AdvertiserSignup = () => {
   const handleTransportButtonClick = () => {
     setIsTransportFormVisible(!isTransportFormVisible);
   };
+  const [showDetails, setShowDetails] = useState(false);
+
+  const toggleDetails = () => {
+      setShowDetails(!showDetails);
+  };
 
   return (
     <div className="container">
@@ -191,20 +196,25 @@ const AdvertiserSignup = () => {
       {/* Display error or success messages */}
       {error && <div style={{ color: "red" }}>{error}</div>}
       {successMessage && <div style={{ color: "green" }}>{successMessage}</div>}
+      <button
+  onClick={() => setIsVisible(!isVisible)}
+  className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition-all duration-200"
+>
+  {isVisible ? "Hide" : "Show"} Advertiser Details
+</button>
 
-      <button onClick={() => setIsVisible(!isVisible)}>
-        {isVisible ? 'Hide' : 'Show'} Advertiser Details
-      </button>
-      {isVisible && (
-        <div className="workouts">
-          {advertiser && advertiser.map((advertiser) => (
-            <div key={advertiser._id}>
-              <AdvertiserDetails advertiser={advertiser} />
-              <button onClick={() => setSelectedTourguide(advertiser)}>Update</button>
-            </div>
-          ))}
-        </div>
-      )}
+{isVisible && (
+  <div className="mt-4 flex justify-center">
+    {loggedInAdvertiser ? (
+      <AdvertiserDetails advertiser={loggedInAdvertiser} />
+    ) : (
+      <div className="text-center text-gray-500">
+        <p>No advertiser details available. Please log in again.</p>
+      </div>
+    )}
+  </div>
+)}
+
 
       {/* Other components and form toggles */}
       <UpdateAdvertiser existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />

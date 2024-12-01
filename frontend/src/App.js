@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-
+import React, { useState } from 'react';
 // pages & components
 import SellerForm from './components/sellerForm';
 import GovernerForm from './components/governerForm';
@@ -31,7 +31,10 @@ import AdminForm from './components/adminForm';
 import TourguideForm from './components/tourguideForm';
 import AdvertiserForm from './components/advertiserForm';
 import TouristForm from './components/touristForm';
+import AdvertiserSignup from './pages/advertiserSignup';
+
 function App() {
+  const [loggedInAdvertiser, setLoggedInAdvertiser] = useState(null);
   return (
     <div className="App">
       <BrowserRouter>
@@ -52,7 +55,14 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/signup-paths" element={<SignupPaths />} />
               <Route path="/tourist-signup" element={<TouristSignup />} />
-              <Route path="/advertiser-signup" element={<AdvertiserSignUp />} />
+              <Route
+  path="/advertiser-signup"
+  element={<AdvertiserSignup loggedInAdvertiser={loggedInAdvertiser} />}
+/>
+<Route
+  path="/login/advertiser"
+  element={<AdvertiserLogin setLoggedInAdvertiser={setLoggedInAdvertiser} />}
+/>
               <Route path="/tourguide-signup" element={<TourguideSignup />} />
               <Route path="/adminDashboard" element={<AdminDashboard />} />
               <Route path="/seller-signup" element={<SellerSignup />} />
@@ -62,7 +72,7 @@ function App() {
               <Route path="/museums/:museumId" element={<MuseumDetailsPage />} />
               <Route path="/itinerary/:itineraryId" element={<ItineraryDetailsPage />} />
               <Route path="/login/tourist" element={<TouristLogin />} />
-              <Route path="/login/advertiser" element={<AdvertiserLogin />} />
+            
               <Route path="/login/seller" element={<SellerLogin />} />
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/signup/governor" element={<GovernerForm />} />
