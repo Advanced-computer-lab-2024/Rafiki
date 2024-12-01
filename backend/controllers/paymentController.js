@@ -1,5 +1,10 @@
 const TouristModel = require('../models/Tourist'); // Import the Tourist model
 const PaymentModel = require('../models/payment'); // Import the Payment model
+const ActivityModel = require('../models/activity')
+const ItineraryModel = require('../models/itinerary')
+const MuseumModel = require('../models/museum')
+const nodemailer = require('nodemailer');
+
 
 // Function to determine badge level based on total points
 const determineBadgeLevel = (points) => {
@@ -67,7 +72,12 @@ const processActivityPayment = async (req, res) => {
         { $addToSet: { paidActivities: activityId } }, // Add the activity to the list
         { new: true }
       );
-  
+      const activity = await ActivityModel.findById(activityId);
+
+      const subject = `Reminder: Upcoming Event - ${activity.name || activity.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
+
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
@@ -139,7 +149,13 @@ const processItineraryPayment = async (req, res) => {
         { $addToSet: { paidItineraries: itineraryId  } }, // Add the activity to the list
         { new: true }
       );
-  
+
+      const itinerary = await ItineraryModel.findById(itineraryId);
+
+      const subject = `Reminder: Upcoming Event - ${itinerary.name || itinerary.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
+
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
@@ -209,6 +225,12 @@ const processMuseumPayment = async (req, res) => {
             { $addToSet: { BookedMuseums: museumId } }, // Add the activity to the list
             { new: true }
           );
+
+          const museum = await MuseumModel.findById(museumId);
+
+      const subject = `Reminder: Upcoming Event - ${museum.name }`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${museum.location || museum.pickupLocation} on ${museum.openingHours }.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
       
         
   
@@ -225,7 +247,33 @@ const processMuseumPayment = async (req, res) => {
         console.error('Error processing Museum payment:', error); // Log the error for debugging
         res.status(500).json({ error: 'Internal server error.' });
     }
-};    
+}; 
+
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Use the email service you're working with
+    auth: {
+      user: 'rafiki.info1@gmail.com', 
+      pass: 'hsyotajsdxtetmbw',
+    },
+  });
+  
+  const sendNotificationEmail = (email, subject, message) => {
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: email,
+      subject: subject,
+      text: message
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(`Error sending email to ${email}:`, error);
+      } else {
+        console.log(`Email sent to ${email}:`, info.response);
+      }
+    });
+  };
 
 
 module.exports = {  processActivityPayment, processItineraryPayment,  processMuseumPayment };

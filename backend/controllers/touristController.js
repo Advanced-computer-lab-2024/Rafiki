@@ -71,7 +71,7 @@ const loginTourist = async (req, res) => {
         tourist.lastBirthdayPromo = today;
         await tourist.save();
         await sendBirthdayPromoEmail(tourist,promoCode);
-      
+
         res.status(200).json({
           message: "Login successful. Happy Birthday! Here's your promo code.",
           tourist,
@@ -89,6 +89,7 @@ const loginTourist = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const createTourist = async (req, res) => {
   const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
@@ -243,10 +244,14 @@ const bookActivity = async (req, res) => {
           { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
           { new: true }
       ).populate('BookedActivities'); // Populate to see full details of attended activities if needed
-
       if (!tourist) {
           return res.status(404).json({ message: "Tourist not found." });
       }
+      const activity = await ActivityModel.findById(activityId);
+
+      const subject = `Reminder: Upcoming Event - ${activity.name || activity.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
 
       res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities });
   } catch (error) {
@@ -374,6 +379,11 @@ const bookItinerary = async (req, res) => {
       if (!tourist) {
           return res.status(404).json({ message: "Tourist not found." });
       }
+      const itinerary = await ItineraryModel.findById(itineraryId);
+
+      const subject = `Reminder: Upcoming Event - ${itinerary.name || itinerary.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
 
       res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries});
   } catch (error) {
@@ -708,23 +718,18 @@ const getPastPaidItineraries = async (req, res) => {
   }
 };
 
-
-
-
-  
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'rafiki.info1@gmail.com', // Replace with your Gmail address
-        pass: 'hsyotajsdxtetmbw',    // Replace with the generated App Password
-      },
-    });
-
-
+// Configure your email transporter securely
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use the email service you're working with
+  auth: {
+    user: 'rafiki.info1@gmail.com', 
+    pass: 'hsyotajsdxtetmbw',
+  },
+});
 
 const sendNotificationEmail = (email, subject, message) => {
   const mailOptions = {
-    from: 'rafiki.info@gmail.com',
+    from: 'rafiki.info1@gmail.com',
     to: email,
     subject: subject,
     text: message
