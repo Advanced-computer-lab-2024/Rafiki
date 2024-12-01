@@ -723,17 +723,16 @@ const getPastPaidItineraries = async (req, res) => {
 
 // Configure your email transporter securely
 const transporter = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: 587,
+  service: 'gmail', // Use the email service you're working with
   auth: {
-    user: "api",
-    pass: "0bdb8e05c96edd14df4abb34d87b0d26"
-  }
+    user: 'rafiki.info1@gmail.com', 
+    pass: 'hsyotajsdxtetmbw',
+  },
 });
 
 const sendNotificationEmail = (email, subject, message) => {
   const mailOptions = {
-    from: 'info@demomailtrap.com',
+    from: 'rafiki.info1@gmail.com',
     to: email,
     subject: subject,
     text: message
