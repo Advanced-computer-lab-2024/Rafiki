@@ -71,7 +71,7 @@ const loginTourist = async (req, res) => {
         tourist.lastBirthdayPromo = today;
         await tourist.save();
         await sendBirthdayPromoEmail(tourist,promoCode);
-      
+
         res.status(200).json({
           message: "Login successful. Happy Birthday! Here's your promo code.",
           tourist,
@@ -89,6 +89,7 @@ const loginTourist = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const createTourist = async (req, res) => {
   const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
@@ -243,10 +244,14 @@ const bookActivity = async (req, res) => {
           { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
           { new: true }
       ).populate('BookedActivities'); // Populate to see full details of attended activities if needed
-
       if (!tourist) {
           return res.status(404).json({ message: "Tourist not found." });
       }
+      const activity = await ActivityModel.findById(activityId);
+
+      const subject = `Reminder: Upcoming Event - ${activity.name || activity.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
 
       res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities });
   } catch (error) {
@@ -258,43 +263,67 @@ const cancelActivityBooking = async (req, res) => {
   const { touristId, activityId } = req.body;
 
   try {
-      // Find the tourist
-      const tourist = await TouristModel.findById(touristId);
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
+    // Find the tourist
+    const tourist = await TouristModel.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found." });
+    }
 
-      // Find the activity to get the amount paid
-      const activity = await ActivityModel.findById(activityId);
-      if (!activity) {
-          return res.status(404).json({ message: "Activity not found." });
-      }
+    // Find the activity
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found." });
+    }
 
-      // Refund the tourist's wallet
-      tourist.Wallet += activity.price;  // Add the activity's price back to the wallet
+    // Check if the activity is booked or paid for
+    const isBooked = tourist.BookedActivities.includes(activityId);
+    const isPaid = tourist.paidActivities.includes(activityId);
 
-      // Remove the activity from the tourist's BookedActivities and paidActivities
+    if (!isBooked && !isPaid) {
+      return res.status(400).json({
+        message: "This activity is neither booked nor paid for. Cancellation is not allowed."
+      });
+    }
+
+    let message = "Activity booking canceled successfully.";
+    // If the activity is booked but not paid for
+    if (isBooked && !isPaid) {
+      await TouristModel.findByIdAndUpdate(
+        touristId,
+        { $pull: { BookedActivities: activityId } },
+        { new: true }
+      );
+    }
+
+    // Refund the tourist's wallet if paid
+    if (isPaid) {
+      tourist.Wallet += activity.price; // Refund the price
       const updatedTourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { 
-              $pull: { 
-                  BookedActivities: activityId, 
-                  paidActivities: activityId 
-              }, 
-              Wallet: tourist.Wallet  // Update the wallet balance
+        touristId,
+        {
+          $pull: {
+            BookedActivities: activityId,
+            paidActivities: activityId
           },
-          { new: true }
-      ).populate('BookedActivities'); // Populate BookedActivities to show updated list
+          Wallet: tourist.Wallet // Update the wallet balance
+        },
+        { new: true }
+      ).populate('BookedActivities'); // Populate BookedActivities for updated list
 
       res.status(200).json({
-          message: "Activity booking canceled successfully. ",
-          newWalletBalance: updatedTourist.Wallet,  // Return the updated wallet balance
-          BookedActivities: updatedTourist.BookedActivities  // Return updated list of booked activities
+        message: `${message} Refund issued for the paid activity.`,
+        newWalletBalance: updatedTourist.Wallet,
+        BookedActivities: updatedTourist.BookedActivities
       });
+      return;
+    }
+
+    res.status(200).json({ message });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
+
 
 
 
@@ -374,6 +403,11 @@ const bookItinerary = async (req, res) => {
       if (!tourist) {
           return res.status(404).json({ message: "Tourist not found." });
       }
+      const itinerary = await ItineraryModel.findById(itineraryId);
+
+      const subject = `Reminder: Upcoming Event - ${itinerary.name || itinerary.location}`;
+      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`;
+      sendNotificationEmail(tourist.Email, subject, message);
 
       res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries});
   } catch (error) {
@@ -385,43 +419,67 @@ const cancelItineraryBooking = async (req, res) => {
   const { touristId, itineraryId } = req.body;
 
   try {
-      // Find the tourist
-      const tourist = await TouristModel.findById(touristId);
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
+    // Find the tourist
+    const tourist = await TouristModel.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found." });
+    }
 
-      // Find the itinerary to get the amount paid
-      const itinerary = await ItineraryModel.findById(itineraryId);
-      if (!itinerary) {
-          return res.status(404).json({ message: "Itinerary not found." });
-      }
+    // Find the itinerary
+    const itinerary = await ItineraryModel.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found." });
+    }
 
-      // Refund the tourist's wallet
-      tourist.Wallet += itinerary.price;  // Add the itinerary's price back to the wallet
+    // Check if the itinerary is booked or paid for
+    const isBooked = tourist.BookedItineraries.includes(itineraryId);
+    const isPaid = tourist.paidItineraries.includes(itineraryId);
 
-      // Remove the itinerary from the tourist's BookedItineraries and paidItineraries
+    if (!isBooked && !isPaid) {
+      return res.status(400).json({
+        message: "This itinerary is neither booked nor paid for. Cancellation is not allowed."
+      });
+    }
+
+    let message = "Itinerary booking canceled successfully.";
+    // If the itinerary is booked but not paid for
+    if (isBooked && !isPaid) {
+      await TouristModel.findByIdAndUpdate(
+        touristId,
+        { $pull: { BookedItineraries: itineraryId } },
+        { new: true }
+      );
+    }
+
+    // Refund the tourist's wallet if paid
+    if (isPaid) {
+      tourist.Wallet += itinerary.price; // Refund the price
       const updatedTourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { 
-              $pull: { 
-                  BookedItineraries: itineraryId, 
-                  paidItineraries: itineraryId 
-              }, 
-              Wallet: tourist.Wallet  // Update the wallet balance
+        touristId,
+        {
+          $pull: {
+            BookedItineraries: itineraryId,
+            paidItineraries: itineraryId
           },
-          { new: true }
-      ).populate('BookedItineraries'); // Populate BookedItineraries to show updated list
+          Wallet: tourist.Wallet // Update the wallet balance
+        },
+        { new: true }
+      ).populate('BookedItineraries'); // Populate BookedActivities for updated list
 
       res.status(200).json({
-          message: "Itinerary booking canceled successfully. ",
-          newWalletBalance: updatedTourist.Wallet,  // Return the updated wallet balance
-          BookedItineraries: updatedTourist.BookedItineraries  // Return updated list of booked itineraries
+        message: `${message} Refund issued for the paid itinerary.`,
+        newWalletBalance: updatedTourist.Wallet,
+        BookedItineraries: updatedTourist.BookedItineraries
       });
+      return;
+    }
+
+    res.status(200).json({ message });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
+
 
 
 const cancelMuseumBooking = async (req, res) => {
@@ -440,8 +498,11 @@ const cancelMuseumBooking = async (req, res) => {
           return res.status(404).json({ message: "museum not found." });
       }
 
-      // Refund the tourist's wallet
-      tourist.Wallet += museum.ticketPrices;  // Add the museum's price back to the wallet
+
+
+      const isPaid = tourist.BookedMuseums.includes(museumId);
+
+     if(isPaid){ tourist.Wallet += museum.ticketPrices;  // Add the museum's price back to the wallet
 
       // Remove the museum from the tourist's paidmuseum
       const updatedTourist = await TouristModel.findByIdAndUpdate(
@@ -459,7 +520,14 @@ const cancelMuseumBooking = async (req, res) => {
           message: "Museum booking canceled successfully. ",
           newWalletBalance: updatedTourist.Wallet,  // Return the updated wallet balance
           BookedMuseums: updatedTourist.BookedMuseums  // Return updated list of booked museums
+      });}
+
+     else{ return res.status(400).json({
+        message: "This Museum is neither booked nor paid for. Cancellation is not allowed."
       });
+    }
+      // Refund the tourist's wallet
+     
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
@@ -708,23 +776,18 @@ const getPastPaidItineraries = async (req, res) => {
   }
 };
 
-
-
-
-  
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'rafiki.info1@gmail.com', // Replace with your Gmail address
-        pass: 'hsyotajsdxtetmbw',    // Replace with the generated App Password
-      },
-    });
-
-
+// Configure your email transporter securely
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Use the email service you're working with
+  auth: {
+    user: 'rafiki.info1@gmail.com', 
+    pass: 'hsyotajsdxtetmbw',
+  },
+});
 
 const sendNotificationEmail = (email, subject, message) => {
   const mailOptions = {
-    from: 'rafiki.info@gmail.com',
+    from: 'rafiki.info1@gmail.com',
     to: email,
     subject: subject,
     text: message

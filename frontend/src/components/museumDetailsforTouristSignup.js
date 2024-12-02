@@ -87,7 +87,7 @@ const MuseumDetails = ({ museum}) => {
               // Ensure this field is correct (check the backend response structure)
               setWalletBalance(updatedTourist.newWalletBalance);  // Adjust this if the field name is different
           } else {
-              alert("Failed to cancel the booking of the museum.");
+              alert("Failed to cancel the booking of the museum, thee museum is not paid for.");
           }
       } catch (error) {
           console.error("Error canceling the booking of the museum:", error);

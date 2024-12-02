@@ -159,25 +159,33 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
   }, []);
 
   const handleDeleteAccount = async () => {
-    if (!advertiser) return;
+    const username = prompt("Please enter your username:");
+    if (!username) return; // Exit if no username is entered
+  
+    const password = prompt("Please enter your password:");
+    if (!password) return; // Exit if no password is entered
+  
     const confirmation = window.confirm("Are you sure you want to delete your account?");
-    if (!confirmation) return;
+    if (!confirmation) return; // Exit if user cancels
+  
     try {
-      const response = await axios.delete(`/api/AdvertiserRoute/deleteAccount/${advertiser._id}`);
+      const response = await axios.delete(`/api/AdvertiserRoute/deleteAccount/${advertiser._id}`, {
+        data: { username, password }, // Send username and password in the request body
+      });
+  
       if (response.status === 200) {
-        setSuccessMessage("Account deleted successfully.");
-        setAdvertiser(null); // Clear advertiser data
-        setTimeout(() => setSuccessMessage(null), 5000);
-      } else {
-        setError("Account cannot be deleted due to upcoming bookings.");
-        setTimeout(() => setError(null), 5000);
+        alert("Account deleted successfully. You will now be redirected to the homepage.");
+        navigate("/"); // Redirect to the homepage
       }
     } catch (error) {
-      console.error("Error deleting account:", error.message);
-      setError("An error occurred while deleting the account.");
-      setTimeout(() => setError(null), 5000);
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(`Error: ${error.response.data.error}`); // Show specific error from the server
+      } else {
+        alert("An error occurred while trying to delete the account. Please try again.");
+      }
     }
   };
+  
 
   return (
     <div className="flex h-screen">

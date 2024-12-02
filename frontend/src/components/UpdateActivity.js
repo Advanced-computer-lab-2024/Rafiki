@@ -1,132 +1,146 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const UpdateSeller= ({ existingTourguide, onUpdate }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [Date, setDate] = useState(existingTourguide ? existingTourguide.Date : '');
-    const [Location, setLocation] = useState(existingTourguide ? existingTourguide.Location : '');
-    // const [Password, setPassword] = useState('');
-    const [SpecialDiscount, setSpecialDiscount] = useState(existingTourguide ? existingTourguide.SpecialDiscount : '');
-    // const [Description, setDescription] = useState(existingTourguide ? existingTourguide.Description : '');
-    // const [DOB, setDOB] = useState(existingTourguide ? existingTourguide.DOB : '');
-    // const [Job, setJob] = useState(existingTourguide ? existingTourguide.Job : '');
-    const [error, setError] = useState(null);
+const UpdateSeller = ({ existingTourguide, onUpdate }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [date, setDate] = useState(existingTourguide ? existingTourguide.Date : "");
+  const [location, setLocation] = useState(existingTourguide ? existingTourguide.Location : "");
+  const [specialDiscount, setSpecialDiscount] = useState(existingTourguide ? existingTourguide.SpecialDiscount : "");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
-    useEffect(() => {
-        if (existingTourguide) {
-            setDate(existingTourguide.Date);
-            setLocation(existingTourguide.Location);
-            setSpecialDiscount(existingTourguide.SpecialDiscount);
-            // setDescription(existingTourguide.Description);
-            // setDOB(existingTourguide.DOB);
-            // setJob(existingTourguide.Job);
-        } else {
-            // Reset the form if there's no existing tour guide
-            setDate('');
-            setLocation('');
-            setSpecialDiscount('');
-            // setDescription('');
-            // setDOB('');
-            // setJob('');
+  useEffect(() => {
+    if (existingTourguide) {
+      setDate(existingTourguide.Date || "");
+      setLocation(existingTourguide.Location || "");
+      setSpecialDiscount(existingTourguide.SpecialDiscount || "");
+    } else {
+      // Reset fields if no existing tour guide is selected
+      setDate("");
+      setLocation("");
+      setSpecialDiscount("");
+    }
+  }, [existingTourguide]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const tourguide = { Date: date, Location: location, SpecialDiscount: specialDiscount };
+
+    const method = existingTourguide ? "PUT" : "POST";
+    const url = existingTourguide
+      ? `/api/ActivityRoute/${existingTourguide._id}`
+      : "/api/ActivityRoute";
+
+    try {
+      const response = await fetch(url, {
+        method,
+        body: JSON.stringify(tourguide),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+
+      if (!response.ok) {
+        setError(json.error);
+        setSuccessMessage("");
+      } else {
+        setError(null);
+        setSuccessMessage(existingTourguide ? "Tour guide updated successfully!" : "New tour guide added successfully!");
+        if (!existingTourguide) {
+          setDate("");
+          setLocation("");
+          setSpecialDiscount("");
         }
-    }, [existingTourguide]);
+        if (onUpdate) onUpdate(); // Notify parent component if needed
+      }
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      setError("An error occurred. Please try again.");
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleClick = () => {
+    setIsVisible(!isVisible);
+  };
 
-        const tourguide = { Date, Location };
+  return (
+    <div className="max-w-lg mx-auto mt-10">
+      <button
+        onClick={handleClick}
+        className={`w-full px-6 py-3 text-white font-semibold rounded-md shadow-md transition-all ${
+          isVisible ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
+        }`}
+      >
+        {isVisible ? "Close Form" : "Update Tour Guide"}
+      </button>
 
-        const method = existingTourguide ? 'PUT' : 'POST';
-        const url = existingTourguide ? `/api/ActivityRoute/${existingTourguide._id}` : '/api/ActivityRoute';
+      {isVisible && (
+        <form
+          className="mt-6 bg-white rounded-lg shadow-md p-6 space-y-4 border-t-4 border-blue-500"
+          onSubmit={handleSubmit}
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            {existingTourguide ? "Update Tour Guide" : "Add New Tour Guide"}
+          </h3>
 
-        const response = await fetch(url, {
-            method,
-            body: JSON.stringify(tourguide),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const json = await response.json();
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date:</label>
+            <input
+              type="date"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+            />
+          </div>
 
-        if (!response.ok) {
-            setError(json.error);
-        }
-        if (response.ok) {
-            setError(null);
-            // Reset form fields after successful submission
-            if (!existingTourguide) {
-                setDate('');
-                setLocation('');
-               
-            }
-            console.log(existingTourguide ? 'Advertiser updated:' : 'New advertiser added:', json);
-            if (onUpdate) onUpdate(); // Call the onUpdate prop if provided
-        }
-    };
+          {/* Location */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Location:</label>
+            <input
+              type="text"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              required
+            />
+          </div>
 
-    const handleClick = () => {
-        setIsVisible(!isVisible);
-    };
+          {/* Special Discount */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Special Discount:</label>
+            <input
+              type="text"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={specialDiscount}
+              onChange={(e) => setSpecialDiscount(e.target.value)}
+              placeholder="E.g., 10% off for groups"
+            />
+          </div>
 
-    return (
-        <div>
-            <button onClick={handleClick}>
-                {isVisible ? 'Hide' : 'Show'} {existingTourguide ? 'Update' : 'update'}
-            </button>
-            {isVisible && (
-                <form classSpecialDiscount="create" onSubmit={handleSubmit}>
-                    <h3>{existingTourguide ? 'Update Tourguide' : 'Tourguide Signup'}</h3>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-600 transition-all"
+          >
+            {existingTourguide ? "Update Tour Guide" : "Add Tour Guide"}
+          </button>
 
-                    <label>Date:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setDate(e.target.value)}
-                        value={Date}
-                    />
-
-                    <label>Location:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setLocation(e.target.value)}
-                        value={Location}
-                    />
-
-{/* <label>Descriptiom:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setDescription(e.target.value)}
-                        value={Description}
-                    /> */}
-
-
-<label>SpecialDiscount:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setSpecialDiscount(e.target.value)}
-                        value={SpecialDiscount}
-                    />
-
-{/* <label>DOB:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setDOB(e.target.value)}
-                        value={DOB}
-                    />
-
-<label>Job:</label>
-                    <input
-                        type="text"
-                        onChange={(e) => setJob(e.target.value)}
-                        value={Job}
-                    /> */}
-
-
-
-                    <button>{existingTourguide ? 'Update' : 'update'}</button>
-                    {error && <div classSpecialDiscount="error">{error}</div>}
-                </form>
-            )}
-        </div>
-    );
+          {/* Success or Error Messages */}
+          {successMessage && (
+            <div className="mt-4 p-3 text-green-700 bg-green-100 rounded-md shadow-sm">
+              {successMessage}
+            </div>
+          )}
+          {error && (
+            <div className="mt-4 p-3 text-red-700 bg-red-100 rounded-md shadow-sm">{error}</div>
+          )}
+        </form>
+      )}
+    </div>
+  );
 };
 
 export default UpdateSeller;
