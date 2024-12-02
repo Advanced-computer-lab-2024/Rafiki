@@ -85,12 +85,23 @@ const updateTourguide = async (req, res) => {
 // Get All Tour Guides
 const getAlltour = async (req, res) => {
     try {
-        const tours = await TourguideModel.find({});
-        res.status(200).json(tours);
+      const { username } = req.query;
+  
+      if (username) {
+        const tourGuide = await TourguideModel.findOne({ Username: username });
+        if (!tourGuide) {
+          return res.status(404).json({ message: "Tour guide not found." });
+        }
+        return res.status(200).json(tourGuide);
+      }
+  
+      const tours = await TourguideModel.find({});
+      res.status(200).json(tours);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message });
     }
-};
+  };
+  
 
 // Change Password
 // Change Password for Tour Guide with hashed passwords

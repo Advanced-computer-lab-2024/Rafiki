@@ -155,24 +155,42 @@ const changePassword = async (req, res) => {
 // Controller to request account deletion with conditions
 const requestAccountDeletion = async (req, res) => {
   const { id } = req.params;
+  const { username, password } = req.body; // Receive username and password from the client
 
   try {
-    // Check for any upcoming, paid bookings associated with activities or itineraries
+    // Fetch the advertiser account
+    const advertiser = await AdvertiserModel.findById(id);
+
+    if (!advertiser) {
+      return res.status(404).json({ error: "Advertiser not found." });
+    }
+
+    // Check if the username matches
+    if (advertiser.username !== username) {
+      return res.status(400).json({ error: "Invalid username." });
+    }
+
+    // Check if the password matches (plain-text comparison)
+    if (advertiser.password !== password) {
+      return res.status(400).json({ error: "Invalid password." });
+    }
+
+    // Check for upcoming, paid bookings associated with activities or itineraries
     const hasPaidUpcomingActivities = await BookingModel.exists({
       advertiserId: id,
-      status: 'paid',
-      activityDate: { $gte: new Date() }
+      status: "paid",
+      activityDate: { $gte: new Date() },
     });
 
     const hasPaidUpcomingItineraries = await BookingModel.exists({
       advertiserId: id,
-      status: 'paid',
-      itineraryDate: { $gte: new Date() }
+      status: "paid",
+      itineraryDate: { $gte: new Date() },
     });
 
     if (hasPaidUpcomingActivities || hasPaidUpcomingItineraries) {
       return res.status(400).json({
-        error: 'Account cannot be deleted due to upcoming paid bookings associated with activities or itineraries.',
+        error: "Account cannot be deleted due to upcoming paid bookings associated with activities or itineraries.",
       });
     }
 
@@ -184,13 +202,15 @@ const requestAccountDeletion = async (req, res) => {
     const deletedAdvertiser = await AdvertiserModel.findByIdAndDelete(id);
 
     if (!deletedAdvertiser) {
-      return res.status(404).json({ error: 'Advertiser not found.' });
+      return res.status(404).json({ error: "Advertiser not found." });
     }
 
-    res.status(200).json({ message: 'Account deleted successfully, and all associated activities and itineraries are now hidden.' });
+    res.status(200).json({
+      message: "Account deleted successfully, and all associated activities and itineraries are now hidden.",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An internal server error occurred.' });
+    res.status(500).json({ error: "An internal server error occurred." });
   }
 };
 
