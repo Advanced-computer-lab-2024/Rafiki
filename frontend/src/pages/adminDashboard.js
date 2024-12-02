@@ -41,6 +41,7 @@ const AdminSignup = () => {
   const [outOfStockProducts, setOutOfStockProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationShown, setNotificationShown] = useState(false);
   //const location = useLocation();
   //const outOfStockProducts = location.state?.outOfStockProducts || [];
     //         if (response.ok) {
@@ -61,7 +62,10 @@ const AdminSignup = () => {
         const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
         const products = response.data.products;
         setOutOfStockProducts(products);
-        setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+        if (products.length > 0 && !notificationShown) {
+          setShowNotification(true); // Show notification
+          setNotificationShown(true); // Prevent further pop-ups in this session
+        }
         setError(null); // Clear previous errors
       } catch (err) {
         console.error('Error fetching out-of-stock products:', err);
@@ -73,10 +77,6 @@ const AdminSignup = () => {
   
     useEffect(() => {
       fetchOutOfStockProducts();
-  
-      // Optional: Poll for updates every 30 seconds
-      //const interval = setInterval(fetchOutOfStockProducts, 30000);
-      //return () => clearInterval(interval); // Clean up interval
     }, []);
   
     // Close the pop-up
