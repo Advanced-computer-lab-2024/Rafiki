@@ -6,6 +6,9 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
+const sellerModel=require('../models/seller');
+const ProductModel=require('../models/products');
+const AdminModel=require('../models/admin');
 
 async function sendBirthdayPromoEmail(tourist, promoCode) {
   try {
@@ -348,24 +351,55 @@ const viewWalletBalance = async (req, res) => {
 
 const PurchaseProduct = async (req, res) => {
   const { touristId, ProductId } = req.body;
-  
+
   try {
-      // Find the tourist and update their purchases list
-      const tourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { $addToSet: { PurchasedProducts: ProductId } }, // Use $addToSet to avoid duplicates
-          { new: true }
-      ).populate('PurchasedProducts'); // Populate to see full details of attended activities if needed
+    const product = await ProductModel.findOneAndUpdate(
+      { _id: ProductId, AvailableQuantity: { $gt: 0 } },
+      { $inc: { AvailableQuantity: -1 } },
+      { new: true }
+    );
 
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
+    if (!product) {
+      return res.status(400).json({ message: "Product is out of stock." });
+    }
 
-      res.status(200).json({ message: "Product Purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
+    if (product.AvailableQuantity === 0) {
+      const seller = await sellerModel.findOne({ Username: product.Seller });
+      const emailSubject = 'Out of Stock Product Alert';
+      const emailBody = `The following products are out of stock:\n\n` +
+      `this product"${product.Name}" (ID: ${product._id}) is out of stock. \n\nplease restock it.`;+
+     `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nYour App Team `;
+     sendNotificationEmail(seller.Email, emailSubject, emailBody);
+
+     const admins = await AdminModel.find({}, 'Email');
+     const adminEmails = admins.map(admin => admin.Email);
+     const emailSubject2 = 'Out of Stock Product Alert';
+      const emailBody2 = `The following products are out of stock:\n\n` +
+      `this product"${product.Name}" (ID: ${product._id}) is out of stock. `;+
+     `\n\nBest regards,\nYour App Team `;
+     for (const adminEmail of adminEmails) {
+       sendNotificationEmail(adminEmail, emailSubject2, emailBody2);
+    }
+    }
+
+    const tourist = await TouristModel.findByIdAndUpdate(
+      touristId,
+      { $addToSet: { PurchasedProducts: ProductId } },
+      { new: true }
+    ).populate('PurchasedProducts');
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found." });
+    }
+
+    res.status(200).json({ message: "Product purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
+
+
 
 
 const attendItinerary = async (req, res) => {

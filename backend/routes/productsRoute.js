@@ -18,7 +18,7 @@ router.get("/sortProducts", sortProducts);
 router.get('/check-stock', checkStockAndNotify);
 
 // Route to update a product by name (add multer for file upload)
-router.put('/updateProduct/:name', upload.single('Picture'), updateProduct);
+router.put('/updateProduct/:name',upload.single('Picture'), updateProduct);
 
 // Route to get all products
 router.get("/", getProducts);
