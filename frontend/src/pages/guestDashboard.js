@@ -4,6 +4,12 @@ import MuseumDetails from "../components/museumDetails";
 import ItineraryDetails from "../components/itineraryDetails";
 
 const GuestDashboard = () => {
+
+    const [isGuideVisible, setIsGuideVisible] = useState(false);
+
+    const handleGuideToggle = () => {
+      setIsGuideVisible(!isGuideVisible);
+    };
     // activities
     const [activities, setActivities] = useState(null); 
     const [isVisibleActivities, setIsVisibleActivities] = useState(false);
@@ -201,6 +207,33 @@ const [selectedFile, setSelectedFile] = useState(null);
     return (
         <div>
             <h1>Guest Dashboard</h1>
+
+            <button
+  onClick={handleGuideToggle}
+  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+>
+  {isGuideVisible ? 'Hide Vacation Guide' : 'View Vacation Guide'}
+</button>
+{isGuideVisible && (
+  <div className="bg-gray-100 border border-gray-300 rounded p-4 mt-4">
+    <h3 className="text-xl font-bold mb-3">Step-by-Step Vacation Guide</h3>
+    <ol className="list-decimal ml-6">
+      <li>Login to your account.</li>
+      <li>Explore available activities, itineraries, and accommodations.</li>
+      <li>Add your favorite activities to your cart.</li>
+      <li>Confirm your bookings and make payments.</li>
+      <li>Check your email for booking confirmations.</li>
+      <li>Enjoy your vacation!</li>
+    </ol>
+    <div className="mt-4">
+      <h4 className="text-lg font-semibold">Demo: How to Use the System</h4>
+      <p className="mt-2 text-gray-700">
+        Use the navigation bar to access various sections. Browse itineraries or activities, add them to your cart, and confirm your bookings through the checkout process. If you need assistance, contact support via the help section.
+      </p>
+    </div>
+  </div>
+)}
+
 
              {/* File Upload Section */}
              <div className="file-upload">
