@@ -1,6 +1,6 @@
 const Bookmark = require('../models/bookmark'); // Replace with the correct path to your bookmark model
 const Activity = require('../models/activity'); // Replace with the correct path to your activity model
-const Itienary = require('../models/Itinerary'); // Replace with the correct path to your itinerary model
+const Itienary = require('../models/itinerary'); // Replace with the correct path to your itinerary model
 const Museum = require('../models/museum'); // Replace with the correct path to your museum model
 
 // Function to add an item to the bookmark

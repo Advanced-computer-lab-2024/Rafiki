@@ -9,23 +9,24 @@ function SellerLogin() {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setError(null);
-
-        try {
-            const response = await axios.post('/api/sellerRoute/login', {
-                Username: username,
-                Password: password,
-            });
-
-            if (response.status === 200) {
-                //const { outOfStockProducts } = response.data;
-                alert("Login successful");
-                navigate('/seller-signup');// { state: { outOfStockProducts } }); // Redirect to dashboard
-            }
-        } catch (error) {
-            setError(error.response?.data?.message || "Login failed. Please try again.");
+      e.preventDefault();
+      setError(null);
+    
+      try {
+        const response = await axios.post('/api/sellerRoute/login', {
+          Username: username,
+          Password: password,
+        });
+    
+        if (response.status === 200) {
+          const { tourist } = response.data; // Assuming "tourist" holds seller data
+          localStorage.setItem("sellerId", tourist._id); // Store seller ID in localStorage
+          alert("Login successful");
+          navigate('/seller-signup');
         }
+      } catch (error) {
+        setError(error.response?.data?.message || "Login failed. Please try again.");
+      }
     };
     
       
