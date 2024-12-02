@@ -98,21 +98,6 @@ const checkStockAndNotify = async (req, res) => {
     const outOfStockProducts = await productsModel.find({ AvailableQuantity: { $lte: 0 } });
 
     if (outOfStockProducts.length > 0) {
-      const sellers = await sellerModel.find({}, 'Email'); // Adjust the model name and email field as per your schema
-      const sellerEmails = sellers.map(seller => seller.Email);
-      if (sellerEmails.length > 0) {
-        const emailSubject = 'Out of Stock Products Alert';
-        const emailBody = `The following products are out of stock:\n\n` +
-          outOfStockProducts.map(product => `${product.Name} (ID: ${product._id})`).join('\n') +
-          `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nYour App Team`;
-
-        // Send the notification email to all sellers
-        for (const Email of sellerEmails) {
-          await sendEmail(Email, emailSubject, emailBody);
-        }
-
-        console.log('Email notifications sent to all sellers.');
-      }
       // Respond with the list of out-of-stock products
       return res.status(200).json({
         message: 'Some products are out of stock.',
@@ -132,29 +117,7 @@ const checkStockAndNotify = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-const sendEmail = async (to, subject, body) => {
-  try {
-      const transport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-              user: 'rafiki.info1@gmail.com', // Your email
-              pass: 'hsyotajsdxtetmbw', // Your email password or App password
-          },
-      });
 
-      const mailOptions = {
-          from: 'rafiki.info1@gmail.com', // Your email
-          to: to, // Recipient email (admin email)
-          subject: subject,
-          text: body,
-      };
-
-      await transport.sendMail(mailOptions);
-      console.log('Stock alert email sent successfully!');
-  } catch (error) {
-      console.error('Failed to send email:', error.message);
-  }
-};
 
 
 

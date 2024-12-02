@@ -43,9 +43,6 @@ const SellerSignup = () => {
   );
   
   
-
-  
-
   const fetchOutOfStockProducts = async () => {
     try {
       setLoading(true); // Start loading state
