@@ -367,16 +367,16 @@ const PurchaseProduct = async (req, res) => {
       const seller = await sellerModel.findOne({ Username: product.Seller });
       const emailSubject = 'Out of Stock Product Alert';
       const emailBody = `The following products are out of stock:\n\n` +
-      `this product"${product.Name}" (ID: ${product._id}) is out of stock. \n\nplease restock it.`;+
-     `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nYour App Team `;
+      `this product"${product.Name}" is out of stock. \n\nplease restock it.`;+
+     `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nRafiki `;
      sendNotificationEmail(seller.Email, emailSubject, emailBody);
 
      const admins = await AdminModel.find({}, 'Email');
      const adminEmails = admins.map(admin => admin.Email);
      const emailSubject2 = 'Out of Stock Product Alert';
       const emailBody2 = `The following products are out of stock:\n\n` +
-      `this product"${product.Name}" (ID: ${product._id}) is out of stock. `;+
-     `\n\nBest regards,\nYour App Team `;
+      `this product"${product.Name}" is out of stock. `;+
+     `\n\nBest regards,\nRafiki`;
      for (const adminEmail of adminEmails) {
        sendNotificationEmail(adminEmail, emailSubject2, emailBody2);
     }
