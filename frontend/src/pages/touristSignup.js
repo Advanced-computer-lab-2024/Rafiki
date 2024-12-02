@@ -16,6 +16,8 @@ import UpcomingItineraries from "../components/UpcomingItineraries";
 import PastActivities from "../components/PastActivities";
 import PastItineraries from "../components/PastItineraries";
 import { useLocation, Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 
 // componentsf
 import axios from 'axios';
@@ -107,6 +109,19 @@ const TouristSignup = () => {
     const [isVisibleItineraryBookmark, setIsVisibleItineraryBookmark] = useState(false);
     const [bookmarkusername, setbookmarkUsername] = useState("");
     const [username, setUsername] = useState('');
+    
+    //address
+    const [newAddress, setNewAddress] = useState({
+        street: '',
+        city: '',
+        postalCode: '',
+    });
+    const [addresses, setAddresses] = useState([]);
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
+
+
+
 
     const [isCartVisible, setIsCartVisible] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -819,6 +834,54 @@ const TouristSignup = () => {
         }
     };
 
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewAddress({ ...newAddress, [name]: value });
+    };
+
+    // Handle adding address
+    const handleAddAddress = async () => {
+        // Validate address fields
+        if (!newAddress.street || !newAddress.city || !newAddress.postalCode) {
+          alert("All address fields are required!");
+          return;
+        }
+    
+        try {
+          const username = localStorage.getItem('username'); // Assuming username is stored in localStorage
+    
+          // Make the POST request to add the address
+          const response = await axios.post(`/api/TouristRoute/${username}/addAddress`, newAddress);
+    
+          // Check if the request was successful
+          if (response.status === 200) {
+            alert("Address added successfully!");
+            
+            // Update the address list after adding the new address
+            setAddresses(response.data.addresses); // Assuming the response contains the updated list of addresses
+            setNewAddress({ street: '', city: '', postalCode: '' }); // Clear the form fields
+          }
+        } catch (error) {
+          console.error("Error adding address:", error);
+          setError("There was an error adding the address.");
+        }
+      };
+    
+
+    // Navigate to checkout page
+    const handleCheckout = () => {
+        navigate('/checkout', { state: { addresses } });  // Use navigate() instead of history.push
+    };
+
+    
+
+
+
+
+
+
+
     return (
         <div>
             <h2>Tourist Dashboard</h2>
@@ -962,6 +1025,56 @@ const TouristSignup = () => {
             <h4>Complaint:</h4>
             <ComplainCreateForm />
 
+
+
+            <div>
+          
+            <h3>Add New Address</h3>
+            <input
+                type="text"
+                name="street"
+                placeholder="Street"
+                value={newAddress.street}
+                onChange={handleInputChange}
+            />
+            <input
+                type="text"
+                name="city"
+                placeholder="City"
+                value={newAddress.city}
+                onChange={handleInputChange}
+            />
+            <input
+                type="text"
+                name="postalCode"
+                placeholder="Postal Code"
+                value={newAddress.postalCode}
+                onChange={handleInputChange}
+            />
+            <button onClick={handleAddAddress}>Add Address</button>
+
+            <h3>Existing Addresses</h3>
+            <ul>
+                {addresses.length === 0 ? (
+                    <p>No addresses added yet.</p>
+                ) : (
+                    addresses.map((address, index) => (
+                        <li key={index}>
+                            {address.street}, {address.city}, {address.postalCode}
+                        </li>
+                    ))
+                )}
+            </ul>
+
+            {/* <button onClick={handleCheckout}>Go to Checkout</button> */}
+        </div>
+    
+
+
+
+
+
+
             <h4>Activities:</h4>
 
             <div>
@@ -995,7 +1108,7 @@ const TouristSignup = () => {
                         )}
 
                         { /* this button must redirect us to checkout page */}
-                        <button>checkout</button>
+                        <button onClick={handleCheckout}> Checkout</button>
                     </div>
                 )}
             </div>

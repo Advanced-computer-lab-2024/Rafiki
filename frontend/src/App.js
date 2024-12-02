@@ -32,6 +32,7 @@ import TourguideForm from './components/tourguideForm';
 import AdvertiserForm from './components/advertiserForm';
 import TouristForm from './components/touristForm';
 import AdvertiserSignup from './pages/advertiserSignup';
+import CheckoutPage from './pages/CheckoutPage';
 
 function App() {
   const [loggedInAdvertiser, setLoggedInAdvertiser] = useState(null);
@@ -77,6 +78,7 @@ function App() {
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/signup/governor" element={<GovernerForm />} />
               <Route path="/signup/admin" element={<AdminForm />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
           </div>
         </FlaggedActivitiesProvider>

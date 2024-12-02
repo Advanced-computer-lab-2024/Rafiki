@@ -874,6 +874,67 @@ const sendUpcomingNotifications = async (req, res) => {
 };
 
 
+// Controller: Add a new address to the tourist's profile
+// Controller: Add address to tourist
+const addAddress = async (req, res) => {
+  const { username } = req.params; // Get the tourist's username from the request parameters
+  const { street, city, postalCode } = req.body; // Get the address details from the body
+
+  try {
+      // Validate the address fields
+      if (!street || !city || !postalCode) {
+          return res.status(400).json({ message: 'All address fields are required' });
+      }
+
+      // Find the tourist by username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+
+      // Add the new address to the tourist's addresses array
+      tourist.addresses.push({ street, city, postalCode });
+
+      // Save the tourist document
+      await tourist.save();
+
+      // Return success response with the updated addresses
+      res.status(200).json({
+          message: 'Address added successfully',
+          addresses: tourist.addresses
+      });
+  } catch (error) {
+      console.error('Error adding address:', error);
+      res.status(500).json({
+          message: 'Error adding address',
+          error: error.message || error
+      });
+  }
+};
+
+
+
+// Controller: Get all addresses of a tourist by username
+const getAddresses = async (req, res) => {
+  const { username } = req.params; // Retrieve the username from the request parameters
+
+  try {
+    // Find the tourist by username
+    const tourist = await TouristModel.findOne({ Username: username }); // Make sure the field matches your model
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Return the list of addresses
+    res.status(200).json({ addresses: tourist.addresses });
+  } catch (error) {
+    console.error('Error fetching addresses:', error);
+    res.status(500).json({ message: 'Error fetching addresses', error });
+  }
+};
+
+
+
 
 
 
@@ -881,4 +942,4 @@ module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTour
   incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
-    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking};
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking,addAddress,getAddresses};

@@ -4,7 +4,7 @@ const { createTourist, getTourist, getTourists, updateTourist,changePassword
      PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
       getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary,sendUpcomingNotifications
     ,cancelActivityBooking,cancelItineraryBooking, getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist,
-    viewWalletBalance , cancelMuseumBooking} = require('../controllers/touristController'); // Update to your file structure
+    viewWalletBalance , cancelMuseumBooking,addAddress,getAddresses} = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);
@@ -31,5 +31,10 @@ router.get('/:id/upcoming-booked-activities', getUpcomingBookedActivities);
 router.get('/:id/upcoming-booked-Itineraries', getUpcomingBookedItineraries);
 router.post('/sendUpcomingNotifications', sendUpcomingNotifications);
 router.get('/:touristId/wallet', viewWalletBalance);
+// Route to add a new address
+router.post('/:username/addAddress', addAddress);
+
+// Route to get all addresses for a tourist
+router.get('/:username/addresses', getAddresses);
 
 module.exports = router;

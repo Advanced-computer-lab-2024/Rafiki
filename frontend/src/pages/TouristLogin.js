@@ -22,6 +22,7 @@ function TouristLogin() {
 
             if (response.status === 200) {
                 alert("Login successful");
+                localStorage.setItem("username", username);
                 navigate('/tourist-signup', { state: { promoCode: response.data.promoCode } }); // Redirect to dashboard
             }
         } catch (error) {
