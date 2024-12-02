@@ -39,6 +39,9 @@ const getWishlistProducts = async (req, res) => {
     try {
         // Find the wishlist by username and populate the Products field
         const wishlist = await Wishlist.findOne({ Username: username }).populate('Products');
+        if (!wishlist) {
+            return res.status(404).json({ message: 'No wishlist found for this user' });
+        }
         res.status(200).json({
             products: wishlist.Products
         });
