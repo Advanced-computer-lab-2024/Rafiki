@@ -41,6 +41,10 @@ const SellerSignup = () => {
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
+  
+  
+
+  
 
   const fetchOutOfStockProducts = async () => {
     try {
@@ -209,6 +213,7 @@ const SellerSignup = () => {
       console.error("Error updating product:", error);
     }
   };
+  
 
   return (
     <div>

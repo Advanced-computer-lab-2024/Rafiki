@@ -1,6 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const sellerModel = require('../models/seller');
 const path = require('path');
+const productsModel=require('../models/products');
 const fs = require('fs');
 
 const loginSeller = async (req, res) => {
@@ -17,7 +18,7 @@ const loginSeller = async (req, res) => {
         if (tourist.Password !== Password) {
             return res.status(400).json({ message: "Incorrect password." });
         }
-  
+       
         res.status(200).json({
             message: "Login successful",
             tourist,
@@ -26,6 +27,11 @@ const loginSeller = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
   };
+
+  
+
+
+
 // Define each function as a standalone, outside of any other function
 const createSeller = async (req, res) => {
     const { Username, Email, Password, Name, Description } = req.body;

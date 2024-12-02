@@ -27,6 +27,8 @@ function SellerLogin() {
             setError(error.response?.data?.message || "Login failed. Please try again.");
         }
     };
+    
+      
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
