@@ -31,7 +31,47 @@ const SellerDashboard = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const navigate = useNavigate();
 
+  const SellerChangePassword = () => (
+    <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
+  );
   
+  
+  const fetchOutOfStockProducts = async () => {
+    try {
+      setLoading(true); // Start loading state
+      const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
+      const products = response.data.products;
+      setOutOfStockProducts(products);
+      setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+      setError(null); // Clear previous errors
+    } catch (err) {
+      console.error('Error fetching out-of-stock products:', err);
+      setError('Failed to fetch out-of-stock products.');
+    } finally {
+      setLoading(false); // Stop loading state
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    fetchOutOfStockProducts();
+
+    // Optional: Poll for updates every 30 seconds
+    //const interval = setInterval(fetchOutOfStockProducts, 30000);
+    //return () => clearInterval(interval); // Clean up interval
+  }, []);
+
+  // Close the pop-up
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
+  // Function to fetch sellers from the backend
+
+
+  // Function to request account deletion for a seller
   const requestAccountDeletion = async (sellerId) => {
     try {
       const response = await fetch(`/api/sellerRoute/deleteRequest/${sellerId}`, {
@@ -96,18 +136,7 @@ const SellerDashboard = () => {
     };
   
     // Fetch out-of-stock products
-    const fetchOutOfStockProducts = async () => {
-      try {
-        const response = await axios.get('/api/productsRoute/check-stock');
-        setOutOfStockProducts(response.data.products || []);
-        setShowNotification(response.data.products.length > 0);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch out-of-stock products.");
-      } finally {
-        setLoading(false);
-      }
-    };
+ 
   
     // Filter products by price range
     const filterProducts = () => {

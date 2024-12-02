@@ -3,6 +3,9 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const products = require('../models/products');
+const sellerModel= require ('../models/seller');
+const nodemailer=require('nodemailer');
+
 
 // Ensure the uploads directory exists
 const uploadsDir = path.join(__dirname, '../uploads');
@@ -87,6 +90,8 @@ const createProduct = async (req, res) => {
   }
 };
 
+
+
 const checkStockAndNotify = async (req, res) => {
   try {
     // Find products with AvailableQuantity = 0
@@ -98,6 +103,8 @@ const checkStockAndNotify = async (req, res) => {
         message: 'Some products are out of stock.',
         products: outOfStockProducts,
       });
+      
+
     }
 
     // If no products are out of stock
@@ -110,6 +117,7 @@ const checkStockAndNotify = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
