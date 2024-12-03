@@ -256,7 +256,7 @@ const bookActivity = async (req, res) => {
       const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
       sendNotificationEmail(tourist.Email, subject, message);
 
-      res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities });
+      res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities ,reminderMessage: `You have successfully booked the activity! This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on${activity.date || activity.availableDates[0]} .\n\nThank You!`,});
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
@@ -443,7 +443,7 @@ const bookItinerary = async (req, res) => {
       const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`;
       sendNotificationEmail(tourist.Email, subject, message);
 
-      res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries});
+      res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries,reminderMessage:`You have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\n Thank You! `});
   } catch (error) {
       res.status(400).json({ error: error.message });
   }

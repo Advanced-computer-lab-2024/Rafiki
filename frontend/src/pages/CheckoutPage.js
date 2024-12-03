@@ -92,8 +92,10 @@ const CheckoutPage = () => {
 
       setTotalPrice(discountedPrice.toFixed(2)); // Update final price with the discounted value
       setMessage(`Promo code applied! You saved ${discountAmount.toFixed(2)}.`);
+      setError('');
     } catch (err) {
       setError(err.message);
+      setMessage('');
       setTotalPrice(totalPrice); // Reset to the original price if promo code is invalid
     }
   };

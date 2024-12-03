@@ -87,7 +87,9 @@ const ActivityDetails = ({ activity }) => {
                 body: JSON.stringify({ touristId: tourist._id, activityId: activity._id })
             });
             if (response.ok) {
-                alert("Activity booked successfully!");
+                const { message, reminderMessage } = await response.json();
+
+                alert(reminderMessage);
             } else {
                 alert("Failed to book activity.");
             }

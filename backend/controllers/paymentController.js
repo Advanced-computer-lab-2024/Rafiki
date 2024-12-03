@@ -82,7 +82,7 @@ const processActivityPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Activity Payment processed successfully.",
+            message:` Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
@@ -160,7 +160,7 @@ const processItineraryPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Itinerary Payment processed successfully.",
+            message: `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
@@ -238,7 +238,7 @@ const processMuseumPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Museum Payment processed successfully.",
+            message: `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${museum.location || museum.pickupLocation} on ${museum.openingHours}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
