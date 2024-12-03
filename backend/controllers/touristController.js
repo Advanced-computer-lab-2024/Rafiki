@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt'); // Ensure you have this imported for password 
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
 const crypto = require('crypto'); // Importing crypto for OTP generation
-let otpStore = {};
+const otpStore = {}; // This is an in-memory object to store OTPs temporarily
+
 
 
 const nodemailer = require('nodemailer');
@@ -60,16 +61,20 @@ async function sendForgotPasswordOTP(tourist, otp) {
 
 const requestOTP = async (req, res) => {
   const { email } = req.body;
-
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore[email] = otp;
   try {
     // Find tourist by email
     const tourist = await TouristModel.findOne({ Email: email });
+    
     if (!tourist) {
       return res.status(404).json({ message: 'No tourist found with this email.' });
     }
 
     // Send OTP email
     await sendForgotPasswordOTP(tourist); // Send OTP to the tourist
+    console.log(`OTP for ${email}: ${otp}`); // Debugging: Log OTP
+
 
     res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
@@ -77,6 +82,51 @@ const requestOTP = async (req, res) => {
     res.status(500).json({ message: 'Error sending OTP.' });
   }
 };
+// Function to reset the password
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    // Find the tourist by email
+    const tourist = await TouristModel.findOne({ Email: email });
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found with this email.' });
+    }
+
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database
+    tourist.Password = hashedPassword;
+    await tourist.save();
+
+    res.status(200).json({ message: 'Password reset successfully.' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Error resetting password.' });
+  }
+};
+// Function to handle OTP verification
+const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+    // Fetch the OTP from the database or cache
+    const storedOTP = otpStore[email];
+
+    if (!storedOTP) {
+      return res.status(400).json({ message: 'OTP not found or expired' });
+    }
+
+  // Compare the OTP entered by the user with the one stored
+  if (storedOTP === otp) {
+    return res.status(200).json({ message: 'OTP verified successfully.' });
+  } else {
+    return res.status(400).json({ message: 'Invalid OTP. Please try again.' });
+  }
+};
+
+
+
+
 
 
 
@@ -1046,4 +1096,4 @@ module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTour
   incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
-    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking, requestOTP,addAddress,getAddresses};
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking, requestOTP,addAddress,getAddresses, resetPassword, verifyOTP};
