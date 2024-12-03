@@ -14,6 +14,7 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('wallet'); // Default payment method
   const [promoCode, setPromoCode] = useState('');
   const [totalPrice, setTotalPrice] = useState(0); // Total price for checkout
+  const [touristWallet, setTouristWallet] = useState(0); // Tourist's wallet balance
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -52,6 +53,10 @@ const CheckoutPage = () => {
           const items = response.data.products || [];
           const total = items.reduce((total, item) => total + (item.product.Price * item.amount), 0);
           setTotalPrice(total);
+
+          // Fetch the tourist's wallet balance
+          const walletResponse = await axios.get(`/api/payments/${username}/wallet`);
+          setTouristWallet(walletResponse.data.balance); // Assuming wallet balance is in `balance`
         } catch (error) {
           console.error("Error fetching cart data:", error);
         }
@@ -103,8 +108,29 @@ const CheckoutPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (paymentMethod === 'cash-on-delivery') {
+      // Mark payment as successful immediately for Cash on Delivery
+      alert('Cash on Delivery payment successful!');
+      setIsProcessing(false);
+      return;
+    }
+
+    if (paymentMethod === 'wallet') {
+      // Check if wallet has sufficient funds
+      if (touristWallet < totalPrice) {
+        alert('Insufficient funds in wallet!');
+        setIsProcessing(false);
         return;
+      }
+
+      // Proceed with the wallet payment
+      alert('Wallet payment successful!');
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!stripe || !elements) {
+      return;
     }
 
     setIsProcessing(true);
@@ -113,29 +139,29 @@ const CheckoutPage = () => {
     const { token, error } = await stripe.createToken(cardElement);
 
     if (error) {
-        alert(error.message);
-        setIsProcessing(false);
+      alert(error.message);
+      setIsProcessing(false);
     } else {
-        // Log the total price and the amount to be sent to backend
-        console.log("Total Price:", totalPrice);
-        console.log("Amount to send to backend:", totalPrice * 100);  // Amount in cents
+      // Log the total price and the amount to be sent to backend
+      console.log("Total Price:", totalPrice);
+      console.log("Amount to send to backend:", totalPrice * 100);  // Amount in cents
 
-        const response = await axios.post('/api/payments/create-payment-intent', {
-            amount: totalPrice * 100, // Convert to cents (e.g., $160 -> 16000 cents)
-            paymentMethod: 'pm_card_visa', // Hardcoded payment method for now
-            address: selectedAddress, // Selected address (if needed)
-        });
+      const response = await axios.post('/api/payments/create-payment-intent', {
+        amount: totalPrice * 100, // Convert to cents (e.g., $160 -> 16000 cents)
+        paymentMethod: token.id, // Use the generated token for payment
+        address: selectedAddress, // Selected address (if needed)
+      });
 
-        const data = response.data;
-        if (data.clientSecret) {
-            alert('Payment Successful!');
-        } else {
-            alert('Payment Failed');
-        }
+      const data = response.data;
+      if (data.clientSecret) {
+        alert('Payment Successful!');
+      } else {
+        alert('Payment Failed');
+      }
 
-        setIsProcessing(false);
+      setIsProcessing(false);
     }
-};
+  };
 
   return (
     <div>
