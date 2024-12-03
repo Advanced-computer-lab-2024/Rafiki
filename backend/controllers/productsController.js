@@ -118,6 +118,33 @@ const checkStockAndNotify = async (req, res) => {
   }
 };
 
+const checkStockAndNotifySeller = async (req, res) => {
+  try {
+    // Find products with AvailableQuantity = 0
+    const outOfStockProducts = await productsModel.find({ AvailableQuantity: { $lte: 0 } });
+    if (outOfStockProducts.length > 0) {
+      const sellerUsernames = [...new Set(outOfStockProducts.map(product => product.Seller))];
+      const sellers = await sellerModel.find({ Username: { $in: sellerUsernames } });
+      // Respond with the list of out-of-stock products
+      return res.status(200).json({
+        message: 'Some products are out of stock.',
+        products: outOfStockProducts,
+        sellers: sellers,
+      });
+      
+
+    }
+
+    // If no products are out of stock
+    res.status(200).json({
+      message: 'All products are in stock.',
+      products: [],
+    });
+  } catch (error) {
+    console.error('Error checking stock:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 
@@ -279,4 +306,4 @@ const getproductRating = async (req, res) => {
 };
 
 
-module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, checkStockAndNotify,archiveProduct, getArchivedProducts , getproductRating , addRatingToProduct};
+module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, checkStockAndNotify,checkStockAndNotifySeller,archiveProduct, getArchivedProducts , getproductRating , addRatingToProduct};

@@ -15,9 +15,9 @@ const SellerDashboard = () => {
   const [products, setProducts] = useState([]);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [outOfStockProducts, setOutOfStockProducts] = useState([]);
+  
   const [activeContent, setActiveContent] = useState("description"); // Default to description
-  const [showNotification, setShowNotification] = useState(false);
+  
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [minPrice, setMinPrice] = useState("");
@@ -30,19 +30,46 @@ const SellerDashboard = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const navigate = useNavigate();
+  const [outOfStockProducts, setOutOfStockProducts] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationShown, setNotificationShown] = useState(false); // Prevents multiple pop-ups
+  const [sellerUsername, setSellerUsername] = useState('');
+  
+ 
+
 
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
-  
-  
+
+  useEffect(() => {
+    const username = localStorage.getItem('sellerUsername'); // Replace with your key
+    if (username) {
+      setSellerUsername(username);
+    } else {
+      console.error('Seller username not found.');
+    }
+  }, []);
+
+ 
   const fetchOutOfStockProducts = async () => {
     try {
       setLoading(true); // Start loading state
-      const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
-      const products = response.data.products;
-      setOutOfStockProducts(products);
-      setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+      const response = await axios.get('/api/productsRoute/check-stock2'); // Adjust the API endpoint
+      const allOutOfStockProducts = response.data.products;
+
+      // Filter products that belong to the current seller
+      const sellerProducts = allOutOfStockProducts.filter(
+        (product) => product.Seller === sellerUsername
+      );
+
+      setOutOfStockProducts(sellerProducts);
+
+      if (sellerProducts.length > 0 && !notificationShown) {
+        setShowNotification(true); // Show notification
+        setNotificationShown(true); // Prevent further pop-ups in this session
+      }
+
       setError(null); // Clear previous errors
     } catch (err) {
       console.error('Error fetching out-of-stock products:', err);
@@ -52,21 +79,21 @@ const SellerDashboard = () => {
     }
   };
 
-
-
-
   useEffect(() => {
-    fetchOutOfStockProducts();
+    if (sellerUsername) {
+      fetchOutOfStockProducts();
+    }
+  }, [sellerUsername]);
 
-    // Optional: Poll for updates every 30 seconds
-    //const interval = setInterval(fetchOutOfStockProducts, 30000);
-    //return () => clearInterval(interval); // Clean up interval
-  }, []);
-
-  // Close the pop-up
+  // Close the notification pop-up
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
+  
+  
+
+  // Close the pop-up
+  
 
   // Function to fetch sellers from the backend
 
@@ -204,7 +231,7 @@ const SellerDashboard = () => {
     useEffect(() => {
       fetchCurrentSeller();
       fetchProducts();
-      fetchOutOfStockProducts();
+      
     }, []);
 
     return (
@@ -212,6 +239,27 @@ const SellerDashboard = () => {
         {/* Sidebar */}
         <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
           <h3 className="text-xl font-bold mb-4">Seller Dashboard</h3>
+          {showNotification && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+              onClick={handleCloseNotification}
+            >
+              &times; {/* Close button */}
+            </button>
+            <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
+            <ul className="mt-4 space-y-2">
+              {outOfStockProducts.map((product) => (
+                <li key={product._id} className="text-gray-700">
+                  {product.Name} is out of stock!
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
           <ul className="space-y-4">
             <li>
               <button
