@@ -24,6 +24,8 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
     }
   }, [existingProduct]);
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
