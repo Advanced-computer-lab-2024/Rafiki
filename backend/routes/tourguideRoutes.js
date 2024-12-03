@@ -29,4 +29,6 @@ router.post('/:id/upload-picture', upload.single('picture'), uploadTourGuidePict
 router.post('/:id/ratings', addRatingToTourGuide); // Add a rating
 router.get('/:id/ratings', getTourguideRatings);   // Get all ratings for a tour guide
 
+
+
 module.exports = router;

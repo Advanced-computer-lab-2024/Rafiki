@@ -43,6 +43,26 @@ const getProduct = async (req, res) => {
   }
 };
 
+
+
+const getProductPriceByName = async (req, res) => {
+  const { name } = req.params; // Get product name from URL parameter
+
+  try {
+    // Find the product by name (case insensitive)
+    const product = await productsModel.findOne({ Name: { $regex: new RegExp(name, "i") } });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+
+    // Send back the product price
+    res.status(200).json({ price: product.Price });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Function to handle getting all products
 const getProducts = async (req, res) => {
   try {
@@ -306,4 +326,4 @@ const getproductRating = async (req, res) => {
 };
 
 
-module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, checkStockAndNotify,checkStockAndNotifySeller,archiveProduct, getArchivedProducts , getproductRating , addRatingToProduct};
+module.exports = { createProduct, getProduct, getProducts, filterProducts, sortProducts, updateProduct, upload, checkStockAndNotify,checkStockAndNotifySeller,archiveProduct, getArchivedProducts , getproductRating , addRatingToProduct,getProductPriceByName};

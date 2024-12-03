@@ -36,7 +36,7 @@ import AdvertiserForm from './components/advertiserForm';
 import TouristForm from './components/touristForm';
 import AdvertiserSignup from './pages/advertiserSignup';
 import CheckoutPage from './pages/CheckoutPage';
-
+import ProductCheckout from './pages/ProductCheckout';
 
 const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
 
@@ -90,6 +90,14 @@ function App() {
             element={
               <Elements stripe={stripePromise}>
                 <CheckoutPage />
+              </Elements>
+            }
+          />  
+          <Route
+            path="/ProductCheckout"
+            element={
+              <Elements stripe={stripePromise}>
+                <ProductCheckout />
               </Elements>
             }
           />  

@@ -38,7 +38,11 @@ const activitySchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    ratings: [RatingSchema]  // Array of RatingSchema objects
+    tourGuideUsername: {
+        type: String, // Use the tour guide's username for linking
+        required: true,
+        ref: 'Tourguide', // Reference to the Tourguide model
+        },    ratings: [RatingSchema]  // Array of RatingSchema objects
 }, { timestamps: true });
 
 const Activity = mongoose.model('Activity', activitySchema);

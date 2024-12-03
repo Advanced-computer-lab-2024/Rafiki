@@ -75,7 +75,7 @@ app.use('/api/PromoCodeRoute', PromoCodeRoutes)
 app.use(transportationRoutes);
 app.use('/api/bookmarkRoute', bookmarkRoutes);
 app.use('/api/cartRoute', cartRoutes);
-
+app.use(cors());
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

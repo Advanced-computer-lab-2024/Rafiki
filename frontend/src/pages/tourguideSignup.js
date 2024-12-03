@@ -7,8 +7,14 @@ import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
+import SalesReport from "../components/SalesReport";
 
 const TourguideSignup = () => {
+  const [showRevenue, setShowRevenue] = useState(false);
+
+  const handleShowRevenue = () => {
+    setShowRevenue(!showRevenue);
+  };
   const [tourguide, setTourguide] = useState(null); // Store a single tour guide
   const [itineraries, setItineraries] = useState(null);
   const [activities, setActivities] = useState(null);
@@ -105,6 +111,14 @@ const TourguideSignup = () => {
               Change Password
             </button>
           </li>
+          <li>
+            <button
+              onClick={handleShowRevenue}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              {showRevenue ? "Hide Revenue" : "Show Revenue"}
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -186,6 +200,9 @@ const TourguideSignup = () => {
             <AdminChangePassword />
           </div>
         )}
+
+        {/* Conditionally Render the Sales Report */}
+        {showRevenue && <SalesReport />}
       </div>
 
       {/* Terms Popup */}
