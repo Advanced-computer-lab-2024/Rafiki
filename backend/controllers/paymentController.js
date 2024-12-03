@@ -274,6 +274,44 @@ const transporter = nodemailer.createTransport({
       }
     });
   };
+  const stripe = require('stripe')('sk_test_51QRh7PGXzdUVHQQyTgtko5AeprJrNz2pktOY2eZGnEeH7YMHKnueJnmNX9bj3oDs7Df8q9tP0b2XvAG89Op5LHj100SP2FKXmj'); // Replace with your secret key
+
+  // Controller to create a Payment Intent
+  const createPaymentIntent = async (req, res) => {
+    try {
+        const { amount, paymentMethod, address } = req.body;
+
+        // Log received amount and payment method
+        console.log("Received amount (in cents):", amount);
+        console.log("Received payment method:", paymentMethod);
+
+        // Validate amount
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: 'Invalid or missing amount.' });
+        }
+
+        // Validate that paymentMethod is provided
+        if (!paymentMethod) {
+            return res.status(400).json({ error: 'Payment method is required.' });
+        }
+
+        // Create a payment intent with the provided amount
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount, // Amount in cents
+            currency: 'usd',
+            payment_method: paymentMethod,  // Hardcoded payment method for now
+            payment_method_types: ['card'],
+            confirm: true,  // Confirm immediately for simple flows
+        });
+
+        res.status(200).json({
+            clientSecret: paymentIntent.client_secret,  // Send the client secret to the frontend
+        });
+    } catch (error) {
+        console.error('Error creating payment intent:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
-module.exports = {  processActivityPayment, processItineraryPayment,  processMuseumPayment };
+module.exports = {  processActivityPayment, processItineraryPayment,  processMuseumPayment,createPaymentIntent };
