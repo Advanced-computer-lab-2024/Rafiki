@@ -148,7 +148,7 @@ const CheckoutPage = () => {
 
       const response = await axios.post('/api/payments/create-payment-intent', {
         amount: totalPrice * 100, // Convert to cents (e.g., $160 -> 16000 cents)
-        paymentMethod: token.id, // Use the generated token for payment
+        paymentMethod: 'pm_card_visa', // Use the generated token for payment
         address: selectedAddress, // Selected address (if needed)
       });
 
