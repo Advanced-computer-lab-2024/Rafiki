@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getProduct, upload, createProduct, getProducts, filterProducts, sortProducts,checkStockAndNotify, updateProduct, archiveProduct,  getArchivedProducts, addRatingToProduct,getproductRating, checkStockAndNotifySeller } = require('../controllers/productsController');
+const { getProduct, upload, createProduct, getProducts, filterProducts, sortProducts,checkStockAndNotify, updateProduct, archiveProduct,  getArchivedProducts, addRatingToProduct,getproductRating, checkStockAndNotifySeller,getProductPriceByName } = require('../controllers/productsController');
 
 // Route to get a product by name
-router.get("/getProduct/:name", getProduct);
+    router.get("/getProduct/:name", getProduct);
 
 // Route to create a new product
 router.post("/addProduct", upload.single('Picture'), createProduct);
+
+
+router.get('/getProductPrice/:name', getProductPriceByName);
 
 // Route to filter products by price
 router.get('/filterProducts', filterProducts);

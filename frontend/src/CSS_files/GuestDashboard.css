@@ -1,0 +1,189 @@
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1, h2 {
+    font-family: 'Helvetica', sans-serif;
+    color: #333;
+}
+
+/* Container for the dashboard */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* File Upload Section */
+.file-upload {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.file-upload input[type="file"] {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.file-upload button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-upload button:hover {
+    background-color: #0056b3;
+}
+
+/* Search, Filter & Sort Buttons */
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Input fields */
+input[type="text"], input[type="number"], input[type="date"] {
+    padding: 8px;
+    margin: 5px 0;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Visibility toggles for search and filter sections */
+div {
+    margin-bottom: 20px;
+}
+
+/* Activities, Museums, Itineraries List */
+.activities, .museums, .Itineraries {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.activity, .museum, .itinerary {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.activity:hover, .museum:hover, .itinerary:hover {
+    transform: scale(1.05);
+}
+
+.activity img, .museum img, .itinerary img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.activity h3, .museum h3, .itinerary h3 {
+    margin-top: 10px;
+    color: #333;
+}
+
+.activity p, .museum p, .itinerary p {
+    color: #555;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Toggle Section for Activities, Museums, Itineraries */
+button.view-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+button.view-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 15px;
+    }
+
+    button {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .activities, .museums, .Itineraries {
+        grid-template-columns: 1fr;
+    }
+
+    .file-upload {
+        text-align: left;
+    }
+
+    .file-upload input[type="file"], .file-upload button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+
+    input[type="text"], input[type="number"], input[type="date"] {
+        width: 100%;
+    }
+}

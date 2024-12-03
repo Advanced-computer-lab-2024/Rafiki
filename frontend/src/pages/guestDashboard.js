@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ActivityDetails from "../components/ActivityDetails"; 
 import MuseumDetails from "../components/museumDetails"; 
 import ItineraryDetails from "../components/itineraryDetails";
-
+import '../CSS_files/GuestDashboard.css'
 const GuestDashboard = () => {
 
     const [isGuideVisible, setIsGuideVisible] = useState(false);
