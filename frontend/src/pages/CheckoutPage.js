@@ -12,8 +12,11 @@ const CheckoutPage = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('wallet'); // Default payment method
+  const [promoCode, setPromoCode] = useState('');
   const [totalPrice, setTotalPrice] = useState(0); // Total price for checkout
   const [isProcessing, setIsProcessing] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const stripe = useStripe(); // Use Stripe hook inside the component
   const elements = useElements(); // Use Elements hook inside the component
@@ -62,6 +65,34 @@ const CheckoutPage = () => {
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
   };
+
+  const validatePromoCode = async () => {
+    try {
+      const response = await fetch('/api/PromoCodeRoute/use', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: promoCode }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Invalid promo code.');
+      }
+
+      const { promoCode: usedPromoCode } = await response.json();
+      const discountAmount = (totalPrice * usedPromoCode.discount) / 100;
+      const discountedPrice = totalPrice - discountAmount;
+
+      setTotalPrice(discountedPrice.toFixed(2)); // Update final price with the discounted value
+      setMessage(`Promo code applied! You saved ${discountAmount.toFixed(2)}.`);
+    } catch (err) {
+      setError(err.message);
+      setTotalPrice(totalPrice); // Reset to the original price if promo code is invalid
+    }
+  };
+
 
   // Handle payment method change
   const handlePaymentMethodChange = (e) => {
@@ -126,6 +157,18 @@ const CheckoutPage = () => {
       )}
 
       <h3>Total Price: ${totalPrice}</h3>
+      <div>
+        <label>Promo Code:</label>
+        <input
+          type="text"
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value)}
+          placeholder="Enter promo code"
+        />
+        <button type="button" onClick={validatePromoCode}>
+          Apply Promo Code
+        </button>
+      </div>
 
       <form onSubmit={handleSubmit}>
         <div>
