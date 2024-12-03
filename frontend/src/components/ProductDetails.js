@@ -54,7 +54,6 @@ const ProductDetails = ({ product }) => {
   return (
     <div className="flex justify-center p-6">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-xl w-full">
-        {/* Product Image */}
         <div className="flex justify-center mb-6">
           <img
             src={`/uploads/${product.Picture}`}
@@ -63,10 +62,8 @@ const ProductDetails = ({ product }) => {
           />
         </div>
 
-        {/* Product Name */}
         <h4 className="text-2xl font-bold text-gray-800 mb-4">{product.Name}</h4>
 
-        {/* Price and Currency Selector */}
         <div className="flex items-center justify-between mb-6">
           <span className="text-xl font-semibold text-gray-700">
             {currency} {(parseFloat(finalPrice) * currencyMultiplier).toFixed(2)}
@@ -82,7 +79,6 @@ const ProductDetails = ({ product }) => {
           </select>
         </div>
 
-        {/* Promo Code Section */}
         <div className="mb-6">
           <label
             htmlFor="promoCode"
@@ -108,27 +104,15 @@ const ProductDetails = ({ product }) => {
           </div>
         </div>
 
-        {/* Success or Error Messages */}
         {message && <p className="text-green-600 font-medium mb-4">{message}</p>}
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
 
-        {/* Product Details */}
         <div className="space-y-2 text-gray-700">
-          <p>
-            <strong>Description:</strong> {product.Description}
-          </p>
-          <p>
-            <strong>Seller:</strong> {product.Seller}
-          </p>
-          <p>
-            <strong>Ratings:</strong> {product.Ratings}
-          </p>
-          <p>
-            <strong>Reviews:</strong> {product.Reviews}
-          </p>
-          <p>
-            <strong>Available Quantity:</strong> {product.AvailableQuantity}
-          </p>
+          <p><strong>Description:</strong> {product.Description}</p>
+          <p><strong>Seller:</strong> {product.Seller}</p>
+          <p><strong>Ratings:</strong> {product.Ratings}</p>
+          <p><strong>Reviews:</strong> {product.Reviews}</p>
+          <p><strong>Available Quantity:</strong> {product.AvailableQuantity}</p>
         </div>
       </div>
     </div>

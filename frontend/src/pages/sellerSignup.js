@@ -153,15 +153,26 @@ const SellerDashboard = () => {
       try {
         const response = await fetch('/api/productsRoute');
         const data = await response.json();
+    
         if (response.ok) {
-          setProducts(data);
-          setFilteredProducts(data);
+          const sellerName = localStorage.getItem('sellerName');
+          const sellerProducts = data.filter((product) => product.Seller === sellerName);
+          setProducts(sellerProducts); // Original list of products
+          setFilteredProducts(sellerProducts); // Default to all products
+        } else {
+          console.error("Failed to fetch products.");
         }
       } catch (err) {
+        console.error("Error fetching products:", err);
         setError("Error fetching products.");
       }
     };
-  
+    
+    
+    useEffect(() => {
+      fetchProducts();
+    }, []);
+    
     // Fetch out-of-stock products
  
   
@@ -169,14 +180,16 @@ const SellerDashboard = () => {
     const filterProducts = () => {
       const min = parseFloat(minPrice);
       const max = parseFloat(maxPrice);
-  
-      const filtered = products.filter(product => {
+    
+      // Ensure `products` is the source of truth
+      const filtered = products.filter((product) => {
         const price = product.Price;
         return (isNaN(min) || price >= min) && (isNaN(max) || price <= max);
       });
-  
-      setFilteredProducts(filtered);
+    
+      setFilteredProducts(filtered); // Update the filteredProducts state
     };
+    
   
     // Search products by name
     const handleSearch = () => {
@@ -408,40 +421,42 @@ const SellerDashboard = () => {
           )}
     
           {/* Filter Products */}
-          {activeContent === "filterProducts" && (
-            <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-              <h3 className="text-2xl font-semibold text-gray-800 mb-4">Filter Products by Price</h3>
-              <div className="flex items-center mb-4">
-                <input
-                  type="number"
-                  placeholder="Min Price"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  className="border rounded px-3 py-2 mr-4 w-1/2"
-                />
-                <input
-                  type="number"
-                  placeholder="Max Price"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  className="border rounded px-3 py-2 mr-4 w-1/2"
-                />
-                <button
-                  onClick={filterProducts}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Apply Filter
-                </button>
-              </div>
-              <div className="mt-4">
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map((product) => <ProductDetails key={product._id} product={product} />)
-                ) : (
-                  <p className="text-gray-500">No products found.</p>
-                )}
-              </div>
-            </div>
-          )}
+         {/* Filter Products */}
+{activeContent === "filterProducts" && (
+  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-4">Filter Products by Price</h3>
+    <div className="flex items-center mb-4">
+      <input
+        type="number"
+        placeholder="Min Price"
+        value={minPrice}
+        onChange={(e) => setMinPrice(e.target.value)}
+        className="border rounded px-3 py-2 mr-4 w-1/2"
+      />
+      <input
+        type="number"
+        placeholder="Max Price"
+        value={maxPrice}
+        onChange={(e) => setMaxPrice(e.target.value)}
+        className="border rounded px-3 py-2 mr-4 w-1/2"
+      />
+      <button
+        onClick={filterProducts}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Apply Filter
+      </button>
+    </div>
+    <div className="mt-4">
+      {filteredProducts.length > 0 ? (
+        filteredProducts.map((product) => <ProductDetails key={product._id} product={product} />)
+      ) : (
+        <p className="text-gray-500">No products match the given criteria.</p>
+      )}
+    </div>
+  </div>
+)}
+
         </div>
     
         {/* Terms Popup */}

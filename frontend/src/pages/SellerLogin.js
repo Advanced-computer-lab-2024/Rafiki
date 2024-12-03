@@ -22,6 +22,7 @@ function SellerLogin() {
           const { tourist } = response.data; // Assuming "tourist" holds seller data
           localStorage.setItem("sellerId", tourist._id); // Store seller ID in localStorage
           localStorage.setItem('sellerUsername', tourist.Username);
+          localStorage.setItem('sellerName', tourist.Name); // Store seller Name
           alert("Login successful");
           navigate('/seller-signup');
         }
