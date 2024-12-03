@@ -224,9 +224,9 @@ const WishlistDetails = () => {
                     </button>
                   </div>
                 ))
-              ) : wishlist && wishlist.Products ? (
+              ) :  (
                 <p>No products found in wishlist.</p>
-              ) : null}
+              ) }
             </div>
           )}
         </div>

@@ -1,14 +1,23 @@
+import React from "react";
+
 const SellerDetails = ({ seller }) => {
-    return (
-        <div className="seller-details">
-            <h4>{seller.Username}</h4> {/* Ensure this matches your data structure */}
-            <p><strong>Username: </strong>{seller.Username}</p>
-            <p><strong>Email: </strong>{seller.Email}</p>
-            <p><strong>Name: </strong>{seller.Name}</p>
-            <p><strong>Description: </strong>{seller.Description}</p>
-         
-        </div>
-    );
+  return (
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="flex items-center mb-4">
+        {seller.Picture && (
+          <img
+            src={`/uploads/sellerPictures/${seller.Picture}`}
+            alt={`${seller.Username}'s profile`}
+            className="w-16 h-16 rounded-full mr-4"
+          />
+        )}
+        <h4 className="text-2xl font-semibold text-gray-800">{seller.Name || seller.Username}</h4>
+      </div>
+      <p className="text-gray-600"><strong>Username:</strong> {seller.Username}</p>
+      <p className="text-gray-600"><strong>Email:</strong> {seller.Email}</p>
+      <p className="text-gray-600"><strong>Description:</strong> {seller.Description || "No description provided."}</p>
+    </div>
+  );
 };
 
 export default SellerDetails;

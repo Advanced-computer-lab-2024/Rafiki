@@ -10,6 +10,9 @@ let otpStore = {};
 
 
 const nodemailer = require('nodemailer');
+const sellerModel=require('../models/seller');
+const ProductModel=require('../models/products');
+const AdminModel=require('../models/admin');
 
 // This function will send the OTP email
 
@@ -304,30 +307,62 @@ const attendActivity = async (req, res) => {
   }
 };
 
+async function sendActivityBookingEmail(tourist, activity) {
+  try {
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rafiki.info1@gmail.com',
+        pass: 'hsyotajsdxtetmbw',
+      },
+    });
+
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: tourist.Email,
+      subject: `Your Activity Booking Confirmation: ${activity.name}`,
+      text: `Hello ${tourist.Username},\n\nCongratulations! Your booking for "${activity.name}" has been successfully confirmed.\n\nHere are your booking details:\n- **Activity Name**: ${activity.name}\n- **Price**: $${activity.price}\n- **Location**: ${activity.location || 'To be announced'}\n- **Date**: ${activity.date || 'To be scheduled'}\n\nWe hope you have an amazing experience!\n\nBest regards,\nTeam Rafiki`,
+    };
+
+    await transport.sendMail(mailOptions);
+    console.log('Booking confirmation email sent successfully!');
+  } catch (error) {
+    console.error('Failed to send booking email:', error.message);
+  }
+}
+
 const bookActivity = async (req, res) => {
   const { touristId, activityId } = req.body;
-  
+
   try {
-      // Find the tourist and update their attendedActivities list
-      const tourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
-          { new: true }
-      ).populate('BookedActivities'); // Populate to see full details of attended activities if needed
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
-      const activity = await ActivityModel.findById(activityId);
+    const tourist = await TouristModel.findByIdAndUpdate(
+      touristId,
+      { $addToSet: { BookedActivities: activityId } },
+      { new: true }
+    ).populate('BookedActivities');
 
-      const subject = `Reminder: Upcoming Event - ${activity.name || activity.location}`;
-      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
-      sendNotificationEmail(tourist.Email, subject, message);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found. Please ensure you are registered." });
+    }
 
-      res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities });
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found. It might no longer be available." });
+    }
+
+    await sendActivityBookingEmail(tourist, activity);
+
+    res.status(200).json({
+      message: `You have successfully booked "${activity.name}".`,
+      reminderMessage: `Don't forget! The activity is scheduled at ${activity.location || 'an amazing destination'} on ${activity.date || 'a convenient date'}.`,
+      BookedActivities: tourist.BookedActivities,
+    });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    console.error('Error booking activity:', error);
+    res.status(500).json({ message: "An error occurred while booking the activity. Please try again later." });
   }
 };
+
 
 const cancelActivityBooking = async (req, res) => {
   const { touristId, activityId } = req.body;
@@ -418,24 +453,55 @@ const viewWalletBalance = async (req, res) => {
 
 const PurchaseProduct = async (req, res) => {
   const { touristId, ProductId } = req.body;
-  
+
   try {
-      // Find the tourist and update their purchases list
-      const tourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { $addToSet: { PurchasedProducts: ProductId } }, // Use $addToSet to avoid duplicates
-          { new: true }
-      ).populate('PurchasedProducts'); // Populate to see full details of attended activities if needed
+    const product = await ProductModel.findOneAndUpdate(
+      { _id: ProductId, AvailableQuantity: { $gt: 0 } },
+      { $inc: { AvailableQuantity: -1 } },
+      { new: true }
+    );
 
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
+    if (!product) {
+      return res.status(400).json({ message: "Product is out of stock." });
+    }
 
-      res.status(200).json({ message: "Product Purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
+    if (product.AvailableQuantity === 0) {
+      const seller = await sellerModel.findOne({ Username: product.Seller });
+      const emailSubject = 'Out of Stock Product Alert';
+      const emailBody = `The following products are out of stock:\n\n` +
+      `this product"${product.Name}" is out of stock. \n\nplease restock it.`;+
+     `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nRafiki `;
+     sendNotificationEmail(seller.Email, emailSubject, emailBody);
+
+     const admins = await AdminModel.find({}, 'Email');
+     const adminEmails = admins.map(admin => admin.Email);
+     const emailSubject2 = 'Out of Stock Product Alert';
+      const emailBody2 = `The following products are out of stock:\n\n` +
+      `this product"${product.Name}" is out of stock. `;+
+     `\n\nBest regards,\nRafiki`;
+     for (const adminEmail of adminEmails) {
+       sendNotificationEmail(adminEmail, emailSubject2, emailBody2);
+    }
+    }
+
+    const tourist = await TouristModel.findByIdAndUpdate(
+      touristId,
+      { $addToSet: { PurchasedProducts: ProductId } },
+      { new: true }
+    ).populate('PurchasedProducts');
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found." });
+    }
+
+    res.status(200).json({ message: "Product purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
+
+
 
 
 const attendItinerary = async (req, res) => {
@@ -479,7 +545,7 @@ const bookItinerary = async (req, res) => {
       const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`;
       sendNotificationEmail(tourist.Email, subject, message);
 
-      res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries});
+      res.status(200).json({ message: "Itinerary attended successfully.", BookedItineraries: tourist.BookedItineraries,reminderMessage:`You have succesfully booked, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\n Thank You! `});
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
@@ -910,6 +976,69 @@ const sendUpcomingNotifications = async (req, res) => {
 };
 
 
+// Controller: Add a new address to the tourist's profile
+// Controller: Add address to tourist
+const addAddress = async (req, res) => {
+  const { username } = req.params; // Get the tourist's username from the request parameters
+  const { street, city, postalCode } = req.body; // Get the address details from the body
+
+  try {
+      // Validate the address fields
+      if (!street || !city || !postalCode) {
+          return res.status(400).json({ message: 'All address fields are required' });
+      }
+
+      // Find the tourist by username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+
+      // Add the new address to the tourist's addresses array
+      tourist.addresses.push({ street, city, postalCode });
+
+      // Save the tourist document
+      await tourist.save();
+
+      // Return success response with the updated addresses
+      res.status(200).json({
+          message: 'Address added successfully',
+          addresses: tourist.addresses
+      });
+  } catch (error) {
+      console.error('Error adding address:', error);
+      res.status(500).json({
+          message: 'Error adding address',
+          error: error.message || error
+      });
+  }
+};
+
+
+
+
+
+// Controller: Get all addresses of a tourist by username
+const getAddresses = async (req, res) => {
+  const { username } = req.params; // Retrieve the username from the request parameters
+
+  try {
+    // Find the tourist by username
+    const tourist = await TouristModel.findOne({ Username: username }); // Make sure the field matches your model
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Return the list of addresses
+    res.status(200).json({ addresses: tourist.addresses });
+  } catch (error) {
+    console.error('Error fetching addresses:', error);
+    res.status(500).json({ message: 'Error fetching addresses', error });
+  }
+};
+
+
+
 
 
 
@@ -917,4 +1046,4 @@ module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTour
   incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
-    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking, requestOTP};
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking, requestOTP,addAddress,getAddresses};

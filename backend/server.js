@@ -5,6 +5,7 @@ const express = require('express');
 const cron = require("node-cron");
 const mongoose = require('mongoose');
 const cors = require('cors');
+
 // Import routes
 const workoutRoutes = require('./routes/workouts');
 const touristRoutes = require('./routes/TouristRoute');
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
+app.use(cors()); // Enable CORS for all routes
 
 // Route definitions
 

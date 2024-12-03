@@ -75,7 +75,9 @@ const bookItinerary = async () => {
           body: JSON.stringify({ touristId: tourist._id, itineraryId: itinerary._id })
       });
       if (response.ok) {
-          alert("Itinerary booked successfully!");
+        const { message, reminderMessage } = await response.json();
+
+          alert(reminderMessage);
       } else {
           alert("Failed to book itinerary.");
       }

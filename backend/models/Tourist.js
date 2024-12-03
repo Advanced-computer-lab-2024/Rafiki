@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
+
+const AddressSchema = new mongoose.Schema({
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  postalCode: { type: String, required: true }
+});
+
 const touristSchema = new Schema({
   Username: {
     type: String,
@@ -93,7 +101,7 @@ const touristSchema = new Schema({
       type: Date,
       default: null, // Initially null
     },
-  
+    addresses: [{ street: String, city: String, postalCode: String }],
 }, { timestamps: true });
 
 // Prevent re-compilation error by checking if the model already exists

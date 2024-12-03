@@ -70,31 +70,36 @@ const ActivityDetails = ({ activity }) => {
     const bookActivity = async () => {
         const name = prompt("Please enter your name to book the activity:");
         if (!name) {
-            alert("Name is required to book the activity.");
+            alert("Booking failed: Name is required.");
             return;
         }
-
+    
         const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
         if (!tourist) {
-            alert("Tourist not found. Please ensure your name is correct.");
+            alert("Booking failed: Tourist not found. Please double-check your name and try again.");
             return;
         }
-
+    
         try {
             const response = await fetch(`/api/TouristRoute/bookActivity`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ touristId: tourist._id, activityId: activity._id })
             });
+    
             if (response.ok) {
-                alert("Activity booked successfully!");
+                const { message, reminderMessage } = await response.json();
+                alert(`Success: ${message}\n\n${reminderMessage}`);
             } else {
-                alert("Failed to book activity.");
+                const errorResponse = await response.json();
+                alert(`Error: ${errorResponse.message || "Failed to book activity."}`);
             }
         } catch (error) {
             console.error("Error booking activity:", error);
+            alert("An unexpected error occurred while booking the activity. Please try again later.");
         }
     };
+    
 
     const cancelActivityBooking = async () => {
         const name = prompt("Please enter your name to cancel the booking of the activity:");

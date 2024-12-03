@@ -2,6 +2,7 @@ const TouristModel = require('../models/Tourist'); // Import the Tourist model
 const PaymentModel = require('../models/payment'); // Import the Payment model
 const ActivityModel = require('../models/activity')
 const ItineraryModel = require('../models/itinerary')
+
 const MuseumModel = require('../models/museum')
 const nodemailer = require('nodemailer');
 
@@ -81,7 +82,7 @@ const processActivityPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Activity Payment processed successfully.",
+            message:` Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
@@ -159,7 +160,7 @@ const processItineraryPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Itinerary Payment processed successfully.",
+            message: `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${itinerary.location || itinerary.pickupLocation} on ${itinerary.date || itinerary.availableDates[0]}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
@@ -237,7 +238,7 @@ const processMuseumPayment = async (req, res) => {
         // Respond with success message and payment details
         res.status(201).json({ 
             payment, 
-            message: " Museum Payment processed successfully.",
+            message: `Dear ${tourist.Username},\n\nYou have succesfully paid, This is a reminder for your upcoming event at ${museum.location || museum.pickupLocation} on ${museum.openingHours}.\n\nThank you!`,
             newWalletBalance: tourist.Wallet, // Assuming Wallet is where you store the balance
             badgeLevel: tourist.BadgeLevel, // Include the new badge level in the response
             pointsEarned, // Include points earned from this payment
@@ -274,6 +275,67 @@ const transporter = nodemailer.createTransport({
       }
     });
   };
+  const stripe = require('stripe')('sk_test_51QRh7PGXzdUVHQQyTgtko5AeprJrNz2pktOY2eZGnEeH7YMHKnueJnmNX9bj3oDs7Df8q9tP0b2XvAG89Op5LHj100SP2FKXmj'); // Replace with your secret key
+
+  // Controller to create a Payment Intent
+  const createPaymentIntent = async (req, res) => {
+    try {
+        const { amount, paymentMethod, address } = req.body;
+
+        // Log received amount and payment method
+        console.log("Received amount (in cents):", amount);
+        console.log("Received payment method:", paymentMethod);
+
+        // Validate amount
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: 'Invalid or missing amount.' });
+        }
+
+        // Validate that paymentMethod is provided
+        if (!paymentMethod) {
+            return res.status(400).json({ error: 'Payment method is required.' });
+        }
+
+        // Create a payment intent with the provided amount
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount, // Amount in cents
+            currency: 'usd',
+            payment_method: paymentMethod,  // Hardcoded payment method for now
+            payment_method_types: ['card'],
+            confirm: true,  // Confirm immediately for simple flows
+        });
+
+        res.status(200).json({
+            clientSecret: paymentIntent.client_secret,  // Send the client secret to the frontend
+        });
+    } catch (error) {
+        console.error('Error creating payment intent:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getWalletBalance = async (req, res) => {
+  const { username } = req.params;  // Extract the username from the request params
+
+  try {
+      // Find the tourist by username
+      const tourist = await TouristModel.findOne({ Name: username });
+
+      // If no tourist is found, return an error
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+
+      // Respond with the wallet balance
+      res.status(200).json({
+          balance: tourist.Wallet,  // Send the wallet balance
+      });
+  } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 
-module.exports = {  processActivityPayment, processItineraryPayment,  processMuseumPayment };
+
+module.exports = {  processActivityPayment, processItineraryPayment,  processMuseumPayment,createPaymentIntent,getWalletBalance };

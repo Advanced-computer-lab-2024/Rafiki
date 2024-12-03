@@ -41,6 +41,11 @@ const AdminSignup = () => {
   const [outOfStockProducts, setOutOfStockProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
+  const [notificationShown, setNotificationShown] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
   //const location = useLocation();
   //const outOfStockProducts = location.state?.outOfStockProducts || [];
     //         if (response.ok) {
@@ -52,7 +57,40 @@ const AdminSignup = () => {
     // }, []);
 
    
-
+    const handleFileChange = (event) => {
+      setSelectedFile(event.target.files[0]);
+    };
+  
+    // Handle file upload
+    const handleUpload = async () => {
+      if (!selectedFile) {
+        setUploadError('Please select a file to upload.');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+  
+      try {
+        setIsUploading(true);
+        setUploadError(null);
+  
+        // Make API call to upload the file
+        const response = await axios.post('/api/uploadDocument', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+        if (response.status === 200) {
+          alert('File uploaded successfully!');
+        }
+      } catch (err) {
+        console.error('Error uploading file:', err);
+        setUploadError('Failed to upload file.');
+      } finally {
+        setIsUploading(false);
+      }
+    };
+  
 
 
     const fetchOutOfStockProducts = async () => {
@@ -61,7 +99,10 @@ const AdminSignup = () => {
         const response = await axios.get('/api/productsRoute/check-stock'); // Replace with your backend URL
         const products = response.data.products;
         setOutOfStockProducts(products);
-        setShowNotification(products.length > 0); // Show the notification if there are out-of-stock products
+        if (products.length > 0 && !notificationShown) {
+          setShowNotification(true); // Show notification
+          setNotificationShown(true); // Prevent further pop-ups in this session
+        }
         setError(null); // Clear previous errors
       } catch (err) {
         console.error('Error fetching out-of-stock products:', err);
@@ -73,10 +114,6 @@ const AdminSignup = () => {
   
     useEffect(() => {
       fetchOutOfStockProducts();
-  
-      // Optional: Poll for updates every 30 seconds
-      //const interval = setInterval(fetchOutOfStockProducts, 30000);
-      //return () => clearInterval(interval); // Clean up interval
     }, []);
   
     // Close the pop-up
@@ -486,6 +523,14 @@ const AdminSignup = () => {
   <h2>Admin Dashboard - View Uploaded Documents</h2>
   <button onClick={() => handleDocumentsClick(!isDocumentsVisible)}>
     {isDocumentsVisible ? 'Hide' : 'View'} Documents
+    <div>
+      <h2>Upload PDF</h2>
+      <input type="file" accept=".pdf" onChange={handleFileChange} />
+      <button onClick={handleUpload} disabled={isUploading}>
+        {isUploading ? 'Uploading...' : 'Upload PDF'}
+      </button>
+      {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
+    </div>
   </button>
   {isDocumentsVisible && (
     <div className="documents">

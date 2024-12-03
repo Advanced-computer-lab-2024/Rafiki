@@ -6,6 +6,7 @@ const AdminForm = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [Username, setUsername] = useState('');
   const [Password, setPassword] = useState('');
+  const [Email,setEmail]=useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false); // For success message
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const AdminForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const admin = { Username, Password };
+    const admin = { Username, Password ,Email};
 
     const response = await fetch('/api/adminRoute/addAdmin', {
       method: 'POST',
@@ -33,6 +34,7 @@ const AdminForm = () => {
       setSuccess(true); // Show success message
       setPassword('');
       setUsername('');
+      setEmail('');
 
       // Redirect to the home page after 3 seconds
       setTimeout(() => {
@@ -78,6 +80,19 @@ const AdminForm = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 value={Username}
                 placeholder="Enter your username"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Email
+              </label>
+              <input
+                type="text"
+                onChange={(e) => setEmail(e.target.value)}
+                value={Email}
+                placeholder="Enter your Email"
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-gray-400 focus:outline-none"
                 required
               />

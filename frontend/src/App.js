@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import React, { useState } from 'react';
+
+import { Elements } from '@stripe/react-stripe-js'; // Import Elements provider
+import { loadStripe } from '@stripe/stripe-js'; // Load Stripe public key
 // pages & components
 import SellerForm from './components/sellerForm';
 import GovernerForm from './components/governerForm';
@@ -32,6 +35,11 @@ import TourguideForm from './components/tourguideForm';
 import AdvertiserForm from './components/advertiserForm';
 import TouristForm from './components/touristForm';
 import AdvertiserSignup from './pages/advertiserSignup';
+import CheckoutPage from './pages/CheckoutPage';
+
+
+const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
+
 
 function App() {
   const [loggedInAdvertiser, setLoggedInAdvertiser] = useState(null);
@@ -77,6 +85,14 @@ function App() {
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/signup/governor" element={<GovernerForm />} />
               <Route path="/signup/admin" element={<AdminForm />} />
+              <Route
+            path="/checkout"
+            element={
+              <Elements stripe={stripePromise}>
+                <CheckoutPage />
+              </Elements>
+            }
+          />  
             </Routes>
           </div>
         </FlaggedActivitiesProvider>
