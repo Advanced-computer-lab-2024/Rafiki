@@ -237,30 +237,62 @@ const attendActivity = async (req, res) => {
   }
 };
 
+async function sendActivityBookingEmail(tourist, activity) {
+  try {
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rafiki.info1@gmail.com',
+        pass: 'hsyotajsdxtetmbw',
+      },
+    });
+
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: tourist.Email,
+      subject: `Your Activity Booking Confirmation: ${activity.name}`,
+      text: `Hello ${tourist.Username},\n\nCongratulations! Your booking for "${activity.name}" has been successfully confirmed.\n\nHere are your booking details:\n- **Activity Name**: ${activity.name}\n- **Price**: $${activity.price}\n- **Location**: ${activity.location || 'To be announced'}\n- **Date**: ${activity.date || 'To be scheduled'}\n\nWe hope you have an amazing experience!\n\nBest regards,\nTeam Rafiki`,
+    };
+
+    await transport.sendMail(mailOptions);
+    console.log('Booking confirmation email sent successfully!');
+  } catch (error) {
+    console.error('Failed to send booking email:', error.message);
+  }
+}
+
 const bookActivity = async (req, res) => {
   const { touristId, activityId } = req.body;
-  
+
   try {
-      // Find the tourist and update their attendedActivities list
-      const tourist = await TouristModel.findByIdAndUpdate(
-          touristId,
-          { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
-          { new: true }
-      ).populate('BookedActivities'); // Populate to see full details of attended activities if needed
-      if (!tourist) {
-          return res.status(404).json({ message: "Tourist not found." });
-      }
-      const activity = await ActivityModel.findById(activityId);
+    const tourist = await TouristModel.findByIdAndUpdate(
+      touristId,
+      { $addToSet: { BookedActivities: activityId } },
+      { new: true }
+    ).populate('BookedActivities');
 
-      const subject = `Reminder: Upcoming Event - ${activity.name || activity.location}`;
-      const message = `Dear ${tourist.Username},\n\nYou have succesfully booked, This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on ${activity.date || activity.availableDates[0]}.\n\nThank you!`;
-      sendNotificationEmail(tourist.Email, subject, message);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found. Please ensure you are registered." });
+    }
 
-      res.status(200).json({ message: "Activity attended successfully.", BookedActivities: tourist.BookedActivities ,reminderMessage: `You have successfully booked the activity! This is a reminder for your upcoming event at ${activity.location || activity.pickupLocation} on${activity.date || activity.availableDates[0]} .\n\nThank You!`,});
+    const activity = await ActivityModel.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found. It might no longer be available." });
+    }
+
+    await sendActivityBookingEmail(tourist, activity);
+
+    res.status(200).json({
+      message: `You have successfully booked "${activity.name}".`,
+      reminderMessage: `Don't forget! The activity is scheduled at ${activity.location || 'an amazing destination'} on ${activity.date || 'a convenient date'}.`,
+      BookedActivities: tourist.BookedActivities,
+    });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    console.error('Error booking activity:', error);
+    res.status(500).json({ message: "An error occurred while booking the activity. Please try again later." });
   }
 };
+
 
 const cancelActivityBooking = async (req, res) => {
   const { touristId, activityId } = req.body;
@@ -911,6 +943,8 @@ const addAddress = async (req, res) => {
       });
   }
 };
+
+
 
 
 
