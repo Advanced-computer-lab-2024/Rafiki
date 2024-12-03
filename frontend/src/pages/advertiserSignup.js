@@ -11,6 +11,9 @@ import DeleteActivity from "../components/DeleteActivity";
 import UpdateActivity from "../components/UpdateActivity";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
+import SalesReport from "../components/SalesReport";
+
+
 
 const AdvChangePassword = () => (
   <ChangePasswordForm apiEndpoint="/api/AdvertiserRoute/changePassword" />
@@ -130,6 +133,11 @@ const CreateTransportationAd = ({ isVisible, onClose }) => {
 };
 
 const AdvertiserSignup = ({ loggedInAdvertiser }) => {
+  const [showRevenue, setShowRevenue] = useState(false);
+
+  const handleShowRevenue = () => {
+    setShowRevenue(!showRevenue);
+  };
   const [advertiser, setAdvertiser] = useState(null);
   const [activity, setActivity] = useState(null);
   const [isVisible2, setIsVisible2] = useState(false);
@@ -243,6 +251,14 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
           </li>
           <li>
             <button
+              onClick={handleShowRevenue}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              {showRevenue ? "Hide Revenue" : "Show Revenue"}
+            </button>
+          </li>
+          <li>
+            <button
               onClick={handleDeleteAccount}
               className="text-lg text-red-500 hover:text-red-700"
             >
@@ -294,6 +310,8 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
             onClose={() => setActiveContent("description")}
           />
         )}
+                {/* Conditionally Render the Sales Report */}
+                {showRevenue && <SalesReport />}
 
         {activeContent === "changePassword" && <AdvChangePassword />}
       </div>

@@ -5,6 +5,7 @@ import axios from 'axios';
 function TourGuideLogin() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [activities, setActivities] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -17,12 +18,16 @@ function TourGuideLogin() {
                 Username: username,
                 Password: password,
             });
+            setActivities(response.data.activities); // Store activities for the logged-in tour guide
+
 
             if (response.status === 200) {
                 const { termsAccepted } = response.data;
             
                 // Save the username in localStorage
                 localStorage.setItem("username", username);
+                localStorage.setItem('activities', JSON.stringify(activities));
+
             
                 alert("Login successful");
                 if (!termsAccepted) {

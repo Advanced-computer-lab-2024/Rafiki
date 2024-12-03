@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cron = require("node-cron");
 const mongoose = require('mongoose');
-
+const cors = require('cors');
 // Import routes
 const workoutRoutes = require('./routes/workouts');
 const touristRoutes = require('./routes/TouristRoute');
@@ -73,7 +73,7 @@ app.use('/api/PromoCodeRoute', PromoCodeRoutes)
 app.use(transportationRoutes);
 app.use('/api/bookmarkRoute', bookmarkRoutes);
 app.use('/api/cartRoute', cartRoutes);
-
+app.use(cors());
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

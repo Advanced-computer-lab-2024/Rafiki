@@ -5,7 +5,77 @@ const MuseumModel = require('../models/museum')
 const bcrypt = require('bcrypt'); // Ensure you have this imported for password hashing
 const PromoCode = require('../models/PromoCode'); // Import PromoCode model // Import nodemailer for email functionality
 const { google } = require('googleapis');
+const crypto = require('crypto'); // Importing crypto for OTP generation
+let otpStore = {};
+
+
 const nodemailer = require('nodemailer');
+
+// This function will send the OTP email
+
+
+async function sendForgotPasswordOTP(tourist, otp) {
+  try {
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('Generated OTP:', otp); // Log OTP
+
+    // Create transporter for Gmail
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rafiki.info1@gmail.com',  // Replace with your Gmail email address
+        pass: 'hsyotajsdxtetmbw',     // Use app password if 2FA is enabled
+      },
+    });
+
+    // Set up the email options
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: tourist.Email,  // Tourist's email
+      subject: 'Password Reset OTP',
+      text: `Hello ${tourist.Username},\n\nYour OTP for password reset is: ${otp}\n\nPlease use this OTP to reset your password.\n\nBest regards,\nTeam Rafiki`,
+    };
+
+    // Log mail options to debug
+    console.log('Mail options:', mailOptions);
+
+    // Send the OTP email
+    await transport.sendMail(mailOptions);
+
+    // Store OTP temporarily (in-memory, or in a database)
+    otpStore[tourist.Email] = otp;
+
+    console.log('OTP sent successfully!');
+  } catch (error) {
+    console.error('Failed to send OTP email:', error.message);
+    throw new Error('Error sending OTP email');
+  }
+}
+
+
+
+const requestOTP = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find tourist by email
+    const tourist = await TouristModel.findOne({ Email: email });
+    if (!tourist) {
+      return res.status(404).json({ message: 'No tourist found with this email.' });
+    }
+
+    // Send OTP email
+    await sendForgotPasswordOTP(tourist); // Send OTP to the tourist
+
+    res.status(200).json({ message: 'OTP sent to your email.' });
+  } catch (error) {
+    console.error('Error in requestOTP:', error);
+    res.status(500).json({ message: 'Error sending OTP.' });
+  }
+};
+
+
 
 async function sendBirthdayPromoEmail(tourist, promoCode) {
   try {
@@ -847,4 +917,4 @@ module.exports = { loginTourist, createTourist,bookActivity, getTourist, getTour
   incrementBookedActivity,decrementBookedActivity ,attendActivity, attendItinerary, PurchaseProduct ,
    getUpcomingPaidActivities , getUpcomingPaidItineraries , getPastPaidActivities , getPastPaidItineraries,bookItinerary,
    cancelActivityBooking,cancelItineraryBooking,sendUpcomingNotifications,
-    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking};
+    getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist , viewWalletBalance , cancelMuseumBooking, requestOTP};

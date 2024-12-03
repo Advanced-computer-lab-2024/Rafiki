@@ -4,7 +4,7 @@ const { createTourist, getTourist, getTourists, updateTourist,changePassword
      PurchaseProduct, attendItinerary, getUpcomingPaidActivities , getUpcomingPaidItineraries ,
       getPastPaidActivities , getPastPaidItineraries, bookActivity, bookItinerary,sendUpcomingNotifications
     ,cancelActivityBooking,cancelItineraryBooking, getUpcomingBookedActivities,getUpcomingBookedItineraries,loginTourist,
-    viewWalletBalance , cancelMuseumBooking} = require('../controllers/touristController'); // Update to your file structure
+    viewWalletBalance , cancelMuseumBooking, requestOTP, } = require('../controllers/touristController'); // Update to your file structure
 const router = express.Router();
 
 router.post("/",createTourist);
@@ -31,5 +31,7 @@ router.get('/:id/upcoming-booked-activities', getUpcomingBookedActivities);
 router.get('/:id/upcoming-booked-Itineraries', getUpcomingBookedItineraries);
 router.post('/sendUpcomingNotifications', sendUpcomingNotifications);
 router.get('/:touristId/wallet', viewWalletBalance);
+// Add these routes after your existing ones
+router.post('/requestOTP', requestOTP); // Request OTP
 
 module.exports = router;
