@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import ActivityDetails from "../components/ActivityDetails"; 
 import MuseumDetails from "../components/museumDetails"; 
 import ItineraryDetails from "../components/itineraryDetails";
-import '../CSS_files/GuestDashboard.css'
+import ChangePasswordForm from '../components/ChangePasswordForm';
+import TagForm from "../components/TagForm";
+import MuseumForm from '../components/museumForm';
+// import '../CSS_files/GuestDashboard.css';
+
 const GuestDashboard = () => {
 
     const [isGuideVisible, setIsGuideVisible] = useState(false);
-
     const handleGuideToggle = () => {
-      setIsGuideVisible(!isGuideVisible);
+        setIsGuideVisible(!isGuideVisible);
     };
-    // activities
+
     const [activities, setActivities] = useState(null); 
     const [isVisibleActivities, setIsVisibleActivities] = useState(false);
     const [isVisibleTagSearch, setIsVisibleTagSearch] = useState(false);
@@ -23,7 +26,6 @@ const GuestDashboard = () => {
     const [budget, setBudget] = useState('');
     const [date, setDate] = useState('');
 
-    //museums
     const [museums, setMuseums] = useState(null); 
     const [isVisibleMuseums, setIsVisibleMuseums] = useState(false);
     const [isVisibleTagSearchMuseums, setIsVisibleTagSearchMuseums] = useState(false);
@@ -31,7 +33,6 @@ const GuestDashboard = () => {
     const [tagMuseum, setTagMuseum] = useState('');
     const [nameMuseum, setNameMuseum] = useState('');
 
-    //itineraries
     const [itineraries, setItineraries] = useState(null);
     const [isVisibleItineraries, setIsVisibleItineraries] = useState(false);
     const [isVisibleLanguageFilter, setIsVisibleLanguageFilter] = useState(false);
@@ -41,31 +42,45 @@ const GuestDashboard = () => {
     const [languageItinerary, setLanguageItinerary] = useState('');
     const [budgetItinerary, setBudgetItinerary] = useState('');
     const [dateItinerary, setDateItinerary] = useState('');
+   
+  const [isVisibleCreateTag, setIsVisibleCreateTag] = useState(false);
+  const [isVisibleAddMuseum, setIsVisibleAddMuseum] = useState(false);
+  const [isVisibleChangePassword, setIsVisibleChangePassword] = useState(false);
 
-
-//docs
-const [selectedFile, setSelectedFile] = useState(null);
-
-
-    useEffect(() => {
-        const fetchActivities = async () => {
-            const response = await fetch('/api/ActivityRoute');
-            const json = await response.json();
-            if (response.ok) {
-                setActivities(json);
+    const [loading, setLoading] = useState(true);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const handleToggleVisibility = (stateSetter) => {
+        stateSetter((prevState) => !prevState);
+      };
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const museumResponse = await fetch('/api/museumRoute');
+            const activityResponse = await fetch('/api/ActivityRoute');
+            
+            if (museumResponse.ok) {
+              const museumsData = await museumResponse.json();
+              setMuseums(museumsData);
             }
-        };
-        fetchActivities();
-    }, []);
     
-
-
+            if (activityResponse.ok) {
+              const activitiesData = await activityResponse.json();
+              setActivities(activitiesData);
+            }
+          } catch (err) {
+            console.error('Error fetching data:', err);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
 
-    // Handle file upload
     const handleFileUpload = async () => {
         if (!selectedFile) {
             alert("Please select a file first.");
@@ -83,7 +98,6 @@ const [selectedFile, setSelectedFile] = useState(null);
 
             if (response.ok) {
                 alert("File uploaded successfully");
-                // Clear the selected file after upload
                 setSelectedFile(null);
             } else {
                 alert("Failed to upload file");
@@ -93,9 +107,6 @@ const [selectedFile, setSelectedFile] = useState(null);
             alert("Error uploading file");
         }
     };
-
-
-
 
     const handleTagSearch = async () => {
         const response = await fetch(`/api/ActivityRoute/searchT/${tag}`);
@@ -136,7 +147,7 @@ const [selectedFile, setSelectedFile] = useState(null);
             setActivities(json);
         }
     };
-    //museum
+
     useEffect(() => {
         const fetchMuseum = async () => {
             const response = await fetch('/api/museumRoute');
@@ -155,6 +166,7 @@ const [selectedFile, setSelectedFile] = useState(null);
             setMuseums(json);
         }
     };
+
     const museumTagSearch = async () => {
         const response = await fetch(`/api/museumRoute/searchT/${tagMuseum}`);
         const json = await response.json();
@@ -162,7 +174,7 @@ const [selectedFile, setSelectedFile] = useState(null);
             setMuseums(json);
         }
     };
-    //itineraries
+
     useEffect(() => {
         const fetchItinerary = async () => {
             const response = await fetch('/api/itineraryRoute');
@@ -173,6 +185,7 @@ const [selectedFile, setSelectedFile] = useState(null);
         };
         fetchItinerary();
     }, []);
+
     const itineraryBudgetFilter = async () => {
         const response = await fetch(`/api/itineraryRoute/filter/${budgetItinerary}`);
         const json = await response.json();
@@ -188,6 +201,7 @@ const [selectedFile, setSelectedFile] = useState(null);
             setItineraries(json);
         }
     };
+
     const itineraryLanguageFilter = async () => {
         const response = await fetch(`/api/itineraryRoute/filterLanguage/${languageItinerary}`);
         const json = await response.json();
@@ -195,6 +209,7 @@ const [selectedFile, setSelectedFile] = useState(null);
             setItineraries(json);
         }
     };
+
     const ItinerarySortByPrice = async () => {
         const response = await fetch('/api/itineraryRoute/sort/price');
         const json = await response.json();
@@ -203,244 +218,357 @@ const [selectedFile, setSelectedFile] = useState(null);
         }
     };
 
-
     return (
-        <div>
-            <h1>Guest Dashboard</h1>
-
-            <button
-  onClick={handleGuideToggle}
-  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
->
-  {isGuideVisible ? 'Hide Vacation Guide' : 'View Vacation Guide'}
-</button>
-{isGuideVisible && (
-  <div className="bg-gray-100 border border-gray-300 rounded p-4 mt-4">
-    <h3 className="text-xl font-bold mb-3">Step-by-Step Vacation Guide</h3>
-    <ol className="list-decimal ml-6">
-      <li>Login to your account.</li>
-      <li>Explore available activities, itineraries, and accommodations.</li>
-      <li>Add your favorite activities to your cart.</li>
-      <li>Confirm your bookings and make payments.</li>
-      <li>Check your email for booking confirmations.</li>
-      <li>Enjoy your vacation!</li>
-    </ol>
-    <div className="mt-4">
-      <h4 className="text-lg font-semibold">Demo: How to Use the System</h4>
-      <p className="mt-2 text-gray-700">
-        Use the navigation bar to access various sections. Browse itineraries or activities, add them to your cart, and confirm your bookings through the checkout process. If you need assistance, contact support via the help section.
-      </p>
-    </div>
-  </div>
-)}
-
-
-             {/* File Upload Section */}
-             <div className="file-upload">
-                <h2>Upload Documents</h2>
-                <input type="file" onChange={handleFileChange} />
-                <button onClick={handleFileUpload}>Upload</button>
+        <div className="flex h-screen">
+            {/* Sidebar */}
+            <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
+                <h3 className="text-xl font-bold mb-4">Guest Dashboard</h3>
+                <ul className="space-y-4">
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleActivities(!isVisibleActivities)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Show Activities
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleMuseums(!isVisibleMuseums)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Show Museums
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleItineraries(!isVisibleItineraries)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Show Itineraries
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Search by Tag
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleCategorySearch(!isVisibleCategorySearch)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Search by Category
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleBudgetFilter(!isVisibleBudgetFilter)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Filter by Budget
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => setIsVisibleDateFilter(!isVisibleDateFilter)}
+                            className="text-lg text-blue-400 hover:text-white"
+                        >
+                            Filter by Date
+                        </button>
+                    </li>
+                </ul>
             </div>
 
-            <br></br>
-
-
-
-            {/* Search by Tag */}
-            <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
-                {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}
+           {/* Main Content */}
+<div className="w-3/4 p-6">
+    {/* Activities Section */}
+    {isVisibleActivities && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-2xl font-semibold text-gray-800">Activities</h3>
+            <button
+                onClick={() => handleToggleVisibility(setIsVisibleActivities)}
+                className="text-blue-600 font-semibold"
+            >
+                {isVisibleActivities ? 'Hide' : 'Show'} Activities
             </button>
-            {isVisibleTagSearch && (
-                <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Tag" 
-                        value={tag} 
-                        onChange={(e) => setTag(e.target.value)} 
-                    />
-                    <button onClick={handleTagSearch}>Search</button>
-                </div>
-            )}
-
-            {/* Search by Category */}
-            <button onClick={() => setIsVisibleCategorySearch(!isVisibleCategorySearch)}>
-                {isVisibleCategorySearch ? 'Hide' : 'Search by Category'}
-            </button>
-            {isVisibleCategorySearch && (
-                <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Category" 
-                        value={category} 
-                        onChange={(e) => setCategory(e.target.value)} 
-                    />
-                    <button onClick={handleCategorySearch}>Search</button>
-                </div>
-            )}
-
-            {/* Filter by Budget */}
-            <button onClick={() => setIsVisibleBudgetFilter(!isVisibleBudgetFilter)}>
-                {isVisibleBudgetFilter ? 'Hide' : 'Filter by Budget'}
-            </button>
-            {isVisibleBudgetFilter && (
-                <div>
-                    <input 
-                        type="number" 
-                        placeholder="Enter Budget" 
-                        value={budget} 
-                        onChange={(e) => setBudget(e.target.value)} 
-                    />
-                    <button onClick={handleBudgetFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Filter by Date */}
-            <button onClick={() => setIsVisibleDateFilter(!isVisibleDateFilter)}>
-                {isVisibleDateFilter ? 'Hide' : 'Filter by Date'}
-            </button>
-            {isVisibleDateFilter && (
-                <div>
-                    <input 
-                        type="date" 
-                        value={date} 
-                        onChange={(e) => setDate(e.target.value)} 
-                    />
-                    <button onClick={handleDateFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Sort by Price */}
-            <button onClick={() => setIsVisiblePriceSort(!isVisiblePriceSort)}>
-                {isVisiblePriceSort ? 'Hide' : 'Sort by Price'}
-            </button>
-            {isVisiblePriceSort && (
-                <button onClick={handleSortByPrice}>Sort</button>
-            )}
-            <br />
-            {/* View Activities */}
-            <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
-                {isVisibleActivities ? 'Hide' : 'View'} Activities
-            </button>
-            
             {isVisibleActivities && (
-                <div className="activities">
-                    {activities && activities.map(activity => (
-                        <ActivityDetails activity={activity} key={activity._id} />
-                    ))}
+                <div className="activity-list mt-4">
+                    {loading ? (
+                        <p className="text-gray-500">Loading activities...</p>
+                    ) : activities.length > 0 ? (
+                        activities.map((activity) => (
+                            <ActivityDetails activity={activity} key={activity._id} />
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No activities found.</p>
+                    )}
                 </div>
             )}
-            <br />
-            {/* Search by Name */}
-            <button onClick={() => setIsVisibleSearchMuseums(!isVisibleSearchMuseums)}>
-                {isVisibleSearchMuseums ? 'Hide' : 'Search by Name'}
+        </div>
+    )}
+
+    {/* Museums Section */}
+    {isVisibleMuseums && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-2xl font-semibold text-gray-800">Museums</h3>
+            <button
+                onClick={() => handleToggleVisibility(setIsVisibleMuseums)}
+                className="text-blue-600 font-semibold"
+            >
+                {isVisibleMuseums ? 'Hide' : 'Show'} Museums
             </button>
-            {isVisibleSearchMuseums && (
-                <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Name" 
-                        value={nameMuseum} 
-                        onChange={(e) => setNameMuseum(e.target.value)} 
-                    />
-                    <button onClick={museumNameSearch}>Search</button>
-                </div>
-            )}
-         {/* Search by Tag */}
-            <button onClick={() => setIsVisibleTagSearchMuseums(!isVisibleTagSearchMuseums)}>
-            {isVisibleTagSearchMuseums ? 'Hide Search' : 'Search by Tag'}
-            </button>
-            {isVisibleTagSearchMuseums && (
-                <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Tag" 
-                        value={tagMuseum} 
-                        onChange={(e) => setTagMuseum(e.target.value)} 
-                    />
-                    <button onClick={museumTagSearch}>Search</button>
-                </div>
-            )}
-            <br />
-             {/* View Museums */}
-             <button onClick={() => setIsVisibleMuseums(!isVisibleMuseums)}>
-                {isVisibleMuseums ? 'Hide' : 'View'} Museums
-            </button>
-            
             {isVisibleMuseums && (
-                <div className="museums">
-                    {museums && museums.map(museum => (
-                        <MuseumDetails museum={museum} key={museum._id} />
-                    ))}
+                <div className="museum-list mt-4">
+                    {loading ? (
+                        <p className="text-gray-500">Loading museums...</p>
+                    ) : museums.length > 0 ? (
+                        museums.map((museum) => (
+                            <MuseumDetails museum={museum} key={museum._id} />
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No museums found.</p>
+                    )}
                 </div>
             )}
-            <br />
-            {/* Filter by Budget */}
-            <button onClick={() => setIsVisibleBudgetFilterItinerary(!isVisibleBudgetFilterItinerary)}>
-                {isVisibleBudgetFilterItinerary ? 'Hide' : 'Filter by Budget'}
-            </button>
+        </div>
+    )}
+
+    {/* Create Tag Section */}
+    {isVisibleCreateTag && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Create New Tag</h3>
+            <TagForm />
+        </div>
+    )}
+
+    {/* Add Museum Form Section */}
+    {isVisibleAddMuseum && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Add New Museum</h3>
+            <MuseumForm />
+        </div>
+    )}
+
+    {/* Change Password Section */}
+    {isVisibleChangePassword && (
+        <div className="section-card p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Change Password</h3>
+            <ChangePasswordForm />
+        </div>
+    )}
+
+    {/* File Upload Section */}
+    <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+        <h3 className="text-2xl font-semibold text-gray-800">Upload a File</h3>
+        <input
+            type="file"
+            onChange={handleFileChange}
+            className="mt-4 p-2 border border-gray-300 rounded w-full"
+        />
+        <button
+            onClick={handleFileUpload}
+            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+        >
+            Upload File
+        </button>
+    </div>
+</div>
+    {/* Tag Search Section */}
+    {isVisibleTagSearch && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Search Activities by Tag</h3>
+                    <input
+                        type="text"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                        placeholder="Enter Tag"
+                    />
+                    <button
+                        onClick={handleTagSearch}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Search
+                    </button>
+                </div>
+            )}
+
+            {/* Category Search Section */}
+            {isVisibleCategorySearch && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Search Activities by Category</h3>
+                    <input
+                        type="text"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                        placeholder="Enter Category"
+                    />
+                    <button
+                        onClick={handleCategorySearch}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Search
+                    </button>
+                </div>
+            )}
+
+            {/* Budget Filter Section */}
+            {isVisibleBudgetFilter && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Filter Activities by Budget</h3>
+                    <select
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                    >
+                        <option value="">Select Budget</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <button
+                        onClick={handleBudgetFilter}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Apply Filter
+                    </button>
+                </div>
+            )}
+
+            {/* Date Filter Section */}
+            {isVisibleDateFilter && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Filter Activities by Date</h3>
+                    <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                    />
+                    <button
+                        onClick={handleDateFilter}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Apply Filter
+                    </button>
+                </div>
+            )}
+
+            {/* Sort by Price Section */}
+            {isVisiblePriceSort && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Sort Activities by Price</h3>
+                    <button
+                        onClick={handleSortByPrice}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Sort by Price
+                    </button>
+                </div>
+            )}
+
+            {/* Museums Filter by Name Section */}
+            {isVisibleSearchMuseums && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Search Museums by Name</h3>
+                    <input
+                        type="text"
+                        value={nameMuseum}
+                        onChange={(e) => setNameMuseum(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                        placeholder="Enter Museum Name"
+                    />
+                    <button
+                        onClick={museumNameSearch}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Search
+                    </button>
+                </div>
+            )}
+
+            {/* Itinerary Budget Filter Section */}
             {isVisibleBudgetFilterItinerary && (
-                <div>
-                    <input 
-                        type="number" 
-                        placeholder="Enter Budget" 
-                        value={budgetItinerary} 
-                        onChange={(e) => setBudgetItinerary(e.target.value)} 
-                    />
-                    <button onClick={itineraryBudgetFilter}>Filter</button>
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Filter Itineraries by Budget</h3>
+                    <select
+                        value={budgetItinerary}
+                        onChange={(e) => setBudgetItinerary(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                    >
+                        <option value="">Select Budget</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <button
+                        onClick={itineraryBudgetFilter}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Apply Filter
+                    </button>
                 </div>
             )}
 
-            {/* Filter by Date */}
-            <button onClick={() => setIsVisibleDateFilterItinerary(!isVisibleDateFilterItinerary)}>
-                {isVisibleDateFilterItinerary ? 'Hide' : 'Filter by Date'}
-            </button>
-            {isVisibleDateFilterItinerary && (
-                <div>
-                    <input 
-                        type="date" 
-                        value={dateItinerary} 
-                        onChange={(e) => setDateItinerary(e.target.value)} 
-                    />
-                    <button onClick={itineraryDateFilter}>Filter</button>
-                </div>
-            )}
-            {/* Filter by Language */}
-            <button onClick={() => setIsVisibleLanguageFilter(!isVisibleLanguageFilter)}>
-            {isVisibleLanguageFilter ? 'Hide' : 'Filter by Language'}
-            </button>
+            {/* Itinerary Language Filter Section */}
             {isVisibleLanguageFilter && (
-                <div>
-                    <input 
-                        type="text" 
-                        placeholder="Enter Language" 
-                        value={languageItinerary} 
-                        onChange={(e) => setLanguageItinerary(e.target.value)} 
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Filter Itineraries by Language</h3>
+                    <select
+                        value={languageItinerary}
+                        onChange={(e) => setLanguageItinerary(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
+                    >
+                        <option value="">Select Language</option>
+                        <option value="english">English</option>
+                        <option value="french">French</option>
+                        <option value="spanish">Spanish</option>
+                    </select>
+                    <button
+                        onClick={itineraryLanguageFilter}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Apply Filter
+                    </button>
+                </div>
+            )}
+
+            {/* Itinerary Date Filter Section */}
+            {isVisibleDateFilterItinerary && (
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Filter Itineraries by Date</h3>
+                    <input
+                        type="date"
+                        value={dateItinerary}
+                        onChange={(e) => setDateItinerary(e.target.value)}
+                        className="p-2 border border-gray-300 rounded mb-2 w-full"
                     />
-                    <button onClick={itineraryLanguageFilter}>Filter</button>
+                    <button
+                        onClick={itineraryDateFilter}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Apply Filter
+                    </button>
                 </div>
             )}
 
-            {/* Sort by Price */}
-            <button onClick={() => setIsVisiblePriceSortItinerary(!isVisiblePriceSortItinerary)}>
-                {isVisiblePriceSortItinerary ? 'Hide' : 'Sort by Price'}
-            </button>
+            {/* Itinerary Sort by Price Section */}
             {isVisiblePriceSortItinerary && (
-                <button onClick={ItinerarySortByPrice}>Sort</button>
-            )}
-            <br />
-            {/* View Itienary */}
-            <button onClick={() => setIsVisibleItineraries(!isVisibleItineraries)}>
-                {isVisibleItineraries ? 'Hide' : 'View'} Itineraries
-            </button>
-            
-            {isVisibleItineraries && (
-                <div className="Itineraries">
-                    {itineraries && itineraries.map(itinerary => (
-                        <ItineraryDetails itinerary={itinerary} key={itinerary._id} />
-                    ))}
+                <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+                    <h3 className="text-2xl font-semibold text-gray-800">Sort Itineraries by Price</h3>
+                    <button
+                        onClick={ItinerarySortByPrice}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                        Sort by Price
+                    </button>
                 </div>
             )}
-
         </div>
     );
 };
