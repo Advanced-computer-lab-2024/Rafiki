@@ -385,6 +385,7 @@ const PurchaseProduct = async (req, res) => {
   const { touristId, ProductId } = req.body;
 
   try {
+    // Find the product and decrease the available quantity if it's in stock
     const product = await ProductModel.findOneAndUpdate(
       { _id: ProductId, AvailableQuantity: { $gt: 0 } },
       { $inc: { AvailableQuantity: -1 } },
@@ -395,25 +396,28 @@ const PurchaseProduct = async (req, res) => {
       return res.status(400).json({ message: "Product is out of stock." });
     }
 
+    // If product's available quantity is 0, notify the seller and admins
     if (product.AvailableQuantity === 0) {
-      const seller = await sellerModel.findOne({ Username: product.Seller });
-      const emailSubject = 'Out of Stock Product Alert';
-      const emailBody = `The following products are out of stock:\n\n` +
-      `this product"${product.Name}" is out of stock. \n\nplease restock it.`;+
-     `\n\nPlease restock these items to ensure availability.\n\nBest regards,\nRafiki `;
-     sendNotificationEmail(seller.Email, emailSubject, emailBody);
+      const seller = await SellerModel.findOne({ Username: product.Seller });  // Find the seller by username
+      if (seller) {
+        const emailSubject = 'Out of Stock Product Alert';
+        const emailBody = `The following product is out of stock:\n\n` +
+                          `"${product.Name}" is out of stock. Please restock it.`;
+        sendNotificationEmail(seller.Email, emailSubject, emailBody); // Notify the seller
 
-     const admins = await AdminModel.find({}, 'Email');
-     const adminEmails = admins.map(admin => admin.Email);
-     const emailSubject2 = 'Out of Stock Product Alert';
-      const emailBody2 = `The following products are out of stock:\n\n` +
-      `this product"${product.Name}" is out of stock. `;+
-     `\n\nBest regards,\nRafiki`;
-     for (const adminEmail of adminEmails) {
-       sendNotificationEmail(adminEmail, emailSubject2, emailBody2);
-    }
+        // Notify admins
+        const admins = await AdminModel.find({}, 'Email');
+        const adminEmails = admins.map(admin => admin.Email);
+        const emailSubject2 = 'Out of Stock Product Alert';
+        const emailBody2 = `The following product is out of stock:\n\n` +
+                           `"${product.Name}" is out of stock.`;
+        for (const adminEmail of adminEmails) {
+          sendNotificationEmail(adminEmail, emailSubject2, emailBody2); // Notify each admin
+        }
+      }
     }
 
+    // Add the product to the tourist's purchased products list
     const tourist = await TouristModel.findByIdAndUpdate(
       touristId,
       { $addToSet: { PurchasedProducts: ProductId } },
@@ -424,11 +428,24 @@ const PurchaseProduct = async (req, res) => {
       return res.status(404).json({ message: "Tourist not found." });
     }
 
+    // Update the seller's sales and revenue
+    const seller = await sellerModel.findOne({ Username: product.Seller }); // Find seller by username
+    if (seller) {
+      seller.Sales += 1; // Increment the number of sales for the seller
+      seller.Revenue += product.Price; // Add the product price to the seller's revenue
+      await seller.save(); // Save the updated seller data
+    } else {
+      return res.status(404).json({ message: "Seller not found." });
+    }
+
+    // Send a response indicating the purchase was successful
     res.status(200).json({ message: "Product purchased successfully.", PurchasedProducts: tourist.PurchasedProducts });
   } catch (error) {
+    console.error("Error during purchase:", error); // Log detailed error
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

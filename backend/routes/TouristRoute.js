@@ -32,7 +32,6 @@ router.get('/:id/upcoming-booked-Itineraries', getUpcomingBookedItineraries);
 router.post('/sendUpcomingNotifications', sendUpcomingNotifications);
 router.get('/:touristId/wallet', viewWalletBalance);
 // Add these routes after your existing ones
-router.post('/requestOTP', requestOTP); // Request OTP
 // Route to add a new address
 router.post('/:username/addAddress', addAddress);
 

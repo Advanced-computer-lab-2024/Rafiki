@@ -25,6 +25,14 @@ const userSchema = new Schema({
     Picture: { // New field for profile picture
         type: String,
         required: false
+    },
+    Revenue: {
+      type: Number,
+      default: 0
+    },
+    Sales: {
+      type: Number,
+      default: 0
     }
 }, { timestamps: true });
 

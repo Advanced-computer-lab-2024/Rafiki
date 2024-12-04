@@ -4,6 +4,7 @@ import SellerDetails from "../components/sellerDetails";
 import ProductForm from "../components/productForm";
 import ProductDetails from "../components/ProductDetails";
 import UpdateSeller from "../components/UpdateSeller";
+import RevenueReport from "../components/RevenueReport"; // Adjust path if needed
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts';
 import TermsPopup from "../components/TermsPopup";
@@ -352,6 +353,16 @@ const SellerDashboard = () => {
                 Request My Account to Be Deleted
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => setActiveContent("seller")}
+                className={`w-full text-left px-4 py-2 rounded ${
+                  activeContent === "sellers" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                }`}
+              >
+                Show Revenue Report
+              </button>
+            </li>
           </ul>
         </div>
     
@@ -380,7 +391,19 @@ const SellerDashboard = () => {
     )}
   </div>
 )}
-    
+              {/* Revenue Report Details */}
+              {activeContent === "seller" && (
+  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-4">Revenue Report</h3>
+    {sellers.length > 0 ? (
+      sellers.map((seller) => (
+        <RevenueReport key={seller._id} seller={seller} />
+      ))
+    ) : (
+      <p className="text-gray-500">No seller details found. Please log in.</p>
+    )}
+  </div>
+)}
           {/* Products */}
           {activeContent === "products" && (
             <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
