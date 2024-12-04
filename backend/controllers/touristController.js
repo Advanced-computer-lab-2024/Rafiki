@@ -357,6 +357,7 @@ const attendActivity = async (req, res) => {
   }
 };
 
+
 async function sendActivityBookingEmail(tourist, activity) {
   try {
     const transport = nodemailer.createTransport({
@@ -369,13 +370,13 @@ async function sendActivityBookingEmail(tourist, activity) {
 
     const mailOptions = {
       from: 'rafiki.info1@gmail.com',
-      to: tourist.Email,
-      subject: `Your Activity Booking Confirmation: ${activity.name}`,
-      text: `Hello ${tourist.Username},\n\nCongratulations! Your booking for "${activity.name}" has been successfully confirmed.\n\nHere are your booking details:\n- **Activity Name**: ${activity.name}\n- **Price**: $${activity.price}\n- **Location**: ${activity.location || 'To be announced'}\n- **Date**: ${activity.date || 'To be scheduled'}\n\nWe hope you have an amazing experience!\n\nBest regards,\nTeam Rafiki`,
+      to: tourist.Email, // Tourist's email
+      subject: `Booking Confirmation: ${activity.name}`,
+      text: `Dear ${tourist.Username},\n\nYour booking for the activity " for ${activity.price}" at ${activity.location || 'a wonderful destination'} on ${activity.date || 'a convenient date'} has been successfully completed.\n\nThank you for choosing us!\n\nBest regards,\nTeam Rafiki`,
     };
 
     await transport.sendMail(mailOptions);
-    console.log('Booking confirmation email sent successfully!');
+    console.log('Booking email sent successfully!');
   } catch (error) {
     console.error('Failed to send booking email:', error.message);
   }
@@ -385,31 +386,34 @@ const bookActivity = async (req, res) => {
   const { touristId, activityId } = req.body;
 
   try {
+    // Find the tourist and update their booked activities
     const tourist = await TouristModel.findByIdAndUpdate(
       touristId,
-      { $addToSet: { BookedActivities: activityId } },
+      { $addToSet: { BookedActivities: activityId } }, // Use $addToSet to avoid duplicates
       { new: true }
-    ).populate('BookedActivities');
+    ).populate('BookedActivities'); // Populate to see full details of booked activities
 
     if (!tourist) {
-      return res.status(404).json({ message: "Tourist not found. Please ensure you are registered." });
+      return res.status(404).json({ message: "Tourist not found." });
     }
 
+    // Find the activity details
     const activity = await ActivityModel.findById(activityId);
     if (!activity) {
-      return res.status(404).json({ message: "Activity not found. It might no longer be available." });
+      return res.status(404).json({ message: "Activity not found." });
     }
 
+    // Send the booking confirmation email
     await sendActivityBookingEmail(tourist, activity);
 
+    // Return a success response
     res.status(200).json({
-      message: `You have successfully booked "${activity.name}".`,
-      reminderMessage: `Don't forget! The activity is scheduled at ${activity.location || 'an amazing destination'} on ${activity.date || 'a convenient date'}.`,
+      message: "Activity booked successfully.",
       BookedActivities: tourist.BookedActivities,
     });
   } catch (error) {
     console.error('Error booking activity:', error);
-    res.status(500).json({ message: "An error occurred while booking the activity. Please try again later." });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -570,27 +574,44 @@ const PurchaseProduct = async (req, res) => {
 
 
 
-
 const attendItinerary = async (req, res) => {
   const { touristId, itineraryId } = req.body;
   
   try {
-      // Find the tourist and update their attendedActivities list
+      // Find the tourist and update their attendedItineraries list
       const tourist = await TouristModel.findByIdAndUpdate(
           touristId,
-          { $addToSet: { attendedItineraries: itineraryId } }, // Use $addToSet to avoid duplicates
+          { $addToSet: { attendedItineraries: itineraryId } }, // Avoid duplicates
           { new: true }
-      ).populate('attendedItineraries'); // Populate to see full details of attended activities if needed
+      ).populate('attendedItineraries'); // Optionally populate for full details
 
       if (!tourist) {
           return res.status(404).json({ message: "Tourist not found." });
       }
 
-      res.status(200).json({ message: "Itinerary attended successfully.", attendedItineraries: tourist.attendedItineraries});
+      // Find the corresponding itinerary and increment touristsAttended
+      const itinerary = await ItineraryModel.findById(itineraryId);
+      if (!itinerary) {
+          return res.status(404).json({ message: "Itinerary not found." });
+      }
+
+      itinerary.touristsAttended += 1;  // Increment the touristsAttended counter
+      await itinerary.save();  // Save the updated itinerary
+
+      // Optionally, handle logic to track attendance in December if needed
+      const attendanceDate = new Date();  // Assuming current date is attendance date
+      if (attendanceDate.getMonth() === 11) { // Month is zero-indexed, December is 11
+          console.log("A tourist attended an itinerary in December.");
+      }
+
+      res.status(200).json({ 
+          message: "Itinerary attended successfully.",
+          attendedItineraries: tourist.attendedItineraries 
+      });
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
-};
+}; 
 
 const bookItinerary = async (req, res) => {
   const { touristId, itineraryId } = req.body;

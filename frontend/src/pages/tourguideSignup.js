@@ -1,3 +1,5 @@
+//tourguidesignup
+
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -7,6 +9,7 @@ import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
+import MonthlyReportDetails from "../components/MonthlyReportDetails"; // adjust based on your structure
 import SalesReport from "../components/SalesReport";
 
 const TourguideSignup = () => {
@@ -20,7 +23,16 @@ const TourguideSignup = () => {
   const [activities, setActivities] = useState(null);
   const [activeContent, setActiveContent] = useState("description"); // Default to description
   const [showPopup, setShowPopup] = useState(true); // Show terms popup initially
+  const [reportData, setReportData] = useState(null); // Store report data
+  const [showReport, setShowReport] = useState(false); // Control report modal visibility
+  const [dateItinerary, setDateItinerary] = useState(""); // Store the selected date for filtering itineraries
+  const [filteredItineraries, setFilteredItineraries] = useState(null); // Store filtered itineraries data
+  const [isVisibleDateFilterItinerary, setIsVisibleDateFilterItinerary] = useState(false); // Control visibility of the date filter
+  const [month, setMonth] = useState(""); // Selected month for the report
+  const [monthlyReport, setMonthlyReport] = useState(null); // Store monthly report data
+  const [showMonthlyReport, setShowMonthlyReport] = useState(false);
   const navigate = useNavigate();
+
 
   const username = localStorage.getItem("username"); // Get the logged-in username
 
@@ -51,6 +63,7 @@ const TourguideSignup = () => {
     fetchActivities();
   }, [username]);
 
+
   const handleAccept = async () => {
     try {
       await axios.post("/api/tourguideRoute/accept-terms", { username });
@@ -61,148 +74,263 @@ const TourguideSignup = () => {
     }
   };
 
+  const fetchReport = async () => {
+    try {
+        if (tourguide) {
+            // Fetch the total tourists for the tour guide
+            const response = await axios.get(`/api/tourguideRoute/${tourguide._id}/tourists-total`);
+            setReportData(response.data);
+            setShowReport(true); // Display the report
+        } else {
+            alert("Tour guide details not available.");
+        }
+    } catch (error) {
+        console.error("Error fetching report data:", error.response?.data || error.message);
+        alert("Failed to fetch report. Please try again.");
+    }
+  };
+
+
+  const fetchMonthlyReport = async () => {
+    if (!month) return;
+    try {
+      const response = await fetch(`/api/tourguideRoute/${tourguide._id}/tourists-per-month/${month}`);
+      const data = await response.json();
+      setMonthlyReport(data);
+    } catch (error) {
+      console.error("Error fetching monthly report:", error);
+    }
+  };
+
+  const itineraryDateFilter = async () => {
+    try {
+      if (!dateItinerary) {
+        alert("Please select a date to filter itineraries.");
+        return;
+      }
+
+      // Call backend API to filter itineraries by date
+      const response = await axios.get(`/api/itineraryRoute/filter-by-date/${dateItinerary}`);
+      setFilteredItineraries(response.data); // Set the filtered itineraries
+    } catch (error) {
+      console.error("Error fetching filtered itineraries:", error.response?.data || error.message);
+      alert("Failed to fetch filtered itineraries. Please try again.");
+    }
+  };
+
   const AdminChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/tourguideRoute/changePassword" />
   );
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar Navigation */}
-      <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
-        <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
-        <ul className="space-y-4">
-          <li>
-            <button
-              onClick={() => setActiveContent("tourguides")}
-              className="text-lg text-blue-400 hover:text-white"
+    {/* Sidebar Navigation */}
+    <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
+      <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
+      <ul className="space-y-4">
+        <li>
+          <button
+            onClick={() => setActiveContent("tourguides")}
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Show Tourguide Details
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setActiveContent("itineraries")}
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Show Itineraries
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setActiveContent("activities")}
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Show Activities
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setActiveContent("addItinerary")}
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Add New Itinerary
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setActiveContent("changePassword")}
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Change Password
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => setShowMonthlyReport(true)} // Toggle to show monthly report
+            className="text-lg text-blue-400 hover:text-white"
+          >
+            Show Monthly Report
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={fetchReport}
+            className="text-lg text-green-400 hover:text-white"
+          >
+            View Report
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    {/* Main Content */}
+    <div className="w-3/4 p-6">
+      {/* Default Description */}
+      {activeContent === "description" && (
+        <div className="text-center">
+          <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+            Welcome to the Tour Guide Dashboard
+          </h3>
+          <p className="text-lg text-gray-600">
+            Manage your details, itineraries, activities, and account settings.
+            Choose an option from the menu to get started.
+          </p>
+        </div>
+      )}
+
+      {/* Tourguide Section */}
+      {activeContent === "tourguides" && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            Tourguide Details
+          </h3>
+          {tourguide ? (
+            <TourguideDetails tourguide={tourguide} />
+          ) : (
+            <p className="text-gray-500">No tour guide details available.</p>
+          )}
+        </div>
+      )}
+
+      {/* Itineraries Section */}
+      {activeContent === "itineraries" && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            Itinerary Details
+          </h3>
+          {itineraries ? (
+            itineraries.map((itinerary) => (
+              <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+            ))
+          ) : (
+            <p className="text-gray-500">No itineraries available.</p>
+          )}
+        </div>
+      )}
+
+      {/* Activities Section */}
+      {activeContent === "activities" && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
+          {activities ? (
+            activities.map((activity) => (
+              <ActivityDetails key={activity._id} activity={activity} />
+            ))
+          ) : (
+            <p className="text-gray-500">No activities available.</p>
+          )}
+        </div>
+      )}
+
+      {/* Add Itinerary Section */}
+      {activeContent === "addItinerary" && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            Add New Itinerary
+          </h3>
+          <ItineraryForm />
+        </div>
+      )}
+
+      {/* Change Password Section */}
+      {activeContent === "changePassword" && (
+        <div className="section-card p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            Change Password
+          </h3>
+          <AdminChangePassword />
+        </div>
+      )}
+
+      {/* Monthly Report Section */}
+      {showMonthlyReport && (
+        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            Monthly Tourist Report
+          </h3>
+
+          {/* Select Month for the Report */}
+          <div className="flex space-x-2 mb-4">
+            <select
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="p-2 border border-gray-300 rounded"
             >
-              Show Tourguide Details
-            </button>
-          </li>
-          <li>
+              <option value="">Select Month</option>
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
             <button
-              onClick={() => setActiveContent("itineraries")}
-              className="text-lg text-blue-400 hover:text-white"
+              onClick={fetchMonthlyReport}
+              className="px-4 py-2 bg-green-500 text-white rounded"
             >
-              Show Itineraries
+              Get Monthly Report
             </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setActiveContent("activities")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Show Activities
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setActiveContent("addItinerary")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Add New Itinerary
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setActiveContent("changePassword")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Change Password
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={handleShowRevenue}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              {showRevenue ? "Hide Revenue" : "Show Revenue"}
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      {/* Main Content */}
-      <div className="w-3/4 p-6">
-        {/* Default Description */}
-        {activeContent === "description" && (
-          <div className="text-center">
-            <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-              Welcome to the Tour Guide Dashboard
-            </h3>
-            <p className="text-lg text-gray-600">
-              Manage your details, itineraries, activities, and account settings.
-              Choose an option from the menu to get started.
-            </p>
           </div>
-        )}
 
-        {/* Tourguide Section */}
-        {activeContent === "tourguides" && (
-          <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Tourguide Details
-            </h3>
-            {tourguide ? (
-              <TourguideDetails tourguide={tourguide} />
-            ) : (
-              <p className="text-gray-500">No tour guide details available.</p>
-            )}
-          </div>
-        )}
+          {/* Display Monthly Report */}
+          {monthlyReport ? (
+            <MonthlyReportDetails data={monthlyReport} />
+          ) : (
+            <p className="text-gray-500">No data available for this month.</p>
+          )}
+        </div>
+      )}
 
-        {/* Itineraries Section */}
-        {activeContent === "itineraries" && (
-          <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Itinerary Details
-            </h3>
-            {itineraries ? (
-              itineraries.map((itinerary) => (
-                <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
-              ))
-            ) : (
-              <p className="text-gray-500">No itineraries available.</p>
-            )}
-          </div>
-        )}
+{/* Modal for Report */}
+{showReport && reportData && (
+  <div className="modal fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="modal-content bg-white p-6 rounded-lg">
+      <h3 className="text-2xl font-semibold mb-4">Tourist Report</h3>
+      <p>Total Tourists: {reportData.totalTourists}</p>
 
-        {/* Activities Section */}
-        {activeContent === "activities" && (
-          <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
-            {activities ? (
-              activities.map((activity) => (
-                <ActivityDetails key={activity._id} activity={activity} />
-              ))
-            ) : (
-              <p className="text-gray-500">No activities available.</p>
-            )}
-          </div>
-        )}
+      {/* Removed filter itinerary part */}
 
-        {/* Add Itinerary Section */}
-        {activeContent === "addItinerary" && (
-          <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Add New Itinerary
-            </h3>
-            <ItineraryForm />
-          </div>
-        )}
+      <button
+        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+        onClick={() => setShowReport(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
-        {/* Change Password Section */}
-        {activeContent === "changePassword" && (
-          <div className="section-card p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Change Password
-            </h3>
-            <AdminChangePassword />
-          </div>
-        )}
 
-        {/* Conditionally Render the Sales Report */}
-        {showRevenue && <SalesReport />}
       </div>
 
       {/* Terms Popup */}

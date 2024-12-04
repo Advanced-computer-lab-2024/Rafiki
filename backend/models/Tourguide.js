@@ -34,7 +34,12 @@ const tourguideSchema = new Schema({
     },
     termsAccepted: { type: Boolean, 
         default: false }, 
-    ratings: [RatingSchema]  // Array of RatingSchema objects
+    ratings: [RatingSchema],  // Array of RatingSchema objects
+    touristCounter: { 
+        type: Number, 
+        default: 0  // Default value is 0
+    }
 }, { timestamps: true }); 
+
 
 module.exports = mongoose.model('Tourguide', tourguideSchema);
