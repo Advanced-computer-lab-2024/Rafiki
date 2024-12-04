@@ -132,7 +132,7 @@ const ProductCheckout = () => {
             username,
             productName,
             price:totalPrice,
-            paymentMethod: 'wallet',
+            paymentMethod: 'credit Card',
           });
           console.log('Order created:', orderResponse.data);
         } catch (error) {

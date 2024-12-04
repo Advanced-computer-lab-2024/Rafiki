@@ -109,61 +109,89 @@ const CheckoutPage = () => {
   // Handle form submission and payment intent creation
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // If payment method is 'cash-on-delivery', no Stripe interaction required.
     if (paymentMethod === 'cash-on-delivery') {
       // Mark payment as successful immediately for Cash on Delivery
       alert('Cash on Delivery payment successful!');
+      await createOrder("Cash on Delivery");
       setIsProcessing(false);
       return;
     }
-
+  
+    // If payment method is 'wallet', check if the tourist has enough balance
     if (paymentMethod === 'wallet') {
-      // Check if wallet has sufficient funds
       if (touristWallet < totalPrice) {
         alert('Insufficient funds in wallet!');
         setIsProcessing(false);
         return;
       }
-
-      // Proceed with the wallet payment
+      // Proceed with wallet payment
       alert('Wallet payment successful!');
+      await createOrder("Wallet");
       setIsProcessing(false);
       return;
     }
-
+  
     if (!stripe || !elements) {
       return;
     }
-
+  
     setIsProcessing(true);
-
+  
+    // Get the card details
     const cardElement = elements.getElement(CardElement);
     const { token, error } = await stripe.createToken(cardElement);
-
+  
     if (error) {
       alert(error.message);
       setIsProcessing(false);
     } else {
-      // Log the total price and the amount to be sent to backend
+      // Proceed with Stripe payment
       console.log("Total Price:", totalPrice);
       console.log("Amount to send to backend:", totalPrice * 100);  // Amount in cents
-
+  
       const response = await axios.post('/api/payments/create-payment-intent', {
-        amount: totalPrice * 100, // Convert to cents (e.g., $160 -> 16000 cents)
+        amount: totalPrice * 100, // Convert to cents
         paymentMethod: 'pm_card_visa', // Use the generated token for payment
-        address: selectedAddress, // Selected address (if needed)
+        address: selectedAddress, // Selected address
       });
-
+  
       const data = response.data;
       if (data.clientSecret) {
         alert('Payment Successful!');
+        await createOrder("Credit Card");
       } else {
         alert('Payment Failed');
       }
-
+  
       setIsProcessing(false);
     }
   };
+  
+  // Create an order and send it to the backend
+  const createOrder = async (paymentMethod) => {
+   
+    const username = localStorage.getItem("username");
+    const orderData = {
+      username: username,
+      productName: "Some Product Name", // You can dynamically pull this from the cart or the product selected
+      price: totalPrice,
+      status: "Pending", // Initially set to "Pending"
+      paymentMethod: paymentMethod, // Cash on Delivery, Wallet, Credit Card
+      date: new Date()  // Set the order date to the current date
+    };
+  
+    try {
+      // Create a new order in the database
+      await axios.post('/api/orders/create', orderData);
+      console.log("Order created successfully.");
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
+    navigate('/orders');
+  };
+  
 
   return (
     <div>
