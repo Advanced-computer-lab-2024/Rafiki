@@ -737,7 +737,7 @@ const handleGuideToggle = () => {
 
             // Check if the response is successful
             if (response.ok) {
-                navigate('/ProductCheckout');
+                alert("Product purchased successfully!");
             } else {
                 alert("Failed to purchase product.");
             }

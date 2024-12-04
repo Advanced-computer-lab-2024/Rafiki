@@ -28,6 +28,7 @@ const wishlistRoutes = require('./routes/wishlistRoute');
 const PromoCodeRoutes=require('./routes/PromoCodeRoute');
 const bookmarkRoutes = require('./routes/bookmarkRoute');
 const cartRoutes = require('./routes/cartRoute');
+const OrderRoute=require('./routes/OrderRoute');
 
 // Create an Express application
 const app = express();
@@ -75,6 +76,7 @@ app.use('/api/PromoCodeRoute', PromoCodeRoutes)
 app.use(transportationRoutes);
 app.use('/api/bookmarkRoute', bookmarkRoutes);
 app.use('/api/cartRoute', cartRoutes);
+app.use('/api/orders',OrderRoute);
 app.use(cors());
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)

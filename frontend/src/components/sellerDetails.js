@@ -16,6 +16,10 @@ const SellerDetails = ({ seller }) => {
       <p className="text-gray-600"><strong>Username:</strong> {seller.Username}</p>
       <p className="text-gray-600"><strong>Email:</strong> {seller.Email}</p>
       <p className="text-gray-600"><strong>Description:</strong> {seller.Description || "No description provided."}</p>
+      <p className="text-gray-600"><strong>Revenue:</strong> {seller.Revenue}</p>
+      <p className="text-gray-600"><strong>Sales:</strong> {seller.Sales}</p>
+
+
     </div>
   );
 };
