@@ -87,6 +87,19 @@ const ProductCheckout = () => {
 
       // Proceed with the wallet payment
       alert('Wallet payment successful!');
+      try {
+        
+        const orderResponse = await axios.post('/api/orders/create', {
+          username,
+          productName,
+          price:totalPrice,
+          paymentMethod: 'wallet',
+        });
+        console.log('Order created:', orderResponse.data);
+      } catch (error) {
+        console.error('Error creating order:', error);
+      }
+      navigate('/orders'); // Navigate to orders page 
       setIsProcessing(false);
       return;
     }
@@ -113,6 +126,20 @@ const ProductCheckout = () => {
       const data = response.data;
       if (data.clientSecret) {
         alert('Payment Successful!');
+        try {
+        
+          const orderResponse = await axios.post('/api/orders/create', {
+            username,
+            productName,
+            price:totalPrice,
+            paymentMethod: 'wallet',
+          });
+          console.log('Order created:', orderResponse.data);
+        } catch (error) {
+          console.error('Error creating order:', error);
+        }
+        
+        navigate('/orders'); // Navigate to orders page
       } else {
         alert('Payment Failed');
       }

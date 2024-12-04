@@ -37,6 +37,7 @@ import TouristForm from './components/touristForm';
 import AdvertiserSignup from './pages/advertiserSignup';
 import CheckoutPage from './pages/CheckoutPage';
 import ProductCheckout from './pages/ProductCheckout';
+import OrdersPage from './pages/OrdersPage';
 
 const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
 
@@ -85,6 +86,7 @@ function App() {
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/signup/governor" element={<GovernerForm />} />
               <Route path="/signup/admin" element={<AdminForm />} />
+              <Route path="/orders" element={<OrdersPage />} />
               <Route
             path="/checkout"
             element={
