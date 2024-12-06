@@ -1,130 +1,72 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import travelImage from '../pics/pic1.jpg';
+import advertiserImage from '../pics/pic2.jpg';
 
 function SignupPaths() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-10">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-blue-50 text-gray-900 py-12">
       <div className="container mx-auto px-6">
         {/* Header Section */}
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">
-          Choose Your Path
+        <h1 className="text-5xl font-extrabold text-center mb-8 text-blue-600">
+          Welcome to Our Platform
         </h1>
-        <p className="text-lg text-gray-600 text-center mb-12">
-          Select a role to get started and unlock the features tailored just for you.
+        <p className="text-xl text-center mb-12 text-gray-700">
+          Choose how you'd like to join and start your journey with us today.
         </p>
 
         {/* Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-col sm:flex-row justify-center gap-10">
           {/* Tourist Signup */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Register as a Tourist
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Discover exciting activities, plan your itineraries, and explore destinations with ease.
-            </p>
-            <Link
-              to="/touristForm"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Get Started →
-            </Link>
+          <div
+            className="relative rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-500 w-full sm:w-1/2 h-80"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${travelImage})`,
+              }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+            <div className="relative z-10 p-8 flex flex-col h-full justify-between">
+              <h3 className="text-3xl font-bold text-white">Register as a Tourist</h3>
+              <p className="text-base mt-4 text-gray-300">
+                Explore exciting destinations, plan your trips, and make the most of your journey.
+              </p>
+              <Link
+                to="/touristForm"
+                className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold self-start shadow-md hover:bg-blue-700 transition"
+              >
+                Get Started →
+              </Link>
+            </div>
           </div>
 
-          {/* Advertiser Signup */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Register as an Advertiser
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Promote your services, attract tourists, and grow your brand with our platform.
-            </p>
-            <Link
-              to="/advertiserForm"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Join Now →
-            </Link>
-          </div>
-
-          {/* Tour Guide Signup */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Register as a Tour Guide
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Connect with travelers, share your expertise, and create memorable experiences.
-            </p>
-            <Link
-              to="/tourguideForm"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Start Now →
-            </Link>
-          </div>
-
-          {/* Admin Signup */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Admin Dashboard
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Manage users, oversee platform activities, and ensure a smooth experience for everyone.
-            </p>
-            <Link
-              to="/signup/admin"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Admin Registration →
-            </Link>
-          </div>
-
-          {/* Seller Signup */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Register as a Seller
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Showcase and sell your products to a global audience effortlessly.
-            </p>
-            <Link
-              to="/signup/seller"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Register Now →
-            </Link>
-          </div>
-
-          {/* Governor Dashboard */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Governor Dashboard
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Monitor regional activities, manage tourism growth, and make informed decisions.
-            </p>
-            <Link
-              to="/signup/governor"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Join Now →
-            </Link>
-          </div>
-
-          {/* Guest Dashboard */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Guest Dashboard
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Browse as a guest, explore activities, and experience our platform without registration.
-            </p>
-            <Link
-              to="/guestDashboard"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Explore Now →
-            </Link>
+          {/* Seller/Advertiser/Tour Guide Signup */}
+          <div
+            className="relative rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-500 w-full sm:w-1/2 h-80"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${advertiserImage})`,
+              }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+            <div className="relative z-10 p-8 flex flex-col h-full justify-between">
+              <h3 className="text-3xl font-bold text-white">
+                Register as a Seller, Advertiser, or Tour Guide
+              </h3>
+              <p className="text-base mt-4 text-gray-300">
+                Promote your services, connect with customers, and grow your business on our platform.
+              </p>
+              <Link
+                to="/signup/unified"
+                className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold self-start shadow-md hover:bg-blue-700 transition"
+              >
+                Join Now →
+              </Link>
+            </div>
           </div>
         </div>
       </div>

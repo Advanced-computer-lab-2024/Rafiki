@@ -3,7 +3,7 @@ const sellerModel = require('../models/seller');
 const path = require('path');
 const productsModel=require('../models/products');
 const fs = require('fs');
-
+const bcrypt = require('bcrypt');
 const loginSeller = async (req, res) => {
     const { Username, Password } = req.body;
   
@@ -34,15 +34,46 @@ const loginSeller = async (req, res) => {
 
 // Define each function as a standalone, outside of any other function
 const createSeller = async (req, res) => {
-    const { Username, Email, Password, Name, Description } = req.body;
-    const hashedPassword = Password;
     try {
-        const user = await sellerModel.create({ Username, Email, Password: hashedPassword, Name, Description });
-        res.status(200).json(user);
+      console.log('Request Body:', req.body);
+      console.log('Uploaded File:', req.file || 'No file uploaded'); // Log uploaded file
+  
+      const { Username, Email, Password, Name, Description } = req.body;
+  
+      if (!Username || !Email || !Password || !Name || !Description) {
+        return res.status(400).json({ error: 'All required fields must be filled.' });
+      }
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(Password, 10);
+  
+      // Use the uploaded file path if a file was uploaded; otherwise, set to null
+      const profilePicture = req.file ? req.file.path : null;
+  
+      // Create Seller
+      const newSeller = await sellerModel.create({
+        Username,
+        Email,
+        Password: hashedPassword,
+        Name,
+        Description,
+        profilePicture,
+      });
+  
+      res.status(201).json(newSeller);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ error: 'Invalid input data. Please check your fields.' });
+      } else if (error.code === 11000) {
+        res.status(400).json({ error: 'Email or Username already exists.' });
+      } else {
+        console.error('Unexpected Error in createSeller:', error);
+        res.status(500).json({ error: 'Internal Server Error. Please check the server logs.' });
+      }
     }
-};
+  };
+  
+  
 
 const getSeller = async (req, res) => {
     const { id } = req.params;

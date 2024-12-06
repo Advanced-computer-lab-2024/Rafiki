@@ -38,7 +38,7 @@ import AdvertiserSignup from './pages/advertiserSignup';
 import CheckoutPage from './pages/CheckoutPage';
 import ProductCheckout from './pages/ProductCheckout';
 import OrdersPage from './pages/OrdersPage';
-
+import UnifiedForm from './components/UnifiedForm';
 const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
 
 
@@ -54,6 +54,7 @@ function App() {
             <Routes>
               
             <Route path="/signup/seller" element={<SellerForm />} />
+            <Route path="/signup/unified" element={<UnifiedForm />} />
               <Route path="/" element={<><Hero /></>} /> 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/touristForm" element={<TouristForm />} />

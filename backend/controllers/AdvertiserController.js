@@ -43,37 +43,35 @@ const loginAdvertiser = async (req, res) => {
 
 // Controller to create a new advertiser
 const createAdvertiser = async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).json({ error: 'File upload failed.' });
-    }
-
+  try {
     const { Username, Email, Password, MobileNumber, Nationalty, DOB, Job, isTermsAccepted } = req.body;
 
     if (!isTermsAccepted) {
-      return res.status(400).json({ error: 'Terms and conditions must be accepted.' });
+      return res.status(400).json({ error: 'You must accept the terms and conditions.' });
     }
 
-    try {
-      const hashedPassword = await bcrypt.hash(Password, 10);
-      const profilePicture = req.file ? req.file.path : null;
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(Password, 10);
 
-      const advertiser = await AdvertiserModel.create({
-        Username,
-        Email,
-        Password: hashedPassword,
-        MobileNumber,
-        Nationalty,
-        DOB,
-        Job,
-        profilePicture,
-      });
+    // Handle profile picture
+    const profilePicture = req.file ? req.file.path : null;
 
-      res.status(201).json(advertiser);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  });
+    // Create Advertiser
+    const newAdvertiser = await AdvertiserModel.create({
+      Username,
+      Email,
+      Password: hashedPassword,
+      MobileNumber,
+      Nationalty,
+      DOB,
+      Job,
+      profilePicture,
+    });
+
+    res.status(201).json(newAdvertiser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 // Controller to get an advertiser by ID

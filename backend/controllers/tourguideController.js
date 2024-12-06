@@ -15,25 +15,35 @@ const checkTermsAccepted = (tourGuide, res) => {
 // Create Tour Guide
 const createTourguide = async (req, res) => {
     try {
-        const { Username, Email, Password, MobileNumber, Yearsofexperience, Previouswork } = req.body;
-        
-        const hashedPassword = await bcrypt.hash(Password, 10);
-
-        const newTourguide = await TourguideModel.create({
-            Username,
-            Email,
-            Password: hashedPassword,
-            MobileNumber,
-            Yearsofexperience,
-            Previouswork,
-            termsAccepted: false // By default, termsAccepted is false
-        });
-        
-        res.status(201).json(newTourguide);
+      const { Username, Email, Password, MobileNumber, YearsOfExperience, PreviousWork } = req.body;
+  
+      console.log('Request Body:', req.body);
+  
+      // Validate required fields
+      if (!Username || !Email || !Password || !MobileNumber) {
+        return res.status(400).json({ error: 'All required fields must be filled.' });
+      }
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(Password, 10);
+  
+      // Create Tour Guide
+      const newTourguide = await TourguideModel.create({
+        Username,
+        Email,
+        Password: hashedPassword,
+        MobileNumber,
+        YearsOfExperience,
+        PreviousWork,
+      });
+  
+      res.status(201).json(newTourguide);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      console.error('Error in createTourguide:', error);
+      res.status(400).json({ error: error.message });
     }
-};
+  };
+  
 
 // Get Tour Guide by ID
 const getTourguide = async (req, res) => {
