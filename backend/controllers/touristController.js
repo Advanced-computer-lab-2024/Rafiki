@@ -517,8 +517,8 @@ const PurchaseProduct = async (req, res) => {
     );
 
     if (!product) {
-      return res.status(400).json({ message: "Product is out of stock." });
-    }
+      return res.status(400).json({ message: "Product is out of stock" });
+     }
 
     // If product's available quantity is 0, notify the seller and admins
     if (product.AvailableQuantity === 0) {
