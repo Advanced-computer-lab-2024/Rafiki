@@ -1,118 +1,186 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaBell, FaUserCircle } from "react-icons/fa"; // Import icons
 
 // Components
 import AdvertiserDetails from "../components/AdvertiserDetails";
 import ActivityDetails from "../components/ActivityDetails";
 import ActivityForm from "../components/activityForm";
+import UpdateAdvertiser from "../components/updateAdvertiser";
+import DeleteActivity from "../components/DeleteActivity";
 import UpdateActivity from "../components/UpdateActivity";
 import ChangePasswordForm from "../components/ChangePasswordForm";
+import TermsPopup from "../components/TermsPopup";
 import SalesReport from "../components/SalesReport";
+
+
 
 const AdvChangePassword = () => (
   <ChangePasswordForm apiEndpoint="/api/AdvertiserRoute/changePassword" />
 );
 
-const AdvertiserSignup = ({ loggedInAdvertiser }) => {
-  const [showRevenue, setShowRevenue] = useState(true); // Default to showing revenue
-  const [advertiser, setAdvertiser] = useState(null);
-  const [activity, setActivity] = useState(null);
-  const [subMenu, setSubMenu] = useState(""); // Initialize subMenu state
-  const [activeContent, setActiveContent] = useState("revenue"); // Default to revenue report
-  const [AdvertiserUsername, setAdvertiserUsername] = useState('');
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const navigate = useNavigate();
+const CreateTransportationAd = ({ isVisible, onClose }) => {
+  const [transportation, setTransportation] = useState({
+    departureDate: "",
+    departureTime: "",
+    arrivalDate: "",
+    arrivalTime: "",
+    departureLocation: "",
+    arrivalLocation: "",
+    price: "",
+    vehicleType: "",
+    seatsAvailable: "",
+  });
 
-  // Fetch advertiser username from props or localStorage
-  useEffect(() => {
-    if (loggedInAdvertiser && loggedInAdvertiser.Username) {
-      setAdvertiserUsername(loggedInAdvertiser.Username); // Use prop if available
-    } else {
-      const username = localStorage.getItem("AdvertiserUsername"); // Retrieve from local storage
-      if (username) {
-        setAdvertiserUsername(username);
-      } else {
-        console.warn("Advertiser username not found in local storage or props.");
-        setAdvertiserUsername("Advertiser"); // Fallback value
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTransportation({ ...transportation, [name]: value });
+  };
+
+  const validateForm = () => {
+    const requiredFields = [
+      "departureDate",
+      "departureTime",
+      "arrivalDate",
+      "arrivalTime",
+      "departureLocation",
+      "arrivalLocation",
+      "price",
+      "vehicleType",
+      "seatsAvailable",
+    ];
+    const newErrors = requiredFields.reduce((acc, field) => {
+      if (!transportation[field]) acc[field] = "This field is required";
+      return acc;
+    }, {});
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await axios.post("/api/transportationRoute/create", transportation);
+        if (response.status === 200) {
+          setSuccessMessage("Transportation advertisement created successfully!");
+          setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
+          onClose();
+        } else {
+          console.error("Error:", response.data);
+        }
+      } catch (error) {
+        console.error("Error creating transportation ad:", error.response?.data || error.message);
       }
     }
-  }, [loggedInAdvertiser]);
+  };
 
-  // Fetch advertiser data
+  return isVisible ? (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-screen">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Create Transportation Ad</h2>
+        {successMessage && (
+          <div className="mb-4 p-2 bg-green-100 text-green-800 rounded-md">{successMessage}</div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {[
+            { label: "Departure Date", type: "date", name: "departureDate" },
+            { label: "Departure Time", type: "time", name: "departureTime" },
+            { label: "Arrival Date", type: "date", name: "arrivalDate" },
+            { label: "Arrival Time", type: "time", name: "arrivalTime" },
+            { label: "Departure Location", type: "text", name: "departureLocation" },
+            { label: "Arrival Location", type: "text", name: "arrivalLocation" },
+            { label: "Price", type: "number", name: "price" },
+            { label: "Vehicle Type", type: "text", name: "vehicleType" },
+            { label: "Seats Available", type: "number", name: "seatsAvailable" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium text-gray-700">{field.label}</label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={transportation[field.name] || ""}
+                onChange={handleChange}
+                className={`mt-1 block w-full px-3 py-2 border rounded-md ${
+                  errors[field.name] ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
+            </div>
+          ))}
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Create Ad
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  ) : null;
+};
+
+const AdvertiserSignup = ({ loggedInAdvertiser }) => {
+  const [showRevenue, setShowRevenue] = useState(false);
+
+  const handleShowRevenue = () => {
+    setShowRevenue(!showRevenue);
+  };
+  const [advertiser, setAdvertiser] = useState(null);
+  const [activity, setActivity] = useState(null);
+  const [isVisible2, setIsVisible2] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [activeContent, setActiveContent] = useState("description"); // Default to welcome message
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchAdvertiser = async () => {
-      try {
-        const response = await axios.get("/api/AdvertiserRoute");
-        if (response.status === 200) {
-          setAdvertiser(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching advertiser data:", error);
-      }
+    const fetchAdvertisers = async () => {
+      const response = await fetch("/api/AdvertiserRoute");
+      const json = await response.json();
+      if (response.ok) setAdvertiser(json);
     };
-    fetchAdvertiser();
+    fetchAdvertisers();
   }, []);
 
-  // Fetch activities
   useEffect(() => {
     const fetchActivities = async () => {
-      try {
-        const response = await axios.get("/api/ActivityRoute");
-        if (response.status === 200) {
-          setActivity(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching activities:", error);
-      }
+      const response = await fetch("/api/ActivityRoute");
+      const json = await response.json();
+      if (response.ok) setActivity(json);
     };
     fetchActivities();
   }, []);
 
-  // Fetch notifications
-  const fetchNotifications = async () => {
-    try {
-      const response = await axios.get("/api/notifications"); // Adjust the endpoint
-      if (response.status === 200) {
-        setNotifications(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  // Toggle notification dropdown
-  const toggleNotificationDropdown = () => {
-    setShowNotificationDropdown((prev) => !prev);
-  };
-
-  // Toggle profile dropdown
-  const toggleProfileDropdown = () => {
-    setShowProfileDropdown((prev) => !prev);
-  };
-
-  // Handle delete account
   const handleDeleteAccount = async () => {
     const username = prompt("Please enter your username:");
     if (!username) return; // Exit if no username is entered
-
+  
     const password = prompt("Please enter your password:");
     if (!password) return; // Exit if no password is entered
-
+  
     const confirmation = window.confirm("Are you sure you want to delete your account?");
     if (!confirmation) return; // Exit if user cancels
-
+  
     try {
       const response = await axios.delete(`/api/AdvertiserRoute/deleteAccount/${advertiser._id}`, {
-        data: { username, password },
+        data: { username, password }, // Send username and password in the request body
       });
+  
       if (response.status === 200) {
         alert("Account deleted successfully. You will now be redirected to the homepage.");
         navigate("/"); // Redirect to the homepage
@@ -125,12 +193,12 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
       }
     }
   };
+  
 
   return (
     <div className="flex h-screen">
       {/* Sidebar Menu */}
       <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
-        <h3 className="text-xl font-bold mb-4">Hi, {AdvertiserUsername}</h3>
         <h3 className="text-xl font-bold mb-4">Advertiser Dashboard</h3>
         <ul className="space-y-4">
           <li>
@@ -138,18 +206,39 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
               onClick={() => setActiveContent("details")}
               className="text-lg text-blue-400 hover:text-white"
             >
-              My Profile
+              Show Advertiser Details
             </button>
           </li>
           <li>
             <button
-              onClick={() => {
-                setActiveContent("activities");
-                setSubMenu("");
-              }}
+              onClick={() => setActiveContent("activities")}
               className="text-lg text-blue-400 hover:text-white"
             >
-              My Activities
+              Show Activities
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("createActivity")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Create Activity
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("updateActivity")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Update Activity
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("createTransportation")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Create Transportation Ad
             </button>
           </li>
           <li>
@@ -162,10 +251,10 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
           </li>
           <li>
             <button
-              onClick={() => setShowRevenue(!showRevenue)}
+              onClick={handleShowRevenue}
               className="text-lg text-blue-400 hover:text-white"
             >
-              {showRevenue ? "Hide Revenue" : "Revenue Report"}
+              {showRevenue ? "Hide Revenue" : "Show Revenue"}
             </button>
           </li>
           <li>
@@ -180,94 +269,50 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
       </div>
 
       {/* Main Content */}
-      <div className="w-3/4 p-6 relative">
-        {/* Icons */}
-        <div className="absolute top-4 right-6 flex items-center space-x-4">
-          {/* Notification Icon */}
-          <button
-            onClick={toggleNotificationDropdown}
-            className="text-gray-700 hover:text-blue-700"
-          >
-            <FaBell className="w-6 h-6" />
-          </button>
-          {showNotificationDropdown && (
-            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
-              <h4 className="font-bold text-gray-800">Notifications</h4>
-              <ul className="mt-2 space-y-2">
-                {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <li key={index} className="text-gray-700">
-                      {notification.message}
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-gray-500">No notifications</li>
-                )}
-              </ul>
-            </div>
-          )}
+      <div className="w-3/4 p-6">
+        {activeContent === "description" && (
+          <div className="text-center">
+            <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+              Welcome to the Advertiser Dashboard
+            </h3>
+            <p className="text-lg text-gray-600">
+              Manage your details, activities, advertisements, and account settings. Choose an
+              option from the menu to get started.
+            </p>
+          </div>
+        )}
 
-          {/* Profile Icon */}
-          <button
-            onClick={() => setActiveContent("details")}
-            className="text-gray-700 hover:text-blue-700"
-          >
-            <FaUserCircle className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Dynamic Content */}
-        {activeContent === "revenue" || showRevenue ? <SalesReport /> : null}
         {activeContent === "details" && (
           <AdvertiserDetails advertiser={loggedInAdvertiser} />
         )}
+
         {activeContent === "activities" && (
           <div>
-            <h3 className="text-2xl font-semibold text-gray-800">My Activities</h3>
-            <div className="flex space-x-4 mb-6">
-              <button
-                onClick={() => setSubMenu("show")}
-                className={`text-lg px-4 py-2 rounded-md ${
-                  subMenu === "show" ? "bg-blue-600 text-white" : "bg-gray-300"
-                }`}
-              >
-                Show Activities
-              </button>
-              <button
-                onClick={() => setSubMenu("create")}
-                className={`text-lg px-4 py-2 rounded-md ${
-                  subMenu === "create" ? "bg-blue-600 text-white" : "bg-gray-300"
-                }`}
-              >
-                Create Activity
-              </button>
-              <button
-                onClick={() => setSubMenu("update")}
-                className={`text-lg px-4 py-2 rounded-md ${
-                  subMenu === "update" ? "bg-blue-600 text-white" : "bg-gray-300"
-                }`}
-              >
-                Update Activity
-              </button>
-            </div>
-            {subMenu === "show" && (
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">Activities</h3>
-                {activity &&
-                  activity.map((act) => (
-                    <ActivityDetails key={act._id} activity={act} />
-                  ))}
-              </div>
-            )}
-            {subMenu === "create" && <ActivityForm />}
-            {subMenu === "update" && (
-              <UpdateActivity
-                existingTourguide={activity}
-                onUpdate={() => setSubMenu("show")}
-              />
-            )}
+            <h3 className="text-2xl font-semibold text-gray-800">Activities</h3>
+            {activity &&
+              activity.map((act) => (
+                <ActivityDetails key={act._id} activity={act} />
+              ))}
           </div>
         )}
+
+        {activeContent === "createActivity" && <ActivityForm />}
+        {activeContent === "updateActivity" && (
+          <UpdateActivity
+            existingTourguide={selectedActivity}
+            onUpdate={() => setSelectedActivity(null)}
+          />
+        )}
+
+        {activeContent === "createTransportation" && (
+          <CreateTransportationAd
+            isVisible={true}
+            onClose={() => setActiveContent("description")}
+          />
+        )}
+                {/* Conditionally Render the Sales Report */}
+                {showRevenue && <SalesReport />}
+
         {activeContent === "changePassword" && <AdvChangePassword />}
       </div>
     </div>
