@@ -34,11 +34,48 @@ const SellerDashboard = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationShown, setNotificationShown] = useState(false); // Prevents multiple pop-ups
   const [sellerUsername, setSellerUsername] = useState('');
-  
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false); // Dropdown for notifications
  
   
 
+  useEffect(() => {
+    const username = localStorage.getItem("sellerUsername"); // Replace with your key
+    if (username) {
+      setSellerUsername(username);
+    } else {
+      console.error("Seller username not found.");
+    }
+  }, []);
+
+  
+
+  const fetchCurrentSeller = async () => {
+    const sellerId = localStorage.getItem("sellerId");
+    if (!sellerId) {
+      console.error("No seller ID found. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/sellerRoute/${sellerId}`);
+      if (response.status === 200) {
+        setSellers([response.data]); // Store only the current seller
+      }
+    } catch (err) {
+      console.error("Error fetching seller details:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentSeller();
+  }, []);
+
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown((prev) => !prev);
+  };
+
+  
 
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
@@ -134,22 +171,6 @@ const SellerDashboard = () => {
       }
     };
   
-    const fetchCurrentSeller = async () => {
-      const sellerId = localStorage.getItem("sellerId");
-      if (!sellerId) {
-        setError("No seller ID found. Please log in again.");
-        return;
-      }
-    
-      try {
-        const response = await axios.get(`/api/sellerRoute/${sellerId}`);
-        if (response.status === 200) {
-          setSellers([response.data]); // Store only the current seller
-        }
-      } catch (err) {
-        setError("Error fetching seller details.");
-      }
-    };
     
     
     
@@ -367,7 +388,40 @@ const SellerDashboard = () => {
                 </ul>
               </div>
             )}
-          </div>
+
+          {/* Profile Icon */}
+          <button
+            onClick={toggleProfileDropdown}
+            className="text-gray-700 hover:text-blue-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 14c2.761 0 5-2.239 5-5S14.761 4 12 4 7 6.239 7 9s2.239 5 5 5zm0 0c-3.866 0-7 3.134-7 7h14c0-3.866-3.134-7-7-7z"
+              />
+            </svg>
+          </button>
+          {showProfileDropdown && (
+            <div className="absolute right-10 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
+              <h4 className="font-bold text-gray-800">Seller Details</h4>
+              <div className="mt-2 text-gray-700">
+                {sellers.length > 0 ? (
+                  sellers.map((seller) => <SellerDetails key={seller._id} seller={seller} />)
+                ) : (
+                  <p className="text-gray-500">No details found.</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
     
           {/* Default Description */}
           {activeContent === "description" && (
