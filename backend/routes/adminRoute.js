@@ -17,5 +17,5 @@ router.post('/changePassword', changePassword);
 router.post('/changeGovernorPassword',changeGovernorPassword) ;
 router.get('/total-users', getTotalUsers);
 router.get('/new-users-this-month', getNewUsersPerMonth);
-router.post('/login', tourismGovernorLogin);
+router.post('/login-gov', tourismGovernorLogin);
 module.exports = router;

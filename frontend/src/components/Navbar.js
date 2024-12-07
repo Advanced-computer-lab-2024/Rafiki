@@ -8,7 +8,7 @@ function Navbar() {
         <a href="/" className="text-white text-2xl font-bold">Rafiki</a>
         <ul className="flex space-x-4">
           <li>
-            <Link to="/" className="text-white hover:underline">Home</Link>
+            <Link to="/" className="text-white hover:underline">Log Out</Link>
           </li>
           <li>
             <Link to="/about" className="text-white hover:underline">About Us</Link>

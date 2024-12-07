@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import { Elements } from '@stripe/react-stripe-js'; // Import Elements provider
 import { loadStripe } from '@stripe/stripe-js'; // Load Stripe public key
+import UnifiedLogin from './pages/UnifiedLogin'
 // pages & components
 import SellerForm from './components/sellerForm';
 import GovernerForm from './components/governerForm';
@@ -55,6 +56,7 @@ function App() {
               
             <Route path="/signup/seller" element={<SellerForm />} />
             <Route path="/signup/unified" element={<UnifiedForm />} />
+            <Route path="/login/unified" element={<UnifiedLogin />} />
               <Route path="/" element={<><Hero /></>} /> 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/touristForm" element={<TouristForm />} />
