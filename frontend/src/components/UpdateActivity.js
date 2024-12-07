@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+  import { useState, useEffect } from "react";
 
 const UpdateSeller = ({ existingTourguide, onUpdate }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -46,7 +46,7 @@ const UpdateSeller = ({ existingTourguide, onUpdate }) => {
         setSuccessMessage("");
       } else {
         setError(null);
-        setSuccessMessage(existingTourguide ? "Tour guide updated successfully!" : "New tour guide added successfully!");
+        setSuccessMessage(existingTourguide ? "Activity successfully!" : "Nee Activity added successfully!");
         if (!existingTourguide) {
           setDate("");
           setLocation("");
@@ -72,7 +72,7 @@ const UpdateSeller = ({ existingTourguide, onUpdate }) => {
           isVisible ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
         }`}
       >
-        {isVisible ? "Close Form" : "Update Tour Guide"}
+        {isVisible ? "Close Form" : "Update Activities"}
       </button>
 
       {isVisible && (

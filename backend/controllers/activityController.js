@@ -2,7 +2,7 @@ const Activity = require('../models/activity');
 
 // Create an Activity
 const createActivity = async (req, res) => {
-    const { date, time, location, price, category, tags, specialDiscounts, isBookingOpen } = req.body;
+    const { date, time, location, price, category, tags, specialDiscounts, isBookingOpen , tourGuideUsername} = req.body;
     try {
         const activity = await Activity.create({
             date, 
@@ -12,7 +12,8 @@ const createActivity = async (req, res) => {
             category, 
             tags, 
             specialDiscounts, 
-            isBookingOpen
+            isBookingOpen,
+            tourGuideUsername,
         });
         res.status(201).json(activity);
     } catch (error) {
