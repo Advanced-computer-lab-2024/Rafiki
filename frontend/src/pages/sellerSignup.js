@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import SellerForm from "../components/sellerForm";
 import SellerDetails from "../components/sellerDetails";
 import ProductForm from "../components/productForm";
 import ProductDetails from "../components/ProductDetails";
@@ -7,17 +6,17 @@ import UpdateSeller from "../components/UpdateSeller";
 import RevenueReport from "../components/RevenueReport"; // Adjust path if needed
 import ChangePasswordForm from '../components/ChangePasswordForm';
 import ArchivedProducts from '../components/ArchivedProducts';
-import TermsPopup from "../components/TermsPopup";
+
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { FaBell } from "react-icons/fa";
 const SellerDashboard = () => {
   const [sellers, setSellers] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedTourguide, setSelectedTourguide] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
   
-  const [activeContent, setActiveContent] = useState("description"); // Default to description
+  const [activeContent, setActiveContent] = useState("seller"); // Default to description
   
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,9 +34,48 @@ const SellerDashboard = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationShown, setNotificationShown] = useState(false); // Prevents multiple pop-ups
   const [sellerUsername, setSellerUsername] = useState('');
-  
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false); // Dropdown for notifications
  
+  
 
+  useEffect(() => {
+    const username = localStorage.getItem("sellerUsername"); // Replace with your key
+    if (username) {
+      setSellerUsername(username);
+    } else {
+      console.error("Seller username not found.");
+    }
+  }, []);
+
+  
+
+  const fetchCurrentSeller = async () => {
+    const sellerId = localStorage.getItem("sellerId");
+    if (!sellerId) {
+      console.error("No seller ID found. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/sellerRoute/${sellerId}`);
+      if (response.status === 200) {
+        setSellers([response.data]); // Store only the current seller
+      }
+    } catch (err) {
+      console.error("Error fetching seller details:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentSeller();
+  }, []);
+
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown((prev) => !prev);
+  };
+
+  
 
   const SellerChangePassword = () => (
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
@@ -98,6 +136,9 @@ const SellerDashboard = () => {
 
   // Function to fetch sellers from the backend
 
+  const toggleNotificationDropdown = () => {
+    setShowNotificationDropdown(!showNotificationDropdown);
+  };
 
   // Function to request account deletion for a seller
   const requestAccountDeletion = async (sellerId) => {
@@ -130,22 +171,6 @@ const SellerDashboard = () => {
       }
     };
   
-    const fetchCurrentSeller = async () => {
-      const sellerId = localStorage.getItem("sellerId");
-      if (!sellerId) {
-        setError("No seller ID found. Please log in again.");
-        return;
-      }
-    
-      try {
-        const response = await axios.get(`/api/sellerRoute/${sellerId}`);
-        if (response.status === 200) {
-          setSellers([response.data]); // Store only the current seller
-        }
-      } catch (err) {
-        setError("Error fetching seller details.");
-      }
-    };
     
     
     
@@ -252,37 +277,24 @@ const SellerDashboard = () => {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
-          <h3 className="text-xl font-bold mb-4">Seller Dashboard</h3>
-          {showNotification && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-            <button
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-              onClick={handleCloseNotification}
-            >
-              &times; {/* Close button */}
-            </button>
-            <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
-            <ul className="mt-4 space-y-2">
-              {outOfStockProducts.map((product) => (
-                <li key={product._id} className="text-gray-700">
-                  {product.Name} is out of stock!
-                </li>
-              ))}
-            </ul>
+          {/* Profile Section */}
+          <div className="flex items-center mb-6">
+            <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+              {sellerUsername.charAt(0).toUpperCase()}
+            </div>
+            <span className="ml-4 text-lg font-semibold">Hi, {sellerUsername}</span>
           </div>
-        </div>
-      )}
-
+    
+          {/* Sidebar Menu */}
           <ul className="space-y-4">
             <li>
               <button
-                onClick={() => setActiveContent("sellers")}
+                onClick={() => setActiveContent("seller")}
                 className={`w-full text-left px-4 py-2 rounded ${
-                  activeContent === "sellers" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                  activeContent === "seller" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
                 }`}
               >
-                Show Seller Details
+                Revenue Report
               </button>
             </li>
             <li>
@@ -292,7 +304,7 @@ const SellerDashboard = () => {
                   activeContent === "products" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
                 }`}
               >
-                Show Products
+               My Products
               </button>
             </li>
             <li>
@@ -332,7 +344,7 @@ const SellerDashboard = () => {
                   activeContent === "updateSeller" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
                 }`}
               >
-                Show Update Seller
+                Update Seller
               </button>
             </li>
             <li>
@@ -342,32 +354,75 @@ const SellerDashboard = () => {
                   activeContent === "filterProducts" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
                 }`}
               >
-                Show Filter Products
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => requestAccountDeletion(selectedTourguide?._id)}
-                className="w-full text-left bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              >
-                Request My Account to Be Deleted
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setActiveContent("seller")}
-                className={`w-full text-left px-4 py-2 rounded ${
-                  activeContent === "sellers" ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
-                }`}
-              >
-                Show Revenue Report
+                Filter Products
               </button>
             </li>
           </ul>
         </div>
     
         {/* Main Content */}
-        <div className="w-3/4 p-6">
+        <div className="w-3/4 p-6 relative">
+          {/* Notification Bell */}
+          <div className="absolute top-4 right-6">
+            <button
+              onClick={() => setShowNotification((prev) => !prev)}
+              className="text-gray-700 hover:text-blue-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118.5 14.5V11a6.001 6.001 0 00-5-5.917V5a2 2 0 10-4 0v.083A6.001 6.001 0 004.5 11v3.5c0 .415-.162.79-.405 1.095L3 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
+            {showNotification && (
+              <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
+                <h4 className="font-bold text-gray-800">Notifications</h4>
+                <ul className="mt-2 space-y-2">
+                  {outOfStockProducts.length > 0 ? (
+                    outOfStockProducts.map((product) => (
+                      <li key={product._id} className="text-gray-700">
+                        {product.Name} is out of stock!
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-gray-500">No notifications</li>
+                  )}
+                </ul>
+              </div>
+            )}
+
+          {/* Profile Icon */}
+          <button
+            onClick={toggleProfileDropdown}
+            className="text-gray-700 hover:text-blue-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 14c2.761 0 5-2.239 5-5S14.761 4 12 4 7 6.239 7 9s2.239 5 5 5zm0 0c-3.866 0-7 3.134-7 7h14c0-3.866-3.134-7-7-7z"
+              />
+            </svg>
+          </button>
+          {showProfileDropdown && (
+            <div className="absolute right-10 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
+              <h4 className="font-bold text-gray-800">Seller Details</h4>
+              <div className="mt-2 text-gray-700">
+                {sellers.length > 0 ? (
+                  sellers.map((seller) => <SellerDetails key={seller._id} seller={seller} />)
+                ) : (
+                  <p className="text-gray-500">No details found.</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+    
           {/* Default Description */}
           {activeContent === "description" && (
             <div className="text-center">
@@ -378,32 +433,18 @@ const SellerDashboard = () => {
             </div>
           )}
     
-          {/* Seller Details */}
-          {activeContent === "sellers" && (
-  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-    <h3 className="text-2xl font-semibold text-gray-800 mb-4">My Details</h3>
-    {sellers.length > 0 ? (
-      sellers.map((seller) => (
-        <SellerDetails key={seller._id} seller={seller} />
-      ))
-    ) : (
-      <p className="text-gray-500">No seller details found. Please log in.</p>
-    )}
-  </div>
-)}
-              {/* Revenue Report Details */}
-              {activeContent === "seller" && (
-  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-    <h3 className="text-2xl font-semibold text-gray-800 mb-4">Revenue Report</h3>
-    {sellers.length > 0 ? (
-      sellers.map((seller) => (
-        <RevenueReport key={seller._id} seller={seller} />
-      ))
-    ) : (
-      <p className="text-gray-500">No seller details found. Please log in.</p>
-    )}
-  </div>
-)}
+          {/* Revenue Report */}
+          {activeContent === "seller" && (
+            <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">Revenue Report</h3>
+              {sellers.length > 0 ? (
+                sellers.map((seller) => <RevenueReport key={seller._id} seller={seller} />)
+              ) : (
+                <p className="text-gray-500">No seller details found. Please log in.</p>
+              )}
+            </div>
+          )}
+    
           {/* Products */}
           {activeContent === "products" && (
             <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
@@ -444,46 +485,44 @@ const SellerDashboard = () => {
           )}
     
           {/* Filter Products */}
-         {/* Filter Products */}
-{activeContent === "filterProducts" && (
-  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-    <h3 className="text-2xl font-semibold text-gray-800 mb-4">Filter Products by Price</h3>
-    <div className="flex items-center mb-4">
-      <input
-        type="number"
-        placeholder="Min Price"
-        value={minPrice}
-        onChange={(e) => setMinPrice(e.target.value)}
-        className="border rounded px-3 py-2 mr-4 w-1/2"
-      />
-      <input
-        type="number"
-        placeholder="Max Price"
-        value={maxPrice}
-        onChange={(e) => setMaxPrice(e.target.value)}
-        className="border rounded px-3 py-2 mr-4 w-1/2"
-      />
-      <button
-        onClick={filterProducts}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Apply Filter
-      </button>
-    </div>
-    <div className="mt-4">
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((product) => <ProductDetails key={product._id} product={product} />)
-      ) : (
-        <p className="text-gray-500">No products match the given criteria.</p>
-      )}
-    </div>
-  </div>
-)}
-
+          {activeContent === "filterProducts" && (
+            <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">Filter Products by Price</h3>
+              <div className="flex items-center mb-4">
+                <input
+                  type="number"
+                  placeholder="Min Price"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="border rounded px-3 py-2 mr-4 w-1/2"
+                />
+                <input
+                  type="number"
+                  placeholder="Max Price"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="border rounded px-3 py-2 mr-4 w-1/2"
+                />
+                <button
+                  onClick={filterProducts}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Apply Filter
+                </button>
+              </div>
+              <div className="mt-4">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => <ProductDetails key={product._id} product={product} />)
+                ) : (
+                  <p className="text-gray-500">No products match the given criteria.</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
     
         {/* Terms Popup */}
-        {showPopup && <TermsPopup onAccept={handleAcceptTerms} />}
+        
       </div>
     );
     

@@ -215,7 +215,12 @@ const loginTourist = async (req, res) => {
 
 
 const createTourist = async (req, res) => {
-  const { Username, Email, Password, MobileNumber, Nationality, DOB, Job,BookedActivity } = req.body;
+  const { Username, Email, Password, MobileNumber, Nationality, DOB, Job, BookedActivity } = req.body;
+
+  // Check for missing fields
+  if (!Username || !Email || !Password || !MobileNumber || !Nationality || !DOB || !Job) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
 
   // Validate age
   const currentDate = new Date();
@@ -223,33 +228,36 @@ const createTourist = async (req, res) => {
   const age = currentDate.getFullYear() - birthDate.getFullYear();
   const monthDifference = currentDate.getMonth() - birthDate.getMonth();
 
-  // Check if the tourist is under 18 years old
   if (age < 18 || (age === 18 && monthDifference < 0)) {
     return res.status(400).json({ error: "You must be at least 18 years old to register." });
   }
 
   try {
     // Hash the password
-    const hashedPassword = await bcrypt.hash(Password, 10); // Hashing the password
+    if (!Password) {
+      return res.status(400).json({ error: 'Password is required.' });
+    }
+    const hashedPassword = await bcrypt.hash(Password, 10);
 
-    // Create the tourist with the hashed password
-    const tourist = await TouristModel.create({ 
-      Username, 
-      Email, 
-      Password: hashedPassword, // Store hashed password
-      MobileNumber, 
-      Nationality, 
-      DOB, 
+    // Create the tourist
+    const tourist = await TouristModel.create({
+      Username,
+      Email,
+      Password: hashedPassword,
+      MobileNumber,
+      Nationality,
+      DOB,
       Job,
       BookedActivity,
-      Wallet: 0 // Set default wallet value
+      Wallet: 0, // Set default wallet value
     });
-    
-    res.status(201).json(tourist); // Return the created tourist
+
+    res.status(201).json(tourist);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 

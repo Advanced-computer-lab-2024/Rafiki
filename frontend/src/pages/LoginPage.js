@@ -1,115 +1,110 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import travelImage from "../pics/pic1.jpg";
+import managementImage from "../pics/pic2.jpg";
+import gov from '../pics/pic3.jpg'
 
-function LoginPage() {
+function LoginPaths() {
   const navigate = useNavigate();
 
   const handleRoleSelection = (role) => {
-    if (role === 'tourismGovernor') {
-      navigate('/login/tourism-governor');
-    } else if (role === 'tourGuide') {
-      navigate('/login/tourguide');
-    } else if (role === 'tourist') {
-      navigate('/login/tourist');
-    } else if (role === 'advertiser') {
-      navigate('/login/advertiser');
-    } else if (role === 'seller') {
-      navigate('/login/seller');
-    } else if (role === 'admin') {
-      navigate('/login/admin');
-    } else if (role === 'guest') {
-      navigate('/guestDashboard');
+    if (role === "tourist") {
+      navigate("/login/tourist");
+    } else if (role === "admin") {
+      navigate("/login/unified");
+    } else if (role === "seller") {
+      navigate("/UnifiedLoginForUsers");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 py-10">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-blue-50 text-gray-900 py-12">
       <div className="container mx-auto px-6">
         {/* Header Section */}
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">
-          Select Your Login Role
+        <h1 className="text-5xl font-extrabold text-center mb-8 text-blue-600">
+          Welcome Back
         </h1>
-        <p className="text-lg text-gray-600 text-center mb-12">
-          Choose the role you want to log in as and access your personalized dashboard.
+        <p className="text-xl text-center mb-12 text-gray-700">
+          Choose your role to log in and access your dashboard.
         </p>
 
         {/* Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Login as Tourist */}
+        <div className="flex flex-col sm:flex-row justify-center gap-10">
+          {/* Tourist Login */}
           <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('tourist')}
+            className="relative rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-500 w-full sm:w-1/2 h-80 cursor-pointer"
+            onClick={() => handleRoleSelection("tourist")}
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Tourist Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to discover activities, book tours, and explore destinations.
-            </p>
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${travelImage})`,
+              }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+            <div className="relative z-10 p-8 flex flex-col h-full justify-between">
+              <h3 className="text-3xl font-bold text-white">Login as Tourist</h3>
+              <p className="text-base mt-4 text-gray-300">
+                Discover activities, book tours, and explore destinations.
+              </p>
+              <button
+                className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold self-start shadow-md hover:bg-blue-700 transition"
+              >
+                Login →
+              </button>
+            </div>
           </div>
 
-          {/* Login as Advertiser */}
+          {/* Seller/Advertiser/Tour Guide Login */}
           <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('advertiser')}
+            className="relative rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-500 w-full sm:w-1/2 h-80 cursor-pointer"
+            onClick={() => handleRoleSelection("seller")}
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Advertiser Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to promote your services and connect with a global audience.
-            </p>
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${managementImage})`,
+              }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+            <div className="relative z-10 p-8 flex flex-col h-full justify-between">
+              <h3 className="text-3xl font-bold text-white">
+                Login as Seller, Advertiser, or Tour Guide
+              </h3>
+              <p className="text-base mt-4 text-gray-300">
+                Manage your services, connect with customers, and grow your business.
+              </p>
+              <button
+                className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold self-start shadow-md hover:bg-blue-700 transition"
+              >
+                Login →
+              </button>
+            </div>
           </div>
 
-          {/* Login as Tour Guide */}
+          {/* Admin/Tourism Governor Login */}
           <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('tourGuide')}
+            className="relative rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-500 w-full sm:w-1/2 h-80 cursor-pointer"
+            onClick={() => handleRoleSelection("admin")}
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Tour Guide Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to manage your bookings, connect with travelers, and more.
-            </p>
-          </div>
-
-          {/* Login as Seller */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('seller')}
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Seller Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to manage your products and reach a wider audience.
-            </p>
-          </div>
-
-          {/* Login as Governor */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('tourismGovernor')}
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Governor Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to monitor and manage tourism in your region.
-            </p>
-          </div>
-
-          {/* Login as Admin */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('admin')}
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Admin Login</h3>
-            <p className="text-gray-600 mb-6">
-              Log in to manage platform activities and oversee user interactions.
-            </p>
-          </div>
-
-          {/* Login as Guest */}
-          <div
-            className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transform hover:scale-105 transition duration-300 cursor-pointer"
-            onClick={() => handleRoleSelection('guest')}
-          >
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Guest Access</h3>
-            <p className="text-gray-600 mb-6">
-              Browse activities and explore the platform without registration.
-            </p>
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${gov})`,
+              }}
+            ></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+            <div className="relative z-10 p-8 flex flex-col h-full justify-between">
+              <h3 className="text-3xl font-bold text-white">Login as Admin/Governor</h3>
+              <p className="text-base mt-4 text-gray-300">
+                Oversee platform operations or monitor tourism in your region.
+              </p>
+              <button
+                className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold self-start shadow-md hover:bg-blue-700 transition"
+              >
+                Login →
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -117,4 +112,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default LoginPaths;

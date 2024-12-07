@@ -20,7 +20,7 @@ function Hero() {
         </p>
         <div className="mt-6 space-x-4">
           <a
-            href="/signup-paths"
+            href="/guestDashboard"
             className="px-8 py-3 bg-blue-500 rounded hover:bg-blue-700"
           >
             Get Started

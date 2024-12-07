@@ -24,11 +24,11 @@ const tourguideSchema = new Schema({
         type: Number,
         required: false,
     },
-    Yearsofexperience: {
+    YearsOfExperience: {
         type: String,
         required: false,
     },
-    Previouswork: {
+    PreviousWork: {
         type: String,
         required: false,
     },

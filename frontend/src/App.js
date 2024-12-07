@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 
 import { Elements } from '@stripe/react-stripe-js'; // Import Elements provider
 import { loadStripe } from '@stripe/stripe-js'; // Load Stripe public key
+import UnifiedLogin from './pages/UnifiedLogin'
 // pages & components
+import UnifiedLoginForUsers from './pages/UnifiedLoginForUsers';
 import SellerForm from './components/sellerForm';
 import GovernerForm from './components/governerForm';
 import TouristLogin from './pages/TouristLogin';
@@ -38,7 +40,7 @@ import AdvertiserSignup from './pages/advertiserSignup';
 import CheckoutPage from './pages/CheckoutPage';
 import ProductCheckout from './pages/ProductCheckout';
 import OrdersPage from './pages/OrdersPage';
-
+import UnifiedForm from './components/UnifiedForm';
 const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
 
 
@@ -54,6 +56,9 @@ function App() {
             <Routes>
               
             <Route path="/signup/seller" element={<SellerForm />} />
+            <Route path="/UnifiedLoginForUsers" element={<UnifiedLoginForUsers/>} />
+            <Route path="/signup/unified" element={<UnifiedForm />} />
+            <Route path="/login/unified" element={<UnifiedLogin />} />
               <Route path="/" element={<><Hero /></>} /> 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/touristForm" element={<TouristForm />} />
