@@ -28,6 +28,11 @@ function UnifiedLoginForUsers() {
         });
 
         if (response.status === 200) {
+          // Store the username in localStorage for future use
+          const { tourist } = response.data; // Assuming "tourist" holds seller data
+          localStorage.setItem("sellerId", tourist._id); // Store seller ID in localStorage
+          localStorage.setItem('sellerUsername', tourist.Username);
+          localStorage.setItem('sellerName', tourist.Name); // Store seller Name
           navigate(redirect);
           return;
         }
@@ -36,6 +41,7 @@ function UnifiedLoginForUsers() {
           error.response?.status === 400 ||
           error.response?.status === 404
         ) {
+          // If it's a 400 or 404, move on to try the next role
           continue;
         } else {
           setError("An error occurred. Please try again.");
@@ -44,6 +50,7 @@ function UnifiedLoginForUsers() {
       }
     }
 
+    // If we tried all roles and none matched, show incorrect credentials error
     setError("Incorrect username or password.");
   };
 
@@ -74,7 +81,7 @@ function UnifiedLoginForUsers() {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" // Text color set to black for visibility
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           {/* Password Input */}
@@ -85,7 +92,7 @@ function UnifiedLoginForUsers() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" // Text color set to black for visibility
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           {/* Error Message */}

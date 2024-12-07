@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
+import {
+  FaTag,
+  FaDollarSign,
+  FaImage,
+  FaFileAlt,
+  FaStore,
+  FaStar,
+  FaCommentDots,
+  FaBoxes,
+} from "react-icons/fa";
 
 const ProductForm = ({ existingProduct, onSubmit }) => {
   const [imageFile, setImageFile] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [Name, setName] = useState("");
   const [Price, setPrice] = useState("");
   const [Description, setDescription] = useState("");
@@ -11,7 +20,7 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
   const [Reviews, setReviews] = useState("");
   const [AvailableQuantity, setAvailableQuantity] = useState("");
   const [error, setError] = useState(null);
-  const [sellers, setSellers] = useState([]); // List of sellers
+  const [sellers, setSellers] = useState([]);
 
   useEffect(() => {
     if (existingProduct) {
@@ -26,7 +35,6 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
   }, [existingProduct]);
 
   useEffect(() => {
-    // Fetch sellers from the database
     const fetchSellers = async () => {
       try {
         const response = await fetch("/api/sellerRoute");
@@ -67,8 +75,7 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
 
     if (!response.ok) {
       setError(json.error);
-    }
-    if (response.ok) {
+    } else {
       setError(null);
       setName("");
       setImageFile(null);
@@ -83,142 +90,148 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
     }
   };
 
-  const handleClick = () => {
-    setIsVisible(!isVisible);
-  };
-
   return (
-    <div className="flex flex-col items-center">
-      <button
-        onClick={handleClick}
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <form
+        className="w-full max-w-xl bg-white p-6 rounded-lg shadow-lg space-y-6"
+        onSubmit={handleSubmit}
       >
-        {existingProduct ? "Update Product" : "Create Product"}
-      </button>
+        <h3 className="text-2xl font-bold text-gray-800 text-center">
+          {existingProduct ? "Update Product" : "Create Product"}
+        </h3>
 
-      {isVisible && (
-        <form
-          className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md mt-4 space-y-4"
-          onSubmit={handleSubmit}
-        >
-          <h3 className="text-xl font-bold text-gray-800">
-            {existingProduct ? "Update Product" : "Create Product"}
-          </h3>
+        {/* Name */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaTag className="text-blue-500 mr-3" />
+          <input
+            type="text"
+            value={Name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Product Name"
+            className="w-full focus:outline-none"
+            required
+          />
+        </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">Name:</label>
-            <input
-              type="text"
-              value={Name}
-              onChange={(e) => setName(e.target.value)}
-              className="border rounded px-4 py-2 mt-1"
+        {/* Picture */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaImage className="text-blue-500 mr-3" />
+          <input
+            type="file"
+            onChange={(e) => setImageFile(e.target.files[0])}
+            accept="image/*"
+            className="w-full focus:outline-none"
+          />
+        </div>
+        {existingProduct && existingProduct.Picture && (
+          <div className="text-center mt-2">
+            <p className="text-gray-500 text-sm">Current Image:</p>
+            <img
+              src={`/uploads/${existingProduct.Picture}`}
+              alt="Current"
+              className="w-24 h-24 rounded shadow-md mx-auto"
             />
           </div>
+        )}
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">Picture:</label>
-            <input
-              type="file"
-              onChange={(e) => setImageFile(e.target.files[0])}
-              accept="image/*"
-              className="border rounded px-4 py-2 mt-1"
-            />
-            {existingProduct && existingProduct.Picture && (
-              <div className="mt-2">
-                <p className="text-gray-500 text-sm">Current Image:</p>
-                <img
-                  src={`/uploads/${existingProduct.Picture}`}
-                  alt="Current"
-                  className="w-24 h-24 rounded shadow-md"
-                />
-              </div>
-            )}
-          </div>
+        {/* Price */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaDollarSign className="text-blue-500 mr-3" />
+          <input
+            type="text"
+            value={Price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Price"
+            className="w-full focus:outline-none"
+            required
+          />
+        </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">Price:</label>
-            <input
-              type="text"
-              value={Price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="border rounded px-4 py-2 mt-1"
-            />
-          </div>
+        {/* Description */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaFileAlt className="text-blue-500 mr-3" />
+          <textarea
+            value={Description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+            className="w-full focus:outline-none"
+            rows="3"
+            required
+          />
+        </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">Description:</label>
-            <textarea
-              value={Description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="border rounded px-4 py-2 mt-1"
-              rows="3"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">Seller:</label>
-            <select
-              value={Seller}
-              onChange={(e) => setSeller(e.target.value)}
-              className="border rounded px-4 py-2 mt-1"
-            >
-              <option value="">Select a seller</option>
-              {sellers.map((seller) => (
-                <option key={seller._id} value={seller.Name}>
-                  {seller.Name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col">
-              <label className="font-semibold text-gray-600">Ratings:</label>
-              <input
-                type="text"
-                value={Ratings}
-                onChange={(e) => setRatings(e.target.value)}
-                className="border rounded px-4 py-2 mt-1"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="font-semibold text-gray-600">Reviews:</label>
-              <input
-                type="text"
-                value={Reviews}
-                onChange={(e) => setReviews(e.target.value)}
-                className="border rounded px-4 py-2 mt-1"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <label className="font-semibold text-gray-600">
-              Available Quantity:
-            </label>
-            <input
-              type="text"
-              value={AvailableQuantity}
-              onChange={(e) => setAvailableQuantity(e.target.value)}
-              className="border rounded px-4 py-2 mt-1"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-700 transition"
+        {/* Seller */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaStore className="text-blue-500 mr-3" />
+          <select
+            value={Seller}
+            onChange={(e) => setSeller(e.target.value)}
+            className="w-full focus:outline-none"
+            required
           >
-            {existingProduct ? "Update Product" : "Create Product"}
-          </button>
+            <option value="">Select a seller</option>
+            {sellers.map((seller) => (
+              <option key={seller._id} value={seller.Name}>
+                {seller.Name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {error && (
-            <div className="text-red-500 mt-2 text-center font-medium">
-              {error}
-            </div>
-          )}
-        </form>
-      )}
+        {/* Ratings and Reviews */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center border rounded-lg px-3 py-2">
+            <FaStar className="text-blue-500 mr-3" />
+            <input
+              type="text"
+              value={Ratings}
+              onChange={(e) => setRatings(e.target.value)}
+              placeholder="Ratings"
+              className="w-full focus:outline-none"
+              required
+            />
+          </div>
+          <div className="flex items-center border rounded-lg px-3 py-2">
+            <FaCommentDots className="text-blue-500 mr-3" />
+            <input
+              type="text"
+              value={Reviews}
+              onChange={(e) => setReviews(e.target.value)}
+              placeholder="Reviews"
+              className="w-full focus:outline-none"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Available Quantity */}
+        <div className="flex items-center border rounded-lg px-3 py-2">
+          <FaBoxes className="text-blue-500 mr-3" />
+          <input
+            type="text"
+            value={AvailableQuantity}
+            onChange={(e) => setAvailableQuantity(e.target.value)}
+            placeholder="Available Quantity"
+            className="w-full focus:outline-none"
+            required
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition"
+        >
+          {existingProduct ? "Update Product" : "Create Product"}
+        </button>
+
+        {/* Error Message */}
+        {error && (
+          <div className="text-red-500 text-center font-medium mt-2">
+            {error}
+          </div>
+        )}
+      </form>
     </div>
   );
 };
