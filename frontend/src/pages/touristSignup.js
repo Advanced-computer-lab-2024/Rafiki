@@ -738,6 +738,7 @@ const handleGuideToggle = () => {
             // Check if the response is successful
             if (response.ok) {
                 alert("Product purchased successfully!");
+                navigate('/ProductCheckout');
             } else {
                 alert("Failed to purchase product.");
             }
@@ -881,7 +882,9 @@ const handleGuideToggle = () => {
         navigate('/checkout', { state: { addresses } });  // Use navigate() instead of history.push
     };
 
-    
+    const handleOrder=()=>{
+        navigate('/orders')
+    }
 
 
 
@@ -1058,7 +1061,12 @@ const handleGuideToggle = () => {
             <h4>Complaint:</h4>
             <ComplainCreateForm />
 
-
+            <button
+                  onClick={() => handleOrder()}
+                  
+                >
+                  My Orders
+                </button>
 
             <div>
           

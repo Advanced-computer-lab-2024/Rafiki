@@ -2,6 +2,7 @@ const TourguideModel = require('../models/Tourguide');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
+const ItineraryModel = require('../models/Itinerary'); // Assuming you have an Itinerary model
 
 // Helper function to check if terms have been accepted
 const checkTermsAccepted = (tourGuide, res) => {
@@ -254,4 +255,31 @@ const getTourguideRatings = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-module.exports = { acceptTerms,createTourguide,loginTourGuide, getTourguide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture, addRatingToTourGuide,getTourguideRatings };
+const getTotalTouristsForTourGuide = async (req, res) => {
+    const { tourGuideId } = req.params;
+
+    try {
+        // Find all itineraries for the given tour guide
+        const itineraries = await ItineraryModel.find({ tourGuideId });
+
+        if (!itineraries.length) {
+            return res.status(404).json({ message: "No itineraries found for this tour guide." });
+        }
+
+        // Calculate the total number of tourists attended across all itineraries
+        const totalTourists = itineraries.reduce((sum, itinerary) => sum + (itinerary.touristsAttended || 0), 0);
+
+        // Return the total tourists
+        res.status(200).json({
+            tourGuideId,
+            totalTourists,
+        });
+    } catch (error) {
+        console.error("Error fetching total tourists:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+
+module.exports = { acceptTerms,createTourguide,loginTourGuide, getTourguide, updateTourguide, getAlltour, changePassword, uploadTourGuidePicture, addRatingToTourGuide,getTourguideRatings,getTotalTouristsForTourGuide };

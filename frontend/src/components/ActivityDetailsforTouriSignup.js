@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PaymentForm from '../components/paymentForm';
+import Swal from 'sweetalert2';
 
 const ActivityDetails = ({ activity }) => {
     const [isPaymentVisible, setIsPaymentVisible] = useState(false);
@@ -68,15 +69,32 @@ const ActivityDetails = ({ activity }) => {
     };
 
     const bookActivity = async () => {
-        const name = prompt("Please enter your name to book the activity:");
+        const { value: name } = await Swal.fire({
+            title: 'Enter Your Name',
+            input: 'text',
+            inputLabel: 'Please enter your name to book the activity:',
+            inputPlaceholder: 'Your Name',
+            showCancelButton: true,
+            confirmButtonText: 'Book Activity',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Name is required!';
+                }
+            }
+        });
+    
         if (!name) {
-            alert("Booking failed: Name is required.");
-            return;
+            return; // User canceled the prompt
         }
     
         const tourist = tourists.find(t => t.Username.toLowerCase() === name.toLowerCase());
         if (!tourist) {
-            alert("Booking failed: Tourist not found. Please double-check your name and try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Booking Failed',
+                text: 'Tourist not found. Please double-check your name and try again.',
+            });
             return;
         }
     
@@ -89,14 +107,31 @@ const ActivityDetails = ({ activity }) => {
     
             if (response.ok) {
                 const { message, reminderMessage } = await response.json();
-                alert(`Success: ${message}\n\n${reminderMessage}`);
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Booking Successful',
+                    html: `
+                        <p>${message}</p>
+                        <strong>Reminder:</strong>
+                        <p>${reminderMessage}</p>
+                    `,
+                });
             } else {
                 const errorResponse = await response.json();
-                alert(`Error: ${errorResponse.message || "Failed to book activity."}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorResponse.message || 'Failed to book the activity.',
+                });
             }
         } catch (error) {
-            console.error("Error booking activity:", error);
-            alert("An unexpected error occurred while booking the activity. Please try again later.");
+            console.error('Error booking activity:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Unexpected Error',
+                text: 'An unexpected error occurred while booking the activity. Please try again later.',
+            });
         }
     };
     

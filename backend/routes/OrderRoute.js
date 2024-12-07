@@ -1,5 +1,7 @@
 const express = require('express');
 const Order = require('../models/order'); // Import the Order model
+const TouristModel = require('../models/Tourist'); // Adjust the path based on where your model is located
+
 const router = express.Router();
 
 // Create order
@@ -68,5 +70,71 @@ router.put('/update/:orderId', async (req, res) => {
       res.status(500).json({ message: 'Error updating order status' });
     }
   });
+  // Route to cancel an order
+  router.patch('/orders/:username/cancel/:orderId', async (req, res) => {
+    const { username, orderId } = req.params;
+  
+    try {
+      // Log the incoming parameters
+      console.log('Cancelling order for username:', username, 'orderId:', orderId);
+  
+      // Fetch the order by ID
+      const order = await Order.findById(orderId);
+      if (!order) {
+        console.log('Order not found');
+        return res.status(404).json({ message: 'Order not found' });
+      }
+  
+      // Check the order status
+      console.log('Current order status:', order.status);
+      if (order.status !== 'Pending' && order.status !== 'Processing') {
+        console.log('Order cannot be cancelled because it is not in a valid state.');
+        return res.status(400).json({ message: 'Order cannot be cancelled' });
+      }
+  
+      // Update the order status to "Cancelled"
+      order.status = 'Cancelled';
+      await order.save();
+      console.log('Order status updated to Cancelled');
+  
+      // Optionally update the user's wallet if applicable
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (tourist) {
+        console.log('User found, updating wallet balance.');
+        tourist.Wallet += order.price; // Refund the wallet (if needed)
+        await tourist.save();
+        console.log('Wallet updated:', tourist.Wallet);
+      } else {
+        console.log('User not found for wallet update.');
+      }
+  
+      // Respond with the updated order
+      res.status(200).json(order);
+  
+    } catch (error) {
+      console.error('Error during order cancellation:', error); // Log the error
+      res.status(500).json({ message: 'Error canceling order' });
+    }
+  });
+  // In your backend (OrderRoute.js or wherever it fits)
+router.get('/wallet/:username', async (req, res) => {
+    const { username } = req.params;
+    try {
+      // Find the tourist (user) by username
+      const tourist = await TouristModel.findOne({ Username: username });
+  
+      if (!tourist) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Send back the wallet balance
+      res.json({ walletBalance: tourist.Wallet });
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+      res.status(500).json({ message: 'Failed to fetch wallet balance' });
+    }
+  });
+  
+  
   
 module.exports = router;
