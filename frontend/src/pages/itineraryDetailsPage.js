@@ -8,7 +8,6 @@ const ItineraryDetails = ({ itinerary }) => {
   // Function to toggle the active state
   const toggleItineraryActiveState = async () => {
     try {
-      // Simulate calling an API to update the active status (you can adjust it based on your backend)
       const response = await fetch(`/api/itinerary/${itinerary._id}/toggle`, {
         method: 'PUT',
         headers: {
@@ -17,7 +16,6 @@ const ItineraryDetails = ({ itinerary }) => {
       });
 
       if (response.ok) {
-        // Toggle the state locally if the update is successful
         setIsActive(prevState => !prevState);
       } else {
         console.error("Failed to toggle active state.");
@@ -43,7 +41,6 @@ const ItineraryDetails = ({ itinerary }) => {
     const selectedCurrency = e.target.value;
     setCurrency(selectedCurrency);
 
-    // Set the conversion rate based on the selected currency
     switch (selectedCurrency) {
       case 'EGP':
         setCurrencyMultiplier(50);
@@ -57,34 +54,75 @@ const ItineraryDetails = ({ itinerary }) => {
   };
 
   return (
-    <div className="workout-details">
-      <h4>{itinerary.tourGuideUsername}</h4>
-      <p><strong>Activities: </strong>{itinerary.activities}</p>
-      <p><strong>Locations: </strong>{itinerary.locations}</p>
-      <p><strong>Timeline: </strong>{itinerary.timeline}</p>
-      <p><strong>Duration: </strong>{itinerary.duration}</p>
-      <p><strong>Language: </strong>{itinerary.language}</p>
-      <p><strong>Price: </strong>
-        {currency} {(parseFloat(itinerary.price) * currencyMultiplier).toFixed(2)}
-        <select value={currency} onChange={handleCurrencyChange} style={{ marginLeft: '10px' }}>
+    <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg space-y-6">
+      <h2 className="text-3xl font-semibold text-gray-800">{itinerary.tourGuideUsername}'s Itinerary</h2>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Activities:</strong> {itinerary.activities}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Locations:</strong> {itinerary.locations}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Timeline:</strong> {itinerary.timeline}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Duration:</strong> {itinerary.duration}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Language:</strong> {itinerary.language}
+      </p>
+      <div className="flex items-center space-x-2 text-lg text-gray-600">
+        <span className="font-bold">Price:</span>
+        <span>{currency} {(parseFloat(itinerary.price) * currencyMultiplier).toFixed(2)}</span>
+        <select
+          value={currency}
+          onChange={handleCurrencyChange}
+          className="p-2 rounded-md bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
           <option value="USD">USD</option>
           <option value="EGP">EGP</option>
           <option value="EUR">EUR</option>
         </select>
+      </div>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Available Dates:</strong> {itinerary.availableDates}
       </p>
-      <p><strong>Available Dates: </strong>{itinerary.availableDates}</p>
-      <p><strong>Accessibility: </strong>{itinerary.accessibility}</p>
-      <p><strong>Pickup Location: </strong>{itinerary.pickupLocation}</p>
-      <p><strong>Drop Off Location: </strong>{itinerary.dropOffLocation}</p>
-      <p>{itinerary.createdAt}</p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Accessibility:</strong> {itinerary.accessibility}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Pickup Location:</strong> {itinerary.pickupLocation}
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="font-bold">Drop Off Location:</strong> {itinerary.dropOffLocation}
+      </p>
+      <p className="text-sm text-gray-500">Created on: {itinerary.createdAt}</p>
 
       {/* Button to toggle active state */}
-      <button onClick={toggleItineraryActiveState}>
+      <button
+        onClick={toggleItineraryActiveState}
+        className={`px-6 py-2 rounded-full text-white font-semibold ${
+          isActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+        } transition duration-200 ease-in-out`}
+      >
         {isActive ? 'Deactivate Itinerary' : 'Activate Itinerary'}
       </button>
 
-      <button onClick={copyLinkToClipboard}>Copy Itinerary Link</button>
-      <button onClick={shareViaEmail}>Share via Email</button>
+      {/* Button to copy link */}
+      <button
+        onClick={copyLinkToClipboard}
+        className="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition duration-200 ease-in-out"
+      >
+        Copy Itinerary Link
+      </button>
+
+      {/* Button to share via email */}
+      <button
+        onClick={shareViaEmail}
+        className="px-6 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold transition duration-200 ease-in-out"
+      >
+        Share via Email
+      </button>
     </div>
   );
 };

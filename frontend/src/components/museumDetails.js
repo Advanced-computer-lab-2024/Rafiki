@@ -34,33 +34,36 @@ const MuseumDetails = ({ museum }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 max-w-2xl mx-auto mt-6 transform hover:scale-105 hover:shadow-xl hover:bg-gray-100 transition duration-300 ease-in-out">
-      <h4 className="text-2xl font-semibold text-gray-800 mb-2">{museum.name}</h4>
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto mt-6 transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out">
+      <h4 className="text-3xl font-bold text-gray-800 mb-4">{museum.name}</h4>
       
       {/* Image Section */}
-      <img src={museum.pictures} alt={`${museum.name} Image`} className="w-full h-40 object-cover rounded-lg mb-4" />
+      <img src={museum.pictures} alt={`${museum.name} Image`} className="w-full h-64 object-cover rounded-lg mb-6" />
 
       {/* Flex Container for Museum Details */}
-      <div className="flex flex-wrap space-x-4 space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         {/* Description */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Description:</strong> {museum.description}
+        <div className="text-sm text-gray-600">
+          <strong className="font-semibold text-gray-800">Description:</strong>
+          <p>{museum.description}</p>
         </div>
 
         {/* Location */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Location:</strong> {museum.location}
+        <div className="text-sm text-gray-600">
+          <strong className="font-semibold text-gray-800">Location:</strong>
+          <p>{museum.location}</p>
         </div>
 
         {/* Opening Hours */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Opening Hours:</strong> {museum.openingHours}
+        <div className="text-sm text-gray-600">
+          <strong className="font-semibold text-gray-800">Opening Hours:</strong>
+          <p>{museum.openingHours}</p>
         </div>
 
         {/* Ticket Price */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Ticket Price:</strong> {currency} {(parseFloat(museum.ticketPrices) * currencyMultiplier).toFixed(2)}
+        <div className="text-sm text-gray-600">
+          <strong className="font-semibold text-gray-800">Ticket Price:</strong> {currency} {(parseFloat(museum.ticketPrices) * currencyMultiplier).toFixed(2)}
           <select
             value={currency}
             onChange={handleCurrencyChange}
@@ -73,40 +76,40 @@ const MuseumDetails = ({ museum }) => {
         </div>
 
         {/* Tag */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Tag:</strong> {museum.tag}
+        <div className="text-sm text-gray-600">
+          <strong className="font-semibold text-gray-800">Tag:</strong> {museum.tag}
         </div>
       </div>
 
       {/* Buttons for Copy Link and Share */}
-      <div className="mt-4 flex space-x-3 text-sm">
+      <div className="mt-6 flex space-x-4 justify-start">
         <button
           onClick={copyLinkToClipboard}
-          className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition duration-300"
+          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
         >
           <FaLink className="mr-2" /> Copy Link
         </button>
 
         <button
           onClick={shareViaEmail}
-          className="flex items-center bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition duration-300"
+          className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
         >
           <FaEnvelope className="mr-2" /> Share via Email
         </button>
       </div>
 
       {/* Edit and Delete Buttons */}
-      <div className="mt-4 flex space-x-3 text-sm">
+      <div className="mt-6 flex space-x-4 justify-start">
         <button
           onClick={() => console.log('Edit functionality goes here')}
-          className="flex items-center text-yellow-500 px-3 py-1 rounded-lg hover:bg-yellow-100 transition duration-300"
+          className="flex items-center text-yellow-600 bg-yellow-100 px-4 py-2 rounded-lg hover:bg-yellow-200 transition duration-300 transform hover:scale-105"
         >
           <FaEdit className="mr-2" /> Edit
         </button>
 
         <button
           onClick={() => console.log('Delete functionality goes here')}
-          className="flex items-center text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition duration-300"
+          className="flex items-center text-red-600 bg-red-100 px-4 py-2 rounded-lg hover:bg-red-200 transition duration-300 transform hover:scale-105"
         >
           <FaTrashAlt className="mr-2" /> Delete
         </button>

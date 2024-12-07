@@ -21,6 +21,10 @@ function UnifiedLogin() {
       });
 
       if (adminResponse.status === 200) {
+        const { tourist } = adminResponse.data; // Assuming "tourist" holds seller data
+          localStorage.setItem("govId", tourist._id); // Store seller ID in localStorage
+          localStorage.setItem('govUsername', tourist.Username);
+          localStorage.setItem('govName', tourist.Name); 
         navigate("/adminDashboard");
         return;
       }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from "../components/rafiki.PNG";
+import logo from "../pics/rafiki.PNG";
 
 function Navbar() {
   return (
