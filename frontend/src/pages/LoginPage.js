@@ -13,7 +13,7 @@ function LoginPaths() {
     } else if (role === "admin") {
       navigate("/login/unified");
     } else if (role === "seller") {
-      navigate("/login/unified");
+      navigate("/UnifiedLoginForUsers");
     }
   };
 
