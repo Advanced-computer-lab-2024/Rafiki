@@ -150,14 +150,45 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
 
   const navigate = useNavigate();
 
+  const [advertiserUsername, setAdertiserUsername] = useState('');
+
+
+
   useEffect(() => {
-    const fetchAdvertisers = async () => {
-      const response = await fetch("/api/AdvertiserRoute");
-      const json = await response.json();
-      if (response.ok) setAdvertiser(json);
-    };
-    fetchAdvertisers();
+    const username = localStorage.getItem("loggedinUsername"); // Replace with your key
+    if (username) {
+      setAdertiserUsername(username);
+    } else {
+      console.error("advertiser username not found.");
+    }
   }, []);
+
+  
+
+  const fetchCurrentSeller = async () => {
+    const advertiserID = localStorage.getItem("loggedinID");
+    if (!advertiserID) {
+      console.error("No seller ID found. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/AdvertiserRoute/${advertiserID}`);
+      if (response.status === 200) {
+        setAdvertiser([response.data]); // Store only the current seller
+      }
+    } catch (err) {
+      console.error("Error fetching seller details:", err);
+    }
+  };
+
+ 
+  useEffect(() => {
+    fetchCurrentSeller();
+  }, []);
+
+
+  
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -277,7 +308,7 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
         )}
   
         {activeContent === "details" && (
-          <AdvertiserDetails advertiser={loggedInAdvertiser} />
+          <AdvertiserDetails  advertiser={advertiser} />
         )}
   
         {activeContent === "activities" && (

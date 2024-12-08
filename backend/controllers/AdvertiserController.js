@@ -1,6 +1,6 @@
 const AdvertiserModel = require('../models/Advertiser');
 const ActivityModel = require('../models/activity'); // Replace with actual Activity model
-const ItineraryModel = require('../models/Itinerary'); // Replace with actual Itinerary model
+const ItineraryModel = require('../models/itinerary'); // Replace with actual Itinerary model
 const BookingModel = require('../models/Booking');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
@@ -21,21 +21,20 @@ const loginAdvertiser = async (req, res) => {
 
   try {
     // Find advertiser by username
-    const advertiser = await AdvertiserModel.findOne({ Username });
+    const tourist = await AdvertiserModel.findOne({ Username });
 
     // Check if advertiser exists
-    if (!advertiser) {
+    if (!tourist) {
       return res.status(404).json({ message: "Advertiser not found" });
     }
 
     // Compare plain-text password directly
-    if (advertiser.Password !== Password) {
+    if (tourist.Password !== Password) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
     // Send back advertiser data (excluding the password)
-    const { Password: _, ...advertiserData } = advertiser.toObject();
-    res.status(200).json({ advertiser: advertiserData });
+    res.status(200).json({ tourist });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

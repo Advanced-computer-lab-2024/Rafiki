@@ -69,7 +69,7 @@ const TourguideSignup = () => {
   };
   
 
-  const username = localStorage.getItem("username"); // Get the logged-in username
+  const username = localStorage.getItem("loggedinUsername"); // Get the logged-in username
 
   useEffect(() => {
     const fetchTourguide = async () => {

@@ -20,7 +20,6 @@ const loginSeller = async (req, res) => {
         }
        
         res.status(200).json({
-            message: "Login successful",
             tourist,
         });
     } catch (error) {
