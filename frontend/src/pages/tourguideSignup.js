@@ -11,13 +11,16 @@ import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
 import MonthlyReportDetails from "../components/MonthlyReportDetails"; // adjust based on your structure
 import SalesReport from "../components/SalesReport";
+import { FaUser, FaClipboardList, FaCar, FaKey, FaChartBar, FaTrashAlt } from "react-icons/fa";
+import backgroundImage from "../pics/pic5.jpg";
 
 const TourguideSignup = () => {
   const [showRevenue, setShowRevenue] = useState(false);
 
   const handleShowRevenue = () => {
-    setShowRevenue("revenue");
+    setActiveContent("revenueReport"); // Set active content to show revenue report
   };
+  
   const [tourguide, setTourguide] = useState(null); // Store a single tour guide
   const [itineraries, setItineraries] = useState(null);
   const [activities, setActivities] = useState(null);
@@ -69,7 +72,7 @@ const TourguideSignup = () => {
   };
   
 
-  const username = localStorage.getItem("username"); // Get the logged-in username
+  const username = localStorage.getItem("loggedinUsername"); // Get the logged-in username
 
   useEffect(() => {
     const fetchTourguide = async () => {
@@ -158,66 +161,67 @@ const TourguideSignup = () => {
   );
 
   return (
-    <div className="flex h-screen">
+    
+<div
+  className="flex h-screen"
+  style={{
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: "cover", // Makes sure the background image covers the entire screen
+    backgroundPosition: "center", // Centers the background image
+    backgroundAttachment: "fixed", // Keeps the background fixed while scrolling
+    backgroundRepeat: "no-repeat", // Prevents the image from repeating
+  }}
+>
+      
       {/* Sidebar Navigation */}
       <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
         <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
         <ul className="space-y-4">
           <li>
-            <button
-              onClick={() => setActiveContent("tourguides")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Show Tourguide Details
-            </button>
+          <button
+        onClick={() => setActiveContent("tourguides")}
+        className="flex items-center text-lg text-blue-400 hover:text-white"
+      >
+        <FaUser className="mr-3" /> My Profile
+      </button>
           </li>
           <li>
-            <button
-              onClick={() => setActiveContent("itineraries")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Show Itineraries
-            </button>
+          <button
+        onClick={() => setActiveContent("itineraries")}
+        className="flex items-center text-lg text-blue-400 hover:text-white"
+      >
+        <FaClipboardList className="mr-3" /> My Itineraries
+      </button>
           </li>
           <li>
-            <button
-              onClick={() => setActiveContent("activities")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Show Activities
-            </button>
+          
           </li>
           <li>
-            <button
-              onClick={() => setActiveContent("addItinerary")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Add New Itinerary
-            </button>
+        
           </li>
           <li>
-            <button
-              onClick={() => setActiveContent("changePassword")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Change Password
-            </button>
+          <button
+        onClick={() => setActiveContent("changePassword")}
+        className="flex items-center text-lg text-blue-400 hover:text-white"
+      >
+        <FaKey className="mr-3" /> Change Password
+      </button>
           </li>
           <li>
-            <button
-              onClick={handleShowRevenue}
-              className="text-lg text-green-400 hover:text-white"
-            >
-              Show Revenue
-            </button>
+          <button
+        onClick={handleShowRevenue}
+        className="flex items-center text-lg text-green-400 hover:text-white"
+      >
+        <FaChartBar className="mr-3" /> Show Revenue
+      </button>
           </li>
           <li>
-            <button
-              onClick={() => setShowMonthlyReport(true)}
-              className="text-lg text-green-400 hover:text-white"
-            >
-              Monthly Report
-            </button>
+          <button
+        onClick={() => setShowMonthlyReport(true)}
+        className="flex items-center text-lg text-green-400 hover:text-white"
+      >
+        <FaChartBar className="mr-3" /> Monthly Report
+      </button>
           </li>
         </ul>
       </div>
@@ -236,30 +240,13 @@ const TourguideSignup = () => {
             </p>
           </div>
         )}
-
-        {/* Tourguide Section */}
-        {activeContent === "tourguides" && (
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Tourguide Details
-            </h3>
-            {tourguide ? (
-              <TourguideDetails tourguide={tourguide} />
-            ) : (
-              <p className="text-gray-500">No tour guide details available.</p>
-            )}
-          </div>
-        )}
-
-        {/* Itineraries Section */}
-        {activeContent === "itineraries" && (
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Itineraries
-            </h3>
-            {itineraries ? (
-              <>
-                <div className="text-center mb-6 bg-gray-100 p-4 rounded-lg shadow">
+{/* Show Revenue Report when activeContent is "revenueReport" */}
+{activeContent === "revenueReport" && (
+  <div className="bg-white p-6 rounded-lg shadow-lg">
+    <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+      Revenue Report
+    </h3>
+    <div className="text-center mb-6 bg-gray-100 p-4 rounded-lg shadow">
                   <p className="text-lg font-bold text-gray-800">
                     Total Revenue: $
                     {itineraries
@@ -278,16 +265,50 @@ const TourguideSignup = () => {
                     )}
                   </p>
                 </div>
-                {itineraries.map((itinerary) => (
-                  <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
-                ))}
-              </>
+  </div>
+)}
+
+        {/* Tourguide Section */}
+        {activeContent === "tourguides" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Tourguide Details
+            </h3>
+            {tourguide ? (
+              <TourguideDetails tourguide={tourguide} />
             ) : (
-              <p className="text-gray-500">No itineraries available.</p>
+              <p className="text-gray-500">No tour guide details available.</p>
             )}
           </div>
         )}
 
+        {/* Itineraries Section */}
+        {activeContent === "itineraries" && (
+  <div className="bg-white p-6 rounded-lg shadow-lg">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+      Itineraries
+    </h3>
+
+    {/* Add New Itinerary Button */}
+    <button
+      onClick={() => setActiveContent("addItinerary")}
+      className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mb-4"
+    >
+      Add New Itinerary
+    </button>
+
+    {/* Show Itineraries */}
+    {itineraries ? (
+      <>
+        {itineraries.map((itinerary) => (
+          <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+        ))}
+      </>
+    ) : (
+      <p className="text-gray-500">No itineraries available.</p>
+    )}
+  </div>
+)}
         {/* Activities Section */}
         {activeContent === "activities" && (
           <div className="bg-white p-6 rounded-lg shadow-lg">

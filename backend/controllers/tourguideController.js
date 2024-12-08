@@ -227,20 +227,19 @@ const loginTourGuide = async (req, res) => {
     const { Username, Password } = req.body;
 
     try {
-        const tourGuide = await TourguideModel.findOne({ Username });
-        if (!tourGuide) {
+        const tourist = await TourguideModel.findOne({ Username });
+        if (!tourist) {
             return res.status(404).json({ message: "Tour guide not found." });
         }
 
-        const isMatch = await bcrypt.compare(Password, tourGuide.Password);
+        const isMatch = await bcrypt.compare(Password, tourist.Password);
         if (!isMatch) {
             return res.status(400).json({ message: "Incorrect password." });
         }
 
         // Send a flag indicating if terms are accepted
         res.status(200).json({
-            message: "Login successful",
-            termsAccepted: tourGuide.termsAccepted,
+            tourist,
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
