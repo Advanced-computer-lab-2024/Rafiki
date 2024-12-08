@@ -400,7 +400,7 @@ const AdminSignup = () => {
           <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
           {sellerUsername.charAt(0).toUpperCase()}{/* Replace with admin initials */}
           </div>
-          <span className="ml-4 text-lg font-semibold">Hi, {sellerUsername}</span>
+          <span className="ml-4 text-lg font-semibold">Hello Admin</span>
         </div>
   
         {/* Sidebar Menu */}

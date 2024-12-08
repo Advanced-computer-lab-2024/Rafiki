@@ -163,6 +163,36 @@ router.get('/wallet/:username', async (req, res) => {
     }
   });
 
+
+  router.post('/payproduct/:username', async (req, res) => {
+    const { username } = req.params;
+    const { productName, totalPrice } = req.body; // Retrieve the product name and price
+  
+    try {
+      // Fetch the tourist (user) by username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Check if the user has sufficient balance
+      if (tourist.Wallet < totalPrice) {
+        return res.status(400).json({ message: 'Insufficient wallet balance' });
+      }
+  
+      // Deduct the total price from the wallet
+      tourist.Wallet -= totalPrice;
+      await tourist.save();
+  
+      // Respond with the updated wallet balance
+      res.status(200).json({ walletBalance: tourist.Wallet });
+    } catch (error) {
+      console.error('Error during wallet payment:', error);
+      res.status(500).json({ message: 'Error processing wallet payment' });
+    }
+  });
+  
+
   
   
   
