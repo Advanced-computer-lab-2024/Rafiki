@@ -17,7 +17,7 @@ const ActivityDetails = ({ activity }) => {
     const link = `${window.location.origin}/activities/${activity._id}`;
     window.location.href = `mailto:?subject=Check%20out%20this%20activity&body=Here%20is%20an%20activity%20I%20found:%20${link}`;
   };
-
+ console.log(activity)
   const handleCurrencyChange = (e) => {
     const selectedCurrency = e.target.value;
     setCurrency(selectedCurrency);
@@ -57,7 +57,18 @@ const ActivityDetails = ({ activity }) => {
           <strong className="font-semibold block mb-2">Description:</strong>
           {activity.description}
         </div>
-
+        <div>
+          <p className="font-semibold text-gray-700">
+            <strong>tourists Attended:</strong>
+          </p>
+          <p className="text-gray-600">{activity.touristsAttended}</p>
+        </div>
+        <div>
+          <p className="font-semibold text-gray-700">
+            <strong>tourists cost:</strong>
+          </p>
+          <p className="text-gray-600">{parseFloat(activity.price) * activity.touristsAttended}</p>
+        </div>
         {/* Location */}
         <div className="text-lg text-gray-700">
           <strong className="font-semibold block mb-2">Location:</strong>

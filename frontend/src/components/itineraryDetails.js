@@ -68,6 +68,18 @@ const ItineraryDetails = ({ itinerary }) => {
         </div>
         <div>
           <p className="font-semibold text-gray-700">
+            <strong>tourists Attended:</strong>
+          </p>
+          <p className="text-gray-600">{itinerary.touristsAttended}</p>
+        </div>
+        <div>
+          <p className="font-semibold text-gray-700">
+            <strong>revenue: $</strong>
+          </p>
+          <p className="text-gray-600">{parseFloat(itinerary.price) * itinerary.touristsAttended}</p>
+        </div>
+        <div>
+          <p className="font-semibold text-gray-700">
             <strong>Language:</strong>
           </p>
           <p className="text-gray-600">{itinerary.language}</p>

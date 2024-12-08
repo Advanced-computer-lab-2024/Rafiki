@@ -39,10 +39,12 @@ function TouristLogin() {
   // Handle OTP Request
   const handleRequestOTP = async (e) => {
     e.preventDefault();
+    console.log("Email entered:", email); // Debugging
 
     try {
       const response = await axios.post("/api/touristRoute/requestOTP", { email });
       if (response.status === 200) {
+        
         setIsOtpSent(true);
       } else {
         setError("Error sending OTP. Please try again.");

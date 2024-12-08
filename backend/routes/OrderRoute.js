@@ -135,44 +135,63 @@ router.get('/wallet/:username', async (req, res) => {
     }
   });
   // Route to handle successful payment and update wallet
-router.post('/pay/:username', async (req, res) => {
-  const { username } = req.params;
-  const { orderId, totalPrice } = req.body; // Assuming totalPrice is passed with the request
-
-  try {
-    // Fetch the order by ID
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+  router.post('/pay/:username', async (req, res) => {
+    const { username } = req.params;
+    const { totalPrice } = req.body; // Retrieve the total amount
+  
+    try {
+      // Fetch the tourist (user) by username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Check if the user has sufficient balance
+      if (tourist.Wallet < totalPrice) {
+        return res.status(400).json({ message: 'Insufficient wallet balance' });
+      }
+  
+      // Deduct the total price from the wallet
+      tourist.Wallet -= totalPrice;
+      await tourist.save();
+  
+      // Respond with the updated wallet balance
+      res.status(200).json({ walletBalance: tourist.Wallet });
+    } catch (error) {
+      console.error('Error during wallet payment:', error);
+      res.status(500).json({ message: 'Error processing wallet payment' });
     }
+  });
 
-    // Check if the order is already paid
-    if (order.status === 'Paid') {
-      return res.status(400).json({ message: 'Order already paid' });
+
+  router.post('/payproduct/:username', async (req, res) => {
+    const { username } = req.params;
+    const { productName, totalPrice } = req.body; // Retrieve the product name and price
+  
+    try {
+      // Fetch the tourist (user) by username
+      const tourist = await TouristModel.findOne({ Username: username });
+      if (!tourist) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Check if the user has sufficient balance
+      if (tourist.Wallet < totalPrice) {
+        return res.status(400).json({ message: 'Insufficient wallet balance' });
+      }
+  
+      // Deduct the total price from the wallet
+      tourist.Wallet -= totalPrice;
+      await tourist.save();
+  
+      // Respond with the updated wallet balance
+      res.status(200).json({ walletBalance: tourist.Wallet });
+    } catch (error) {
+      console.error('Error during wallet payment:', error);
+      res.status(500).json({ message: 'Error processing wallet payment' });
     }
-
-    // Update order status to 'Paid'
-    order.status = 'Paid';
-    await order.save();
-
-    // Fetch the tourist (user) to update their wallet balance
-    const tourist = await TouristModel.findOne({ Username: username });
-    if (!tourist) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Deduct the amount from the tourist's wallet
-    tourist.Wallet -= totalPrice;
-    await tourist.save();
-
-    // Respond with the updated order and wallet balance
-    res.status(200).json({ order, walletBalance: tourist.Wallet });
-
-  } catch (error) {
-    console.error('Error during payment:', error);
-    res.status(500).json({ message: 'Error processing payment' });
-  }
-});
+  });
+  
 
   
   
