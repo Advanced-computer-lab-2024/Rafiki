@@ -40,16 +40,16 @@ const tourismGovernorLogin = async (req, res) => {
     const { Username, Password } = req.body;
   
     try {
-      const governor = await TourismGovernor.findOne({ Username });
-      if (!governor) {
+      const admin = await TourismGovernor.findOne({ Username });
+      if (!admin) {
         return res.status(404).json({ message: 'Governor not found.' });
       }
   
-      if (governor.Password !== Password) {
+      if (admin.Password !== Password) {
         return res.status(400).json({ message: 'Incorrect password.' });
       }
   
-      res.status(200).json({ message: 'Login successful.' });
+      res.status(200).json({admin});
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
