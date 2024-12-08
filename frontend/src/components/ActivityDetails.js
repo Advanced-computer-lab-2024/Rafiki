@@ -41,15 +41,6 @@ const ActivityDetails = ({ activity }) => {
         {activity.name}
       </h4>
 
-      {/* Image Section */}
-      <div className="mb-6">
-        <img
-          src={activity.pictures}
-          alt={`${activity.name} Image`}
-          className="w-full h-64 object-cover rounded-lg shadow-md"
-        />
-      </div>
-
       {/* Activity Details */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6">
         {/* Description */}
