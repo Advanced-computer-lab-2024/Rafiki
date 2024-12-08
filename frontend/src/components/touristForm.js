@@ -1,14 +1,16 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaEnvelope, FaLock, FaPhone, FaGlobe, FaBriefcase, FaBirthdayCake } from "react-icons/fa";
+import pic from "../pics/pic1.jpg"; // Use pic1 as the background
 
 const TouristForm = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [nationality, setNationality] = useState('');
-  const [dob, setDOB] = useState('');
-  const [job, setJob] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [nationality, setNationality] = useState("");
+  const [dob, setDOB] = useState("");
+  const [job, setJob] = useState("");
   const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
@@ -16,9 +18,8 @@ const TouristForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
     if (!username || !email || !password || !mobileNumber || !nationality || !dob || !job) {
-      setError('All fields are required!');
+      setError("All fields are required!");
       return;
     }
 
@@ -33,43 +34,47 @@ const TouristForm = () => {
     };
 
     try {
-      const response = await fetch('/api/TouristRoute', {
-        method: 'POST',
+      const response = await fetch("/api/TouristRoute", {
+        method: "POST",
         body: JSON.stringify(tourist),
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
+
       const json = await response.json();
 
       if (!response.ok) {
-        setError(json.error || 'An error occurred. Please try again.');
+        setError(json.error || "An error occurred. Please try again.");
       } else {
         setError(null);
         setShowPopup(true);
 
-        // Clear the form
-        setUsername('');
-        setEmail('');
-        setPassword('');
-        setMobileNumber('');
-        setNationality('');
-        setDOB('');
-        setJob('');
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setMobileNumber("");
+        setNationality("");
+        setDOB("");
+        setJob("");
 
-        // Delay navigation to the homepage by 3 seconds
         setTimeout(() => {
           setShowPopup(false);
-          navigate('/');
+          navigate("/");
         }, 3000);
       }
     } catch (err) {
-      setError('Network error. Please try again later.');
+      setError("Network error. Please try again later.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-6 relative">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${pic})`,
+      }}
+    >
       {showPopup && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full animate-fade-in">
@@ -89,98 +94,98 @@ const TouristForm = () => {
 
       {!showPopup && (
         <form
-          className="bg-white rounded-lg shadow-lg p-10 w-full max-w-xl"
+          className="bg-white bg-opacity-90 rounded-lg shadow-2xl p-10 w-full max-w-xl"
           onSubmit={handleSubmit}
         >
           <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">Tourist Signup</h2>
 
           <div className="grid grid-cols-1 gap-6">
             {/* Username */}
-            <div>
-              <label className="block text-gray-700 font-medium">Username</label>
+            <div className="relative">
+              <FaUser className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter your username"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Username"
                 required
               />
             </div>
 
             {/* Email */}
-            <div>
-              <label className="block text-gray-700 font-medium">Email</label>
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter your email"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Email"
                 required
               />
             </div>
 
             {/* Password */}
-            <div>
-              <label className="block text-gray-700 font-medium">Password</label>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Create a password"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Password"
                 required
               />
             </div>
 
             {/* Mobile Number */}
-            <div>
-              <label className="block text-gray-700 font-medium">Mobile Number</label>
+            <div className="relative">
+              <FaPhone className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="tel"
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter your mobile number"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Mobile Number"
                 required
               />
             </div>
 
             {/* Job */}
-            <div>
-              <label className="block text-gray-700 font-medium">Job</label>
+            <div className="relative">
+              <FaBriefcase className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="text"
                 value={job}
                 onChange={(e) => setJob(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter your job"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Job"
                 required
               />
             </div>
 
             {/* Nationality */}
-            <div>
-              <label className="block text-gray-700 font-medium">Nationality</label>
+            <div className="relative">
+              <FaGlobe className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="text"
                 value={nationality}
                 onChange={(e) => setNationality(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter your nationality"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Nationality"
                 required
               />
             </div>
 
             {/* Date of Birth */}
-            <div>
-              <label className="block text-gray-700 font-medium">Date of Birth</label>
+            <div className="relative">
+              <FaBirthdayCake className="absolute left-3 top-3 text-blue-400" />
               <input
                 type="date"
                 value={dob}
                 onChange={(e) => setDOB(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 required
               />
             </div>
@@ -196,9 +201,7 @@ const TouristForm = () => {
 
           {/* Feedback Messages */}
           {error && (
-            <div className="text-red-500 mt-4 text-center">
-              {error}
-            </div>
+            <div className="text-red-500 mt-4 text-center">{error}</div>
           )}
         </form>
       )}

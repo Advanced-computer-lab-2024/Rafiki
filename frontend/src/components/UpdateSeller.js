@@ -61,85 +61,96 @@ const UpdateSeller = ({ existingTourguide, onUpdate }) => {
 
   return (
     <div className="p-4">
-      <button
-        onClick={handleClick}
-        className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md ${
-          isVisible ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
-        }`}
+      <form
+        className="bg-white p-6 mt-4 rounded-lg shadow-md space-y-6 max-w-xl mx-auto"
+        onSubmit={handleSubmit}
       >
-        {isVisible ? "Hide Form" : existingTourguide ? "Update Seller" : "Add Seller"}
-      </button>
-
-      {isVisible && (
-        <form
-          className="bg-white p-6 mt-4 rounded-lg shadow-md space-y-4"
-          onSubmit={handleSubmit}
-        >
-          <h3 className="text-2xl font-semibold text-gray-700">
-            {existingTourguide ? "Update Seller" : "Update New Seller"}
-          </h3>
-
+        {/* Form Header */}
+        <h3 className="text-2xl font-semibold text-gray-700 text-center">
+          {existingTourguide ? "Update Seller" : "Add New Seller"}
+        </h3>
+  
+        {/* Form Fields */}
+        <div className="space-y-4">
+          {/* Username */}
           <div className="flex flex-col">
             <label className="font-semibold text-gray-600">Username:</label>
             <input
               type="text"
               onChange={(e) => setUsername(e.target.value)}
               value={Username}
-              className="border rounded-lg px-3 py-2 mt-1"
+              className={`border rounded-lg px-3 py-2 mt-1 focus:ring focus:ring-blue-400 ${
+                Username ? "border-blue-500" : "border-gray-300"
+              }`}
               placeholder="Enter username"
             />
           </div>
-
+  
+          {/* Email */}
           <div className="flex flex-col">
             <label className="font-semibold text-gray-600">Email:</label>
             <input
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               value={Email}
-              className="border rounded-lg px-3 py-2 mt-1"
+              className={`border rounded-lg px-3 py-2 mt-1 focus:ring focus:ring-blue-400 ${
+                Email ? "border-blue-500" : "border-gray-300"
+              }`}
               placeholder="Enter email"
             />
           </div>
-
+  
+          {/* Name */}
           <div className="flex flex-col">
             <label className="font-semibold text-gray-600">Name:</label>
             <input
               type="text"
               onChange={(e) => setName(e.target.value)}
               value={Name}
-              className="border rounded-lg px-3 py-2 mt-1"
+              className={`border rounded-lg px-3 py-2 mt-1 focus:ring focus:ring-blue-400 ${
+                Name ? "border-blue-500" : "border-gray-300"
+              }`}
               placeholder="Enter name"
             />
           </div>
-
+  
+          {/* Description */}
           <div className="flex flex-col">
             <label className="font-semibold text-gray-600">Description:</label>
             <textarea
               onChange={(e) => setDescription(e.target.value)}
               value={Description}
-              className="border rounded-lg px-3 py-2 mt-1"
+              className={`border rounded-lg px-3 py-2 mt-1 focus:ring focus:ring-blue-400 ${
+                Description ? "border-blue-500" : "border-gray-300"
+              }`}
               placeholder="Enter description"
               rows="3"
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg shadow-md hover:bg-green-600 transition"
-          >
-            {existingTourguide ? "Update Seller" : "Update Seller"}
-          </button>
-
-          {error && (
-            <p className="text-red-500 mt-2 text-center font-medium">{error}</p>
-          )}
-          {successMessage && (
-            <p className="text-green-500 mt-2 text-center font-medium">{successMessage}</p>
-          )}
-        </form>
-      )}
+        </div>
+  
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+        >
+          {existingTourguide ? "Update Seller" : "Add Seller"}
+        </button>
+  
+        {/* Messages */}
+        {error && (
+          <p className="text-red-500 mt-2 text-center font-medium">{error}</p>
+        )}
+        {successMessage && (
+          <p className="text-green-500 mt-2 text-center font-medium">
+            {successMessage}
+          </p>
+        )}
+      </form>
     </div>
   );
+  
+  
 };
 
 export default UpdateSeller;

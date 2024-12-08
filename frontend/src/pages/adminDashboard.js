@@ -1,11 +1,12 @@
 import axios from 'axios';
+import UploadedDocuments from '../components/UploadedDocuments';
 import AdminForm from '../components/adminForm';
 import GovernerForm from '../components/governerForm';
 import DeleteAdmin from '../components/DeleteAdmin';
 import CategoryForm from '../components/categoryForm';
 import { useEffect, useState } from "react";
 import CategoryDetails from "../components/categoryDetails";
-import ProductDetails from "../components/ProductDetails";
+import ProductdetailsForAdmin from "../components/productdetailsForAdmin";
 import AdminTagDetails from '../components/AdminTagDetails';
 import AdminTagForm from '../components/AdminTagForm';
 import ProductForm from '../components/productForm';
@@ -15,7 +16,7 @@ import ComplaintDetails from '../components/complaintDetails';
 import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { useLocation } from 'react-router-dom';
-
+import pic from '../pics/pic3.jpg'
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
   const [isVisible, setIsVisible] = useState(false); // For toggling tags visibility
@@ -367,242 +368,238 @@ const AdminSignup = () => {
   const handleProductClick = () => setIsProductVisible(!isProductVisible);
   const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
   const handleDocumentsClick = () => setIsDocumentsVisible(!isDocumentsVisible);
-  return (
-    <div>
-      <h2>Admin Dashboard</h2>
+  const [activeMenu, setActiveMenu] = useState(null); // Tracks the currently active menu item
+  
+  const handleMenuClick = (menu) => {
+    setActiveMenu(activeMenu === menu ? null : menu); // Toggle current menu or close if already open
+  };
+  const [sellerUsername, setSellerUsername] = useState('');
+  useEffect(() => {
+    const username = localStorage.getItem("adminUsername");
+    console.log("Retrieved username from localStorage:", username); // Debugging
+    if (username) {
+      setSellerUsername(username);
+    } else {
+      console.error("adminUsername not found in localStorage.");
+      setSellerUsername("Guest"); // Default fallback
+    }
+  }, []);
   
 
-        {error && <p style={{ color: 'red', textAlign: 'right' }}>{error}</p>}
-        {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          {/* Pop-up Notification */}
-          {showNotification && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-              <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-                <button
-                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  onClick={handleCloseNotification}
-                >
-                  &times; {/* Close button */}
-                </button>
-                <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
-                <ul className="mt-4 space-y-2">
-                  {outOfStockProducts.map(product => (
-                    <li key={product._id} className="text-gray-700">
-                      {product.Name} is out of stock!
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      {totalUsers !== null && newUsersThisMonth !== null ? (
-        <div style={{ textAlign: 'right' }}>
-          <p>Total Users: {totalUsers}</p>
-          <p>New Users This Month: {newUsersThisMonth}</p>
-        </div>
-      ) : (
-        <p style={{ textAlign: 'right' }}>Loading user data...</p>
-      )}
-    
-
-      {/* Toggle Tags Visibility */}
-      <button onClick={handleClick}>
-        {isVisible ? 'Hide' : 'Show'} Tags
-      </button>
-      {isVisible && (
-        <div className="tag">
-          {tag.length > 0 ? (
-            tag.map(tags => (
-              <AdminTagDetails
-                Tag={tags}
-                key={tags._id}
-                onUpdate={updateTag}
-                onDelete={deleteTag}
-              />
-            ))
-          ) : (
-            <p>No Tags found.</p>
-          )}
-        </div>
-      )}
-      <br />
-
-      {/* Toggle Categories Visibility */}
-      <button onClick={handleClick2}>
-        {isVisible2 ? 'Hide' : 'Show'} Categories
-      </button>
-      {isVisible2 && (
-        <div className="categories">
-          {categories.length > 0 ? (
-            categories.map(category => (
-              <CategoryDetails
-                category={category}
-                key={category._id}
-                onUpdate={updateCategory}
-                onDelete={deleteCategory}
-              />
-            ))
-          ) : (
-            <p>No categories found.</p>
-          )}
-        </div>
-      )}
-
-      <br />
-
-      {/* Toggle Product Details */}
-      <button onClick={handleProductClick}>
-        {isProductVisible ? 'Hide' : 'Show'} Product Details
-      </button>
-      {isProductVisible && (
-        <div className="products">
-          {products.length > 0 ? (
-            products.map(product => (
-              <ProductDetails product={product} key={product._id} />
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
-        </div>
-      )}
-         <br />
-            {/* Sort by Date */}
-            <button onClick={() => setIsVisibleDateSort(!isVisibleDateSort)}>
-                {isVisibleDateSort ? 'Hide' : 'Sort by Date'}
-            </button>
-            {isVisibleDateSort && (
-                <button onClick={complaintSortbyDtae}>Sort</button>
-            )}
-            {/* Search by Status */}
-            <button onClick={() => setIsVisibleStatusSearch(!isVisibleStatusSearch)}>
-                {isVisibleStatusSearch ? 'Hide' : 'Filter by Status'}
-            </button>
-            {isVisibleStatusSearch && (
-                <div>
-                    <select 
-                      value={status} 
-                      onChange={(e) => setStatus(e.target.value)}
-                    >
-                    <option value="">Select Status</option> {/* Disabled placeholder */}
-                    <option value="resolved">Resolved</option>
-                    <option value="pending">Pending</option>
-                    </select>
-                    <button onClick={complaintStatusFilter}>Search</button>
-                </div>
-            )}
-            <br />
-             {/* View Complaints */}
-             <button onClick={() => setIsVisibleComplaints(!isVisibleComplaints)}>
-                {isVisibleComplaints ? 'Hide' : 'View'} Complaints
-            </button>
-            {isVisibleComplaints && (
-                <div className="complaints">
-                    {complaints && complaints.map(complaint => (
-                        <ComplaintDetails complaint={complaint} key={complaint._id} />
-                    ))}
-                </div>
-            )}
-            <br />
-
-
-
-
-
-
-   
-
-    
-
-
-    <div>
-  <h2>Admin Dashboard - View Uploaded Documents</h2>
-  <button onClick={() => handleDocumentsClick(!isDocumentsVisible)}>
-    {isDocumentsVisible ? 'Hide' : 'View'} Documents
-    <div>
-      <h2>Upload PDF</h2>
-      <input type="file" accept=".pdf" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={isUploading}>
-        {isUploading ? 'Uploading...' : 'Upload PDF'}
-      </button>
-      {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
-    </div>
-  </button>
-  {isDocumentsVisible && (
-    <div className="documents">
-      {uploadedDocuments.length > 0 ? (
-        uploadedDocuments.map((document, index) => (
-          <div key={index}>
-            <p>{document.originalname}</p>
-            {/* Button to view PDF */}
-            {document.filename.endsWith('.pdf') && (
-              <button onClick={() => show(document.filename)}>View PDF</button>
-            )}
-           <button onClick={() => handleDocumentAction(document.originalname, 'accept')}>Accept</button>
-           <button onClick={() => handleDocumentAction(document.originalname, 'reject')}>Reject</button>
-            <p>Status: {document.status}</p>
+  return (
+    <div
+      className="flex min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${pic})`,// Replace with your actual background image URL
+      }}
+    >
+      {/* Sidebar */}
+      <div className="w-1/4 bg-gray-900 text-white p-6">
+        {/* Profile Section */}
+        <div className="flex items-center mb-8">
+          <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+          {sellerUsername.charAt(0).toUpperCase()}{/* Replace with admin initials */}
           </div>
-        ))
-      ) : (
-        <p>No documents uploaded yet.</p>
-      )}
-    </div>
-  )}
-
-  {/* View Activities Section */}
-  <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
-    {isVisibleActivities ? 'Hide' : 'Show'} Activities
-  </button>
-  {isVisibleActivities && (
-    <div className="activities">
-      {activities.map(activity => (
-        <div key={activity._id}>
-          <p>{activity.location}</p> {/* Display any activity info */}
-          <button onClick={() => flagActivity(activity._id)}>Flag as Inappropriate</button>
+          <span className="ml-4 text-lg font-semibold">Hi, {sellerUsername}</span>
         </div>
-      ))}
-    </div>
-  )}
-</div>
-
-
-        
-
-
-
-      <br />
-
-      {/* Toggle Archived Products */}
-      <button onClick={handleArchivedClick}>
-        {isArchivedVisible ? 'Hide' : 'Show'} Archived Products
-      </button>
-      {isArchivedVisible && <ArchivedProducts />}
-
-      <br />
-
-
-      
-      {/* Admin Forms */}
-     
-     
-      <DeleteAdmin />
-      <br />
-      <CategoryForm />
-      <br />
-      <CreatePromoCodes/>
-      <br />
-      <AdminTagForm />
-      <br />
-      <ProductForm />
-      <br/>
-      <AdminChangePassword/>
-      {/* <AdminChangePassword/> */}
+  
+        {/* Sidebar Menu */}
+        <ul className="space-y-6">
+          <li>
+            <button
+              onClick={() => setActiveMenu('tags')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'tags' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 2L5 5H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-1l-1-3H6zm0 2h12l.6 2H5.4l.6-2zM4 7h16v11H4V7zm8 2c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z" />
+              </svg>
+              Manage Tags
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('categories')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'categories'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 2v2h14V2H5zm14 4H5l-1 14h16l-1-14zM8 8h2v9H8V8zm6 0h2v9h-2V8z" />
+              </svg>
+              Manage Categories
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('products')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'products'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+              </svg>
+              Product Details
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('archived')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'archived'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h14v2H5v-2z" />
+              </svg>
+              Archived Products
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('documents')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'documents'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M13 2h7v7h-2V5.414l-9.586 9.586-1.414-1.414L16.586 4H13V2zm-9 9H2v11h17v-2H4v-9z" />
+              </svg>
+              Uploaded Documents
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('complaints')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'complaints'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a10 10 0 00-3 19.5V22h6v-.5a10 10 0 00-3-19.5zm0 2a8 8 0 014.33 14.4l-.33.26V20h-8v-1.34l-.33-.26A8 8 0 0112 4z" />
+              </svg>
+              Complaints
+            </button>
+          </li>
+        </ul>
+      </div>
+  
+      {/* Main Content */}
+      <div className="w-3/4 p-6 relative">
+        {activeMenu === 'tags' && <div className="tags">{<div className="tag">
+            {tag.length > 0 ? (
+              tag.map((tags) => (
+                <AdminTagDetails
+                  Tag={tags}
+                  key={tags._id}
+                  onUpdate={updateTag}
+                  onDelete={deleteTag}
+                />
+              ))
+            ) : (
+              <p>No Tags found.</p>
+            )}
+          </div>/* Tags content here */}</div>}
+        {activeMenu === 'categories' && (
+          <div className="categories">{
+            <div className="categories">
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <CategoryDetails
+                  category={category}
+                  key={category._id}
+                  onUpdate={updateCategory}
+                  onDelete={deleteCategory}
+                />
+              ))
+            ) : (
+              <p>No categories found.</p>
+            )}
+          </div>/* Categories content here */}</div>
+        )}
+        {activeMenu === 'products' && (
+          <div className="products">{
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+            {products.length > 0 ? (
+              products.map((product) => (
+                <ProductdetailsForAdmin product={product} key={product._id} />
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </div>/* Product Details content here */}</div>
+        )}
+        {activeMenu === 'archived' && (
+          <div className="archived">{
+            <ArchivedProducts />/* Archived Products content here */}</div>
+        )}
+       {activeMenu === 'documents' && (
+  <UploadedDocuments
+    handleFileChange={handleFileChange}
+    handleUpload={handleUpload}
+    isUploading={isUploading}
+    uploadedDocuments={uploadedDocuments}
+    handleDocumentAction={handleDocumentAction}
+    show={show}
+    uploadError={uploadError}
+    selectedFile={selectedFile}
+  />
+)}
+        {activeMenu === 'complaints' && (
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+         {complaints.map((complaint) => (
+           <ComplaintDetails complaint={complaint} key={complaint._id} />
+         ))}
+       </div>
+        )}
+        <CreatePromoCodes/>
+      </div>
     </div>
   );
+  
+
 };
 
 

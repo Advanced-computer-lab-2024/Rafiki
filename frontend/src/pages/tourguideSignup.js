@@ -159,241 +159,233 @@ const TourguideSignup = () => {
 
   return (
     <div className="flex h-screen">
-    {/* Sidebar Navigation */}
-    <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
-      <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
-      <ul className="space-y-4">
-  <li>
-    <button
-      onClick={() => setActiveContent("tourguides")}
-      className="text-lg text-blue-400 hover:text-white"
-    >
-      Show Tourguide Details
-    </button>
-  </li>
-  <li>
-    <button
-      onClick={() => setActiveContent("itineraries")}
-      className="text-lg text-blue-400 hover:text-white"
-    >
-      Show Itineraries
-    </button>
-  </li>
-  <li>
-    <button
-      onClick={() => setActiveContent("activities")}
-      className="text-lg text-blue-400 hover:text-white"
-    >
-      Show Activities
-    </button>
-  </li>
-  <li>
-    <button
-      onClick={() => setActiveContent("addItinerary")}
-      className="text-lg text-blue-400 hover:text-white"
-    >
-      Add New Itinerary
-    </button>
-  </li>
-  <li>
-    <button
-      onClick={() => setActiveContent("changePassword")}
-      className="text-lg text-blue-400 hover:text-white"
-    >
-      Change Password
-    </button>
-  </li>
-  <li>
-    <button
-      onClick={handleShowRevenue} // New revenue button
-      className="text-lg text-green-400 hover:text-white"
-    >
-      Show Revenue
-    </button>
-  </li>
-</ul>
-
-    </div>
-
-    {/* Main Content */}
-    <div className="w-3/4 p-6">
-  {activeContent === "description" && (
-    <div className="text-center">
-      <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-        Welcome to the Tour Guide Dashboard
-      </h3>
-      <p className="text-lg text-gray-600">
-        Manage your details, itineraries, activities, and account settings.
-        Choose an option from the menu to get started.
-      </p>
-    </div>
-  )}
-
-  {activeContent === "revenue" && (
-    <div className="h-full flex items-center justify-center bg-gray-100 rounded-lg shadow-lg">
-      <h3 className="text-xl font-semibold text-gray-500">
-        Revenue page placeholder
-      </h3>
-    </div>
-  )}
-
-      {/* Tourguide Section */}
-      {activeContent === "tourguides" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            Tourguide Details
-          </h3>
-          {tourguide ? (
-            <TourguideDetails tourguide={tourguide} />
-          ) : (
-            <p className="text-gray-500">No tour guide details available.</p>
-          )}
-        </div>
-      )}
-
-      {/* Itineraries Section */}
-      {activeContent === "itineraries" && (
-  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-      Itinerary Details
-    </h3>
-    {itineraries ? (
-      <>
-        {/* Calculate and display totals */}
-        <div className="text-center mb-6 bg-gray-100 p-4 rounded-lg shadow">
-          <p className="text-lg font-bold text-gray-800">
-            Total Revenue: $
-            {itineraries.reduce(
-              (total, itinerary) => total + itinerary.price * itinerary.touristsAttended,
-              0
-            ).toFixed(2)}
-          </p>
-          <p className="text-lg font-bold text-gray-800">
-            Total Tourists Attended:{" "}
-            {itineraries.reduce(
-              (total, itinerary) => total + itinerary.touristsAttended,
-              0
-            )}
-          </p>
-        </div>
-
-        {/* Render itinerary details */}
-        {itineraries.map((itinerary) => (
-          <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
-        ))}
-      </>
-    ) : (
-      <p className="text-gray-500">No itineraries available.</p>
-    )}
-  </div>
-)}
-
-
-      {/* Activities Section */}
-      {activeContent === "activities" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
-          {activities ? (
-            activities.map((activity) => (
-              <ActivityDetails key={activity._id} activity={activity} />
-            ))
-          ) : (
-            <p className="text-gray-500">No activities available.</p>
-          )}
-        </div>
-      )}
-
-      {/* Add Itinerary Section */}
-      {activeContent === "addItinerary" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            Add New Itinerary
-          </h3>
-          <ItineraryForm />
-        </div>
-      )}
-
-      {/* Change Password Section */}
-      {activeContent === "changePassword" && (
-        <div className="section-card p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            Change Password
-          </h3>
-          <AdminChangePassword />
-        </div>
-      )}
-
-      {/* Monthly Report Section */}
-      {showMonthlyReport && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            Monthly Tourist Report
-          </h3>
-
-          {/* Select Month for the Report */}
-          <div className="flex space-x-2 mb-4">
-            <select
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className="p-2 border border-gray-300 rounded"
-            >
-              <option value="">Select Month</option>
-              <option value="0">January</option>
-              <option value="1">February</option>
-              <option value="2">March</option>
-              <option value="3">April</option>
-              <option value="4">May</option>
-              <option value="5">June</option>
-              <option value="6">July</option>
-              <option value="7">August</option>
-              <option value="8">September</option>
-              <option value="9">October</option>
-              <option value="10">November</option>
-              <option value="11">December</option>
-            </select>
+      {/* Sidebar Navigation */}
+      <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
+        <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
+        <ul className="space-y-4">
+          <li>
             <button
-              onClick={fetchMonthlyReport}
-              className="px-4 py-2 bg-green-500 text-white rounded"
+              onClick={() => setActiveContent("tourguides")}
+              className="text-lg text-blue-400 hover:text-white"
             >
-              Get Monthly Report
+              Show Tourguide Details
             </button>
-          </div>
-
-          {/* Display Monthly Report */}
-          {monthlyReport ? (
-            <MonthlyReportDetails data={monthlyReport} />
-          ) : (
-            <p className="text-gray-500">No data available for this month.</p>
-          )}
-        </div>
-      )}
-
-{/* Modal for Report */}
-{showReport && reportData && (
-  <div className="modal fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-    <div className="modal-content bg-white p-6 rounded-lg">
-      <h3 className="text-2xl font-semibold mb-4">Tourist Report</h3>
-      <p>Total Tourists: {reportData.totalTourists}</p>
-
-      {/* Removed filter itinerary part */}
-
-      <button
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
-        onClick={() => setShowReport(false)}
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
-
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("itineraries")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Show Itineraries
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("activities")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Show Activities
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("addItinerary")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Add New Itinerary
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveContent("changePassword")}
+              className="text-lg text-blue-400 hover:text-white"
+            >
+              Change Password
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleShowRevenue}
+              className="text-lg text-green-400 hover:text-white"
+            >
+              Show Revenue
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setShowMonthlyReport(true)}
+              className="text-lg text-green-400 hover:text-white"
+            >
+              Monthly Report
+            </button>
+          </li>
+        </ul>
       </div>
 
-      {/* Terms Popup */}
-      {showPopup && <TermsPopup onAccept={handleAccept} />}
+      {/* Main Content */}
+      <div className="w-3/4 p-6 overflow-y-auto">
+        {/* Header */}
+        {activeContent === "description" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 className="text-3xl font-semibold text-gray-800">
+              Welcome to Your Tour Guide Dashboard
+            </h3>
+            <p className="text-gray-600 mt-4">
+              Use the sidebar to navigate and manage your details, itineraries,
+              and reports.
+            </p>
+          </div>
+        )}
+
+        {/* Tourguide Section */}
+        {activeContent === "tourguides" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Tourguide Details
+            </h3>
+            {tourguide ? (
+              <TourguideDetails tourguide={tourguide} />
+            ) : (
+              <p className="text-gray-500">No tour guide details available.</p>
+            )}
+          </div>
+        )}
+
+        {/* Itineraries Section */}
+        {activeContent === "itineraries" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Itineraries
+            </h3>
+            {itineraries ? (
+              <>
+                <div className="text-center mb-6 bg-gray-100 p-4 rounded-lg shadow">
+                  <p className="text-lg font-bold text-gray-800">
+                    Total Revenue: $
+                    {itineraries
+                      .reduce(
+                        (total, itinerary) =>
+                          total + itinerary.price * itinerary.touristsAttended,
+                        0
+                      )
+                      .toFixed(2)}
+                  </p>
+                  <p className="text-lg font-bold text-gray-800">
+                    Total Tourists Attended:{" "}
+                    {itineraries.reduce(
+                      (total, itinerary) => total + itinerary.touristsAttended,
+                      0
+                    )}
+                  </p>
+                </div>
+                {itineraries.map((itinerary) => (
+                  <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+                ))}
+              </>
+            ) : (
+              <p className="text-gray-500">No itineraries available.</p>
+            )}
+          </div>
+        )}
+
+        {/* Activities Section */}
+        {activeContent === "activities" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Activities
+            </h3>
+            {activities ? (
+              activities.map((activity) => (
+                <ActivityDetails key={activity._id} activity={activity} />
+              ))
+            ) : (
+              <p className="text-gray-500">No activities available.</p>
+            )}
+          </div>
+        )}
+
+        {/* Add Itinerary Section */}
+        {activeContent === "addItinerary" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Add Itinerary
+            </h3>
+            <ItineraryForm />
+          </div>
+        )}
+
+        {/* Change Password Section */}
+        {activeContent === "changePassword" && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Change Password
+            </h3>
+            <AdminChangePassword />
+          </div>
+        )}
+
+        {/* Monthly Report Section */}
+        {showMonthlyReport && (
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Monthly Report
+            </h3>
+            <div className="flex items-center space-x-4 mb-4">
+              <select
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="border p-2 rounded-lg"
+              >
+                <option value="">Select Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+              </select>
+              <button
+                onClick={fetchMonthlyReport}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg"
+              >
+                Fetch Report
+              </button>
+            </div>
+            {monthlyReport ? (
+              <MonthlyReportDetails data={monthlyReport} />
+            ) : (
+              <p className="text-gray-500">No report available for this month.</p>
+            )}
+          </div>
+        )}
+
+        {/* Report Modal */}
+        {showReport && reportData && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-semibold mb-4">Tourist Report</h3>
+              <p>Total Tourists: {reportData.totalTourists}</p>
+              <button
+                onClick={() => setShowReport(false)}
+                className="bg-red-500 text-white px-4 py-2 mt-4 rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Terms Popup */}
+        {showPopup && <TermsPopup onAccept={handleAccept} />}
+      </div>
     </div>
   );
-};
+}
 
 export default TourguideSignup;

@@ -76,6 +76,12 @@ const SalesReport = () => {
             onChange={(e) => setFilterType(e.target.value)}
             className="mt-2 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           >
+    <div className="sales-report">
+      <h2>Sales Report</h2>
+      <div className="filters">
+        <label>
+          Type:
+          <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
             <option value="">All</option>
             <option value="Activity">Activity</option>
             <option value="Itinerary">Itinerary</option>
@@ -85,39 +91,27 @@ const SalesReport = () => {
         {/* Filter by Date */}
         <div className="bg-white shadow hover:shadow-lg p-6 rounded-lg transition">
           <label className="block text-sm font-semibold text-gray-700">Filter by Date</label>
+        </label>
+        <label>
+          Date:
           <input
             type="date"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
-            className="mt-2 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
-        </div>
-
-        {/* Filter by Month */}
-        <div className="bg-white shadow hover:shadow-lg p-6 rounded-lg transition">
-          <label className="block text-sm font-semibold text-gray-700">Filter by Month</label>
+        </label>
+        <label>
+          Month:
           <input
             type="month"
             value={filterMonth}
             onChange={(e) => setFilterMonth(e.target.value)}
-            className="mt-2 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
-        </div>
+        </label>
+        <button onClick={handleFilter}>Filter</button>
       </div>
-      {activity && activity.length > 0 ? (
-  <div className="activity-container bg-gray-100 p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-bold text-gray-700 mb-4">Activities123</h3>
-    {activity.map((act) => (
-      <ActivityDetails key={act._id} activity={act} />
-    ))}
-  </div>
-) : (
-  <p className="text-gray-500 text-sm">No activities found.</p>
-)}
-
-      {/* Results Section */}
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Filtered Results</h3>
+      <div className="results">
+        <h3>Filtered Results:</h3>
         {filteredData.length > 0 ? (
           <table className="min-w-full divide-y divide-gray-200 table-fixed">
             <thead className="bg-gray-100 sticky top-0">
@@ -149,10 +143,15 @@ const SalesReport = () => {
               ))}
             </tbody>
           </table>
+          <ul>
+            {filteredData.map((item) => (
+              <li key={item.id}>
+                {item.name} - {item.type} - {item.date} - ${item.amount}
+              </li>
+            ))}
+          </ul>
         ) : (
-          <div className="text-center py-10">
-            <p className="text-gray-500 text-lg">No results found. Please adjust your filters.</p>
-          </div>
+          <p>No results found.</p>
         )}
       </div>
     </div>

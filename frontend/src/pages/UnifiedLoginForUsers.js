@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
 import pic from "../pics/pic2.jpg";
-   
-
-
 
 function UnifiedLoginForUsers() {
   const [username, setUsername] = useState("");
@@ -17,6 +14,7 @@ function UnifiedLoginForUsers() {
     e.preventDefault();
     setError(null);
 
+    // Define roles, endpoints, and redirects
     const userRoles = [
       { role: "Seller", endpoint: "/api/sellerRoute/login", redirect: "/seller-signup" },
       { role: "Advertiser", endpoint: "/api/AdvertiserRoute/login", redirect: "/advertiser-signup" },
@@ -31,14 +29,16 @@ function UnifiedLoginForUsers() {
         });
 
         if (response.status === 200) {
+          // Store user info in localStorage
+          const { Username, _id, role } = response.data;
+          localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id, role }));
+
           navigate(redirect);
-          return;
+          return; // Exit once logged in successfully
         }
-      } catch (error) {
-        if (
-          error.response?.status === 400 ||
-          error.response?.status === 404
-        ) {
+      } catch (err) {
+        if (err.response?.status === 400 || err.response?.status === 404) {
+          // Move on to the next role if this one fails
           continue;
         } else {
           setError("An error occurred. Please try again.");
@@ -47,6 +47,7 @@ function UnifiedLoginForUsers() {
       }
     }
 
+    // If all roles fail, show incorrect credentials error
     setError("Incorrect username or password.");
   };
 
@@ -77,7 +78,7 @@ function UnifiedLoginForUsers() {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" // Text color set to black for visibility
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           {/* Password Input */}
@@ -88,7 +89,7 @@ function UnifiedLoginForUsers() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" // Text color set to black for visibility
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-black"
             />
           </div>
           {/* Error Message */}

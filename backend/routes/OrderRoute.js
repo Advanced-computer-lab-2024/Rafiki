@@ -134,6 +134,46 @@ router.get('/wallet/:username', async (req, res) => {
       res.status(500).json({ message: 'Failed to fetch wallet balance' });
     }
   });
+  // Route to handle successful payment and update wallet
+router.post('/pay/:username', async (req, res) => {
+  const { username } = req.params;
+  const { orderId, totalPrice } = req.body; // Assuming totalPrice is passed with the request
+
+  try {
+    // Fetch the order by ID
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Check if the order is already paid
+    if (order.status === 'Paid') {
+      return res.status(400).json({ message: 'Order already paid' });
+    }
+
+    // Update order status to 'Paid'
+    order.status = 'Paid';
+    await order.save();
+
+    // Fetch the tourist (user) to update their wallet balance
+    const tourist = await TouristModel.findOne({ Username: username });
+    if (!tourist) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Deduct the amount from the tourist's wallet
+    tourist.Wallet -= totalPrice;
+    await tourist.save();
+
+    // Respond with the updated order and wallet balance
+    res.status(200).json({ order, walletBalance: tourist.Wallet });
+
+  } catch (error) {
+    console.error('Error during payment:', error);
+    res.status(500).json({ message: 'Error processing payment' });
+  }
+});
+
   
   
   

@@ -34,17 +34,20 @@ const ActivityDetails = ({ activity }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 max-w-2xl mx-auto mt-6 transform hover:scale-105 hover:shadow-xl hover:bg-gray-100 transition duration-300 ease-in-out">
-      <h4 className="text-2xl font-semibold text-gray-800 mb-2">{activity.name}</h4>
-      
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto mt-6 transform hover:scale-105 hover:shadow-xl hover:bg-gray-50 transition duration-300 ease-in-out">
+      <h4 className="text-3xl font-semibold text-gray-800 mb-4">{activity.name}</h4>
+
       {/* Image Section */}
-      <img src={activity.pictures} alt={`${activity.name} Image`} className="w-full h-40 object-cover rounded-lg mb-4" />
+      <img
+        src={activity.pictures}
+        alt={`${activity.name} Image`}
+        className="w-full h-56 object-cover rounded-lg mb-6 shadow-md"
+      />
 
-      {/* Flex Container for Activity Details */}
-      <div className="flex flex-wrap space-x-4 space-y-4">
-
+      {/* Activity Details */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
         {/* Description */}
-        <div className="w-full sm:w-1/2 text-sm">
+        <div className="text-sm text-gray-700">
           <strong className="font-semibold">Description:</strong> {activity.description}
         </div>
         <div>
@@ -60,22 +63,25 @@ const ActivityDetails = ({ activity }) => {
           <p className="text-gray-600">{parseFloat(activity.price) * activity.touristsAttended}</p>
         </div>
         {/* Location */}
-        <div className="w-full sm:w-1/2 text-sm">
+        <div className="text-sm text-gray-700">
           <strong className="font-semibold">Location:</strong> {activity.location}
         </div>
 
         {/* Date */}
-        <div className="w-full sm:w-1/2 text-sm">
+        <div className="text-sm text-gray-700">
           <strong className="font-semibold">Date:</strong> {activity.date}
         </div>
 
         {/* Price */}
-        <div className="w-full sm:w-1/2 text-sm">
-          <strong className="font-semibold">Price:</strong> {currency} {(parseFloat(activity.price) * currencyMultiplier).toFixed(2)}
+        <div className="flex items-center text-sm text-gray-700">
+          <strong className="font-semibold">Price:</strong>
+          <span className="ml-2">
+            {currency} {(parseFloat(activity.price) * currencyMultiplier).toFixed(2)}
+          </span>
           <select
             value={currency}
             onChange={handleCurrencyChange}
-            className="ml-2 p-1 bg-gray-100 border border-gray-300 rounded text-sm"
+            className="ml-4 p-1 bg-gray-100 border border-gray-300 rounded text-sm"
           >
             <option value="USD">USD</option>
             <option value="EGP">EGP</option>
@@ -84,40 +90,42 @@ const ActivityDetails = ({ activity }) => {
         </div>
 
         {/* Tag */}
-        <div className="w-full sm:w-1/2 text-sm">
+        <div className="text-sm text-gray-700">
           <strong className="font-semibold">Tag:</strong> {activity.tag}
         </div>
       </div>
 
-      {/* Buttons for Copy Link and Share */}
-      <div className="mt-4 flex space-x-3 text-sm">
+      {/* Action Buttons */}
+      <div className="flex space-x-4 mt-6">
+        {/* Copy Link Button */}
         <button
           onClick={copyLinkToClipboard}
-          className="flex items-center bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition duration-300"
+          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
         >
           <FaLink className="mr-2" /> Copy Link
         </button>
 
+        {/* Share via Email Button */}
         <button
           onClick={shareViaEmail}
-          className="flex items-center bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition duration-300"
+          className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300"
         >
           <FaEnvelope className="mr-2" /> Share via Email
         </button>
       </div>
 
       {/* Edit and Delete Buttons */}
-      <div className="mt-4 flex space-x-3 text-sm">
+      <div className="flex space-x-4 mt-4">
         <button
           onClick={() => console.log('Edit functionality goes here')}
-          className="flex items-center text-yellow-500 px-3 py-1 rounded-lg hover:bg-yellow-100 transition duration-300"
+          className="flex items-center text-yellow-500 px-4 py-2 rounded-lg hover:bg-yellow-100 transition duration-300"
         >
           <FaEdit className="mr-2" /> Edit
         </button>
 
         <button
           onClick={() => console.log('Delete functionality goes here')}
-          className="flex items-center text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition duration-300"
+          className="flex items-center text-red-500 px-4 py-2 rounded-lg hover:bg-red-100 transition duration-300"
         >
           <FaTrashAlt className="mr-2" /> Delete
         </button>
