@@ -6,7 +6,10 @@ const {
   updateAdvertiser,
   changePassword,
   requestAccountDeletion,
-  loginAdvertiser
+  loginAdvertiser,
+  requestOTP,
+  resetPassword,
+  verifyOTP,
 } = require('../controllers/AdvertiserController');
 const multer = require('multer');
 
@@ -40,5 +43,8 @@ router.post('/changePassword', changePassword);
 
 // Route to request account deletion with specific conditions
 router.delete('/deleteAccount/:id', requestAccountDeletion);
+router.post('/requestOTP', requestOTP); // Sends OTP for password reset
+router.post('/resetPassword', resetPassword); // Resets password after OTP verification
+router.post('/verifyOTP', verifyOTP);  // Verifies OTP
 
 module.exports = router;

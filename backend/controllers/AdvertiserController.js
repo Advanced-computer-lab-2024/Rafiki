@@ -4,6 +4,110 @@ const ItineraryModel = require('../models/Itinerary'); // Replace with actual It
 const BookingModel = require('../models/Booking');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto'); // Importing crypto for OTP generation
+const otpStore = {}; // This is an in-memory object to store OTPs temporarily
+const nodemailer = require('nodemailer');
+async function sendForgotPasswordOTP(advertiser, otp) {
+  try {
+    // Generate a 6-digit OTP
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('Generated OTP:', generatedOtp); // Log OTP
+
+    // Create transporter for Gmail
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rafiki.info1@gmail.com',  // Replace with your Gmail email address
+        pass: 'hsyotajsdxtetmbw',       // Use app password if 2FA is enabled
+      },
+    });
+
+    // Set up the email options
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: advertiser.Email,  // Advertiser's email
+      subject: 'Password Reset OTP',
+      text: `Hello ${advertiser.Username},\n\nYour OTP for password reset is: ${generatedOtp}\n\nPlease use this OTP to reset your password.\n\nBest regards,\nTeam Rafiki.`,
+    };
+
+    // Log mail options to debug
+    console.log('Mail options:', mailOptions);
+
+    // Send the OTP email
+    await transport.sendMail(mailOptions);
+
+    // Store OTP temporarily (in-memory, or in a database)
+    otpStore[advertiser.Email] = generatedOtp;
+
+    console.log('OTP sent successfully!');
+  } catch (error) {
+    console.error('Failed to send OTP email:', error.message);
+    throw new Error('Error sending OTP email');
+  }
+}
+const requestOTP = async (req, res) => {
+  const { email } = req.body;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore[email] = otp;
+
+  try {
+    // Find the advertiser by email
+    const advertiser = await AdvertiserModel.findOne({ Email: email });
+
+    if (!advertiser) {
+      return res.status(404).json({ message: 'No advertiser found with this email.' });
+    }
+
+    // Send OTP email
+    await sendForgotPasswordOTP(advertiser, otp); // Send OTP to the advertiser
+    console.log(`OTP for ${email}: ${otp}`); // Debugging: Log OTP
+
+    res.status(200).json({ message: 'OTP sent to your email.' });
+  } catch (error) {
+    console.error('Error in requestOTP:', error);
+    res.status(500).json({ message: 'Error sending OTP.' });
+  }
+};
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    // Find the advertiser by email
+    const advertiser = await AdvertiserModel.findOne({ Email: email });
+    if (!advertiser) {
+      return res.status(404).json({ message: 'Advertiser not found with this email.' });
+    }
+
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database
+    advertiser.Password = hashedPassword;
+    await advertiser.save();
+
+    res.status(200).json({ message: 'Password reset successfully.' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Error resetting password.' });
+  }
+};
+const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  // Fetch the OTP from the database or cache
+  const storedOTP = otpStore[email];
+
+  if (!storedOTP) {
+    return res.status(400).json({ message: 'OTP not found or expired.' });
+  }
+
+  // Compare the OTP entered by the user with the one stored
+  if (storedOTP === otp) {
+    return res.status(200).json({ message: 'OTP verified successfully.' });
+  } else {
+    return res.status(400).json({ message: 'Invalid OTP. Please try again.' });
+  }
+};
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -219,5 +323,8 @@ module.exports = {
   updateAdvertiser,
   changePassword,
   requestAccountDeletion,
-  loginAdvertiser
+  loginAdvertiser, 
+  requestOTP,
+  resetPassword,
+  verifyOTP,
 };
