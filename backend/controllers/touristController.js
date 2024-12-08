@@ -21,15 +21,15 @@ const AdminModel=require('../models/admin');
 async function sendForgotPasswordOTP(tourist, otp) {
   try {
     // Generate a 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('Generated OTP:', otp); // Log OTP
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('Generated OTP:', generatedOtp); // Log OTP
 
     // Create transporter for Gmail
     const transport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'rafiki.info1@gmail.com',  // Replace with your Gmail email address
-        pass: 'hsyotajsdxtetmbw',     // Use app password if 2FA is enabled
+        pass: 'hsyotajsdxtetmbw',       // Use app password if 2FA is enabled
       },
     });
 
@@ -38,7 +38,7 @@ async function sendForgotPasswordOTP(tourist, otp) {
       from: 'rafiki.info1@gmail.com',
       to: tourist.Email,  // Tourist's email
       subject: 'Password Reset OTP',
-      text: `Hello ${tourist.Username},\n\nYour OTP for password reset is: ${otp}\n\nPlease use this OTP to reset your password.\n\nBest regards,\nTeam Rafiki`,
+      text: `Hello ${tourist.Username},\n\nYour OTP for password reset is: ${generatedOtp}\n\nPlease use this OTP to reset your password.\n\nBest regards,\nTeam Rafiki.`,
     };
 
     // Log mail options to debug
@@ -48,7 +48,7 @@ async function sendForgotPasswordOTP(tourist, otp) {
     await transport.sendMail(mailOptions);
 
     // Store OTP temporarily (in-memory, or in a database)
-    otpStore[tourist.Email] = otp;
+    otpStore[tourist.Email] = generatedOtp;
 
     console.log('OTP sent successfully!');
   } catch (error) {
@@ -57,8 +57,6 @@ async function sendForgotPasswordOTP(tourist, otp) {
   }
 }
 
-
-
 const requestOTP = async (req, res) => {
   const { email } = req.body;
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -66,15 +64,14 @@ const requestOTP = async (req, res) => {
   try {
     // Find tourist by email
     const tourist = await TouristModel.findOne({ Email: email });
-    
+
     if (!tourist) {
       return res.status(404).json({ message: 'No tourist found with this email.' });
     }
 
     // Send OTP email
-    await sendForgotPasswordOTP(tourist); // Send OTP to the tourist
+    await sendForgotPasswordOTP(tourist, otp); // Send OTP to the tourist
     console.log(`OTP for ${email}: ${otp}`); // Debugging: Log OTP
-
 
     res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
@@ -82,6 +79,7 @@ const requestOTP = async (req, res) => {
     res.status(500).json({ message: 'Error sending OTP.' });
   }
 };
+
 // Function to reset the password
 const resetPassword = async (req, res) => {
   const { email, newPassword } = req.body;
@@ -106,15 +104,17 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Error resetting password.' });
   }
 };
+
 // Function to handle OTP verification
 const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
-    // Fetch the OTP from the database or cache
-    const storedOTP = otpStore[email];
 
-    if (!storedOTP) {
-      return res.status(400).json({ message: 'OTP not found or expired' });
-    }
+  // Fetch the OTP from the database or cache
+  const storedOTP = otpStore[email];
+
+  if (!storedOTP) {
+    return res.status(400).json({ message: 'OTP not found or expired.' });
+  }
 
   // Compare the OTP entered by the user with the one stored
   if (storedOTP === otp) {
