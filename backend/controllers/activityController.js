@@ -1,8 +1,11 @@
 const Activity = require('../models/activity');
+const nodemailer=require('nodemailer');
+const Notification=require('../models/notification');
+const Tourist=require('../models/Tourist');
 
 // Create an Activity
 const createActivity = async (req, res) => {
-    const { date, time, location, price, category, tags, specialDiscounts, isBookingOpen } = req.body;
+    const { date, time, location, price, category, tags, specialDiscounts, isBookingOpen  , tourGuideUsername} = req.body;
     try {
         const activity = await Activity.create({
             date, 
@@ -12,7 +15,8 @@ const createActivity = async (req, res) => {
             category, 
             tags, 
             specialDiscounts, 
-            isBookingOpen
+            isBookingOpen,
+         tourGuideUsername,
         });
         res.status(201).json(activity);
     } catch (error) {
@@ -44,16 +48,74 @@ const getActivityById = async (req, res) => {
     }
 };
 
+const notifyUsers = async (activityId) => {
+    try {
+        // Find all users subscribed to notifications for this activity
+        const notifications = await Notification.find({ activityId, isNotified: false });
+
+        for (const notification of notifications) {
+            const tourist=await Tourist.findOne({Username:notification.username});
+            console.log(`Notifying user ${tourist.Username} about activity ${activityId}`);
+            const subject=`booking has opened`;
+            const message=`dear ${tourist.Username} the booking has opened for avtivity: ${activityId}`;
+            sendNotificationEmail(tourist.Email,subject,message);
+
+            // Mark notification as sent
+            notification.isNotified = true;
+            await notification.save();
+        }
+    } catch (error) {
+        console.error('Error notifying users:', error);
+    }
+};
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Use the email service you're working with
+    auth: {
+      user: 'rafiki.info1@gmail.com', 
+      pass: 'hsyotajsdxtetmbw',
+    },
+  });
+  
+  const sendNotificationEmail = (email, subject, message) => {
+    const mailOptions = {
+      from: 'rafiki.info1@gmail.com',
+      to: email,
+      subject: subject,
+      text: message
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(`Error sending email to ${email}:`, error);
+      } else {
+        console.log(`Email sent to ${email}:`, info.response);
+      }
+    });
+  };
+
 // Update an Activity by ID
 const updateActivity = async (req, res) => {
     const { id } = req.params;
     const { date, time, location, price, category, tags, specialDiscounts, isBookingOpen } = req.body;
+
     try {
-        const activity = await Activity.findByIdAndUpdate(id, { date, time, location, price, category, tags, specialDiscounts, isBookingOpen }, { new: true });
-        if (!activity) {
+        // Find the current activity
+        const currentActivity = await Activity.findById(id);
+        if (!currentActivity) {
             return res.status(404).json({ message: "Activity not found." });
         }
-        res.status(200).json(activity);
+
+        // Update the activity
+        const updatedActivity = await Activity.findByIdAndUpdate(id, { date, time, location, price, category, tags, specialDiscounts, isBookingOpen }, { new: true });
+
+        // Check if the booking status changed from false to true
+        if (currentActivity.isBookingOpen === false && updatedActivity.isBookingOpen === true) {
+            // Notify users who requested notifications for this activity
+            await notifyUsers(id);
+        }
+
+        res.status(200).json(updatedActivity);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -206,5 +268,6 @@ module.exports = {
     getActivitiesByDate,
     getActivitiesSortedByPrice,
     addRatingToActivity,
-    getActivityRatings 
+    getActivityRatings,
+    notifyUsers
 };

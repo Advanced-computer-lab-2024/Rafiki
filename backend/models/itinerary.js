@@ -6,10 +6,10 @@ const RatingSchema = new mongoose.Schema({
     comment: { type: String, required: true }
 });
 
+// Define the Itinerary schema
 const itinerarySchema = new Schema({
     tourGuideId: {
         type: Schema.Types.ObjectId,
-      
         required: true,
         ref: 'Tourguide', 
     },
@@ -58,7 +58,12 @@ const itinerarySchema = new Schema({
         type: Boolean,
         default: true, // Initializes with true
     },
+    touristsAttended: {
+        type: Number,
+        default: 0 // Counter to track the number of tourists
+    }
 }, { timestamps: true });
+
 
 // Conditionally define the model to prevent overwrite errors
 const Itinerary = mongoose.models.Itinerary || mongoose.model('Itinerary', itinerarySchema);

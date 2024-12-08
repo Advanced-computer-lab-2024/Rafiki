@@ -13,6 +13,7 @@ const ActivityForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [tourGuideUsername, setTourGuideUsername] = useState(""); // New state for tourGuideUsername
 
   // Fetch categories from the backend
   const fetchCategories = async () => {
@@ -46,7 +47,7 @@ const ActivityForm = () => {
     e.preventDefault();
 
     // Prepare the activity object
-    const activity = { date, time, price, location, category, tag, specialDiscounts };
+    const activity = { date, time, price, location, category, tag, specialDiscounts,tourGuideUsername };
 
     try {
       const response = await fetch("/api/ActivityRoute", {
@@ -70,6 +71,7 @@ const ActivityForm = () => {
         setTag("");
         setCategory("");
         setLocation("");
+        setTourGuideUsername("");
       }
     } catch (err) {
       console.error("Error creating activity:", err);
@@ -147,23 +149,19 @@ const ActivityForm = () => {
             />
           </div>
 
-          {/* Category */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Category:</label>
-            <select
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
+ {/* Category */}
+<div>
+  <label className="block text-sm font-medium text-gray-700">Category:</label>
+  <input
+    type="text"
+    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+    value={category}
+    onChange={(e) => setCategory(e.target.value)}
+    placeholder="Type the category"
+    required
+  />
+</div>
+
 
           {/* Tag */}
           <div>
@@ -194,6 +192,23 @@ const ActivityForm = () => {
               placeholder="E.g., 10% off for groups"
             />
           </div>
+
+
+                {/* Tour Guide Username (input field for the username of the tour guide) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Tour Guide Username:</label>
+            <input
+              type="text"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              value={tourGuideUsername}
+              onChange={(e) => setTourGuideUsername(e.target.value)}
+              placeholder="Enter the tour guide's username"
+              required
+            />
+          </div>
+
+
+
 
           {/* Submit Button */}
           <button
