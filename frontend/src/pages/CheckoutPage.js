@@ -71,6 +71,34 @@ const CheckoutPage = () => {
     setSelectedAddress(address);
   };
 
+
+
+  const handleWalletPayment = async (orderId, totalPrice) => {
+    try {
+      // Send the payment request to the backend
+      const response = await axios.post(
+        `http://localhost:4000/api/orders/pay/${username}`, 
+        { orderId, totalPrice }
+      );
+  
+      console.log('Wallet payment successful:', response.data);
+  
+      // Update the wallet balance in the state
+      const updatedBalance = await axios.get(
+        `http://localhost:4000/api/orders/wallet/${username}`
+      );
+  
+      setTouristWallet(updatedBalance.data.walletBalance); // Update the wallet balance
+      alert('Payment successful!');
+  
+      // Optionally, navigate to the orders page or show a success message
+    } catch (error) {
+      console.error('Error during wallet payment:', error);
+      alert('Payment failed. Please try again.');
+    }
+  };
+  
+
   const validatePromoCode = async () => {
     try {
       const response = await fetch('/api/PromoCodeRoute/use', {
@@ -129,19 +157,12 @@ const CheckoutPage = () => {
       // Proceed with wallet payment
       alert('Wallet payment successful!');
 
-      try {
-        const response = await axios.post(`/api/orders/wallet/${username}/`, {
-          amount: totalPrice, // Deducted amount
-        });
-        setTouristWallet(response.data.newBalance); // Update wallet balance state
-        console.log("Wallet balance updated successfully.");
-      } catch (error) {
-        console.error("Error updating wallet balance:", error);
-      }
+      const orderId = await createOrder("Wallet");
+
+      await handleWalletPayment(orderId, totalPrice);
 
 
 
-      await createOrder("Wallet");
       setIsProcessing(false);
       return;
     }
