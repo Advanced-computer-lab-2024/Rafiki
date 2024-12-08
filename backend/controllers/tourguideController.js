@@ -2,7 +2,7 @@ const TourguideModel = require('../models/Tourguide');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
-const ItineraryModel = require('../models/itinerary'); // Assuming you have an Itinerary model
+const ItineraryModel = require('../models/Itinerary'); // Assuming you have an Itinerary model
 
 // Helper function to check if terms have been accepted
 const checkTermsAccepted = (tourGuide, res) => {
