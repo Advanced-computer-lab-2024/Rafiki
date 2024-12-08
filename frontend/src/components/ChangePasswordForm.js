@@ -49,129 +49,154 @@ const ChangePasswordForm = ({ apiEndpoint }) => {
   };
 
   return (
-    <div className="relative">
-      {/* Button to open form */}
-      <button
-        onClick={handleClick}
-        className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
-        Change my password
-      </button>
-
-      {/* Modal for Changing Password */}
-      {isVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-80 sm:w-96">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Change Password</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-semibold text-gray-600 mb-2"
-                >
-                  Username:
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter username"
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="oldPassword"
-                  className="block text-sm font-semibold text-gray-600 mb-2"
-                >
-                  Old Password:
-                </label>
-                <input
-                  type="password"
-                  id="oldPassword"
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  value={oldPassword}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter old password"
-                  required
-                />
-              </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="newPassword"
-                  className="block text-sm font-semibold text-gray-600 mb-2"
-                >
-                  New Password:
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  value={newPassword}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter new password"
-                  required
-                />
-              </div>
-
-              {/* Error and Success Messages */}
-              {message && (
-                <div
-                  className={`text-sm mb-2 ${
-                    message.includes('Error') ? 'text-red-500' : 'text-green-500'
-                  }`}
-                >
-                  <p>{message}</p>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className={`w-full p-2 bg-blue-500 text-white rounded-lg ${
-                  loading ? 'cursor-not-allowed opacity-50' : 'hover:bg-blue-600'
-                } transition duration-300`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex justify-center">
-                    <FaSpinner className="animate-spin" />
-                  </div>
-                ) : (
-                  'Change Password'
-                )}
-              </button>
-            </form>
-
-            {/* Close Button */}
-            <button
-              onClick={handleClick}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+    
+      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-lg">
+        
+        
+        <form onSubmit={handleSubmit}>
+          {/* Username Input */}
+          <div className="mb-5 relative">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+              Username <span className="text-red-500">*</span>
+            </label>
+            <div className="flex items-center border rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400">
+              <span className="px-3 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A7.962 7.962 0 0012 20a7.962 7.962 0 006.879-2.196m-1.221-1.756A7.963 7.963 0 0012 16a7.963 7.963 0 00-5.657-2.135m11.313 2.135a8.001 8.001 0 10-11.313 0m0 0a3.005 3.005 0 01-.879-1.808M5.121 17.804a3.005 3.005 0 01-.879-1.808" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                id="username"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                className="w-full px-4 py-2 border-l focus:outline-none"
+                placeholder="Enter your username"
+                required
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+  
+          {/* Old Password Input */}
+          <div className="mb-5 relative">
+            <label
+              htmlFor="oldPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Old Password <span className="text-red-500">*</span>
+            </label>
+            <div className="flex items-center border rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400">
+              <span className="px-3 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m0 4h.01M12 9a2 2 0 00-2 2v1h4v-1a2 2 0 00-2-2zM5.5 9A3.5 3.5 0 119 5.5 3.5 3.5 0 015.5 9z" />
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="oldPassword"
+                onChange={(e) => setOldPassword(e.target.value)}
+                value={oldPassword}
+                className="w-full px-4 py-2 border-l focus:outline-none"
+                placeholder="Enter your old password"
+                required
+              />
+            </div>
+          </div>
+  
+          {/* New Password Input */}
+          <div className="mb-5 relative">
+            <label
+              htmlFor="newPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              New Password <span className="text-red-500">*</span>
+            </label>
+            <div className="flex items-center border rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400">
+              <span className="px-3 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 21v-2a4 4 0 00-8 0v2m8 0a4 4 0 004-4V7a4 4 0 00-4-4m0 18H8a4 4 0 01-4-4V7a4 4 0 014-4m0 18a4 4 0 004-4V7a4 4 0 00-4-4" />
+                </svg>
+              </span>
+              <input
+                type="password"
+                id="newPassword"
+                onChange={(e) => setNewPassword(e.target.value)}
+                value={newPassword}
+                className="w-full px-4 py-2 border-l focus:outline-none"
+                placeholder="Enter a new password"
+                required
+              />
+            </div>
+          </div>
+  
+          {/* Feedback Messages */}
+          {message && (
+            <div
+              className={`text-sm mb-4 p-2 rounded-lg ${
+                message.includes('Error') ? 'bg-red-100 text-red-500' : 'bg-green-100 text-green-500'
+              }`}
+            >
+              {message}
+            </div>
+          )}
+  
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className={`w-full py-3 flex items-center justify-center text-white rounded-lg ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+            } transition-all`}
+            disabled={loading}
+          >
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8z"
+                ></path>
+              </svg>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Change Password
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+   
   );
+  
 };
 
 export default ChangePasswordForm;
