@@ -2,6 +2,7 @@ const Bookmark = require('../models/bookmark'); // Replace with the correct path
 const Activity = require('../models/activity'); // Replace with the correct path to your activity model
 const Itienary = require('../models/itinerary'); // Replace with the correct path to your itinerary model
 const Museum = require('../models/museum'); // Replace with the correct path to your museum model
+const Notification=require('../models/notification');
 
 // Function to add an item to the bookmark
 const addToBookmark = async (req, res) => {
@@ -41,6 +42,29 @@ const addToBookmark = async (req, res) => {
         res.status(500).json({ message: 'Failed to add to bookmarks' });
     }
 };  
+
+const requestToBeNotified = async (req, res) => {
+    const { username, activityId } = req.body;
+
+    try {
+        // Check if a notification request already exists
+        const existingNotification = await Notification.findOne({ username, activityId });
+        if (existingNotification) {
+            return res.status(400).json({ message: 'You are already subscribed for notifications on this activity.' });
+        }
+
+        // Create a new notification request
+        const notification = new Notification({ username, activityId });
+        await notification.save();
+
+        res.status(200).json({ message: 'You will be notified by mail when booking opens.' });
+    } catch (error) {
+        console.error('Error requesting notification:', error);
+        res.status(500).json({ message: 'Failed to request notification' });
+    }
+};
+
+
 
 const getBookmarks = async (req, res) => {
     const { username } = req.params; // Get username from request parameters
@@ -116,5 +140,5 @@ const removeCompleteBookmark = async (req, res) => {
 };
 
 module.exports = {
-    addToBookmark, getBookmarks,removeFromBookmark,removeCompleteBookmark
+    addToBookmark, getBookmarks,removeFromBookmark,removeCompleteBookmark,requestToBeNotified
 };

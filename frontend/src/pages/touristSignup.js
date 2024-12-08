@@ -688,6 +688,33 @@ const handleGuideToggle = () => {
         }
     };
 
+    const requestNotification = async (username, activityId) => {
+        if (!username) {
+            console.error('Username is missing!');
+            alert('Failed to request notification. Username is missing.');
+            return;
+        }
+    
+        try {
+            const response = await fetch('/api/bookmarkRoute/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, activityId }),
+            });
+            const data = await response.json();
+    
+            if (response.ok) {
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error requesting notification:', error);
+            alert('Failed to request notification.');
+        }
+    };
+    
+
     // Fetch activities with filters
     const fetchProducts = async () => {
         const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
@@ -1373,7 +1400,7 @@ const handleGuideToggle = () => {
                             <button onClick={() => setIsVisibleActivityBookmark(!isVisibleActivityBookmark)}>
                                 {isVisibleActivityBookmark ? 'Hide' : 'Add to Bookmark by Username'}
                             </button>
-
+                          
                             {/* Input Field and Search Button */}
                             {isVisibleActivityBookmark && (
                                 <div>
@@ -1387,6 +1414,13 @@ const handleGuideToggle = () => {
                                         Add to Bookmark
                                     </button> </div>
                             )}
+                              {!activity.isBookingOpen  && (
+                            <div>
+                                <button onClick={() => requestNotification(bookmarkusername, activity._id)}>
+                                  Request to be Notified
+                                 </button>
+                                </div>
+                                )}
                         </div>
                     ))}
                 </div>
