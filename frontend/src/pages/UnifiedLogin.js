@@ -8,20 +8,28 @@ function UnifiedLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const navigate = useNavigate();
 
+  // Handle normal login (Admin or Governor)
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      // Attempt admin login first
       const adminResponse = await axios.post("/api/adminRoute/login", {
         Username: username,
         Password: password,
       });
 
       if (adminResponse.status === 200) {
+        const { Username, _id } = adminResponse.data;
+        localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id }));
         // Store user info in localStorage
         const { admin } = adminResponse.data;
         localStorage.setItem("loggedinID", admin._id); // Store seller ID in localStorage
@@ -39,6 +47,8 @@ function UnifiedLogin() {
           });
 
           if (governorResponse.status === 200) {
+            const { Username, _id } = governorResponse.data;
+            localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id }));
             // Store user info in localStorage
             const { admin } = governorResponse.data;
             localStorage.setItem("loggedinID", admin._id); // Store seller ID in localStorage
@@ -62,6 +72,60 @@ function UnifiedLogin() {
         setError("An error occurred. Please try again.");
         return;
       }
+    }
+  };
+
+  // Handle Forgot Password request (send OTP)
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const response = await axios.post("/api/adminRoute/requestOTP", { email });
+      if (response.status === 200) {
+        setIsOtpSent(true);
+      } else {
+        setError("Error sending OTP. Please try again.");
+      }
+    } catch (error) {
+      setError("Error sending OTP. Please try again.");
+    }
+  };
+
+  // Handle OTP verification
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const response = await axios.post("/api/adminRoute/verifyOTP", { email, otp });
+      if (response.status === 200) {
+        setIsOtpVerified(true);
+      } else {
+        setError("Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      setError("Invalid OTP. Please try again.");
+    }
+  };
+
+  // Handle password reset
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const response = await axios.post("/api/adminRoute/resetPassword", { email, newPassword });
+      if (response.status === 200) {
+        setIsOtpVerified(false);
+        setIsOtpSent(false);
+        setIsForgotPassword(false);
+        setError(null);
+      } else {
+        setError("Error resetting password.");
+      }
+    } catch (error) {
+      setError("Error resetting password.");
     }
   };
 
@@ -116,6 +180,85 @@ function UnifiedLogin() {
             Login
           </button>
         </form>
+
+        {/* Forgot Password */}
+        <button
+          onClick={() => setIsForgotPassword(true)}
+          className="text-blue-600 mt-4 hover:underline block text-center"
+        >
+          Forgot your password?
+        </button>
+
+        {/* Forgot Password Section */}
+        {isForgotPassword && (
+          <div className="bg-white shadow-lg p-8 rounded-lg mt-6 space-y-4 w-full">
+            {/* OTP Request */}
+            {!isOtpSent && (
+              <>
+                <h3 className="text-xl font-semibold text-gray-800">Reset Password</h3>
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                  >
+                    Request OTP
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* OTP Verification */}
+            {isOtpSent && !isOtpVerified && (
+              <>
+                <h3 className="text-xl font-semibold text-gray-800">Verify OTP</h3>
+                <form onSubmit={handleVerifyOTP} className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                  >
+                    Verify OTP
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* Password Reset */}
+            {isOtpVerified && (
+              <>
+                <h3 className="text-xl font-semibold text-gray-800">Enter New Password</h3>
+                <form onSubmit={handleResetPassword} className="space-y-4">
+                  <input
+                    type="password"
+                    placeholder="Enter New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                  >
+                    Reset Password
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
