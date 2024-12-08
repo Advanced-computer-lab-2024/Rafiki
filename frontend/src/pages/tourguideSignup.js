@@ -16,7 +16,7 @@ const TourguideSignup = () => {
   const [showRevenue, setShowRevenue] = useState(false);
 
   const handleShowRevenue = () => {
-    setShowRevenue(!showRevenue);
+    setShowRevenue("revenue");
   };
   const [tourguide, setTourguide] = useState(null); // Store a single tour guide
   const [itineraries, setItineraries] = useState(null);
@@ -32,7 +32,42 @@ const TourguideSignup = () => {
   const [monthlyReport, setMonthlyReport] = useState(null); // Store monthly report data
   const [showMonthlyReport, setShowMonthlyReport] = useState(false);
   const navigate = useNavigate();
-
+  const [filter, setFilter] = useState("all");
+  const [filterValue, setFilterValue] = useState("");
+  const [filteredRevenue, setFilteredRevenue] = useState(0);
+  const [filteredTourists, setFilteredTourists] = useState(0);
+  
+  const filterRevenue = (filterType, value) => {
+    if (!itineraries) return;
+  
+    let filtered = itineraries;
+  
+    if (filterType === "itinerary" && value) {
+      filtered = itineraries.filter((itinerary) =>
+        itinerary.name.toLowerCase().includes(value.toLowerCase())
+      );
+    } else if (filterType === "date" && value) {
+      filtered = itineraries.filter((itinerary) => itinerary.date === value);
+    } else if (filterType === "month" && value) {
+      filtered = itineraries.filter(
+        (itinerary) =>
+          new Date(itinerary.date).getMonth() === parseInt(value) - 1
+      );
+    }
+  
+    const revenue = filtered.reduce(
+      (total, itinerary) => total + itinerary.price * itinerary.touristsAttended,
+      0
+    );
+    const tourists = filtered.reduce(
+      (total, itinerary) => total + itinerary.touristsAttended,
+      0
+    );
+  
+    setFilteredRevenue(revenue);
+    setFilteredTourists(tourists);
+  };
+  
 
   const username = localStorage.getItem("username"); // Get the logged-in username
 
@@ -128,79 +163,79 @@ const TourguideSignup = () => {
     <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
       <h3 className="text-xl font-bold mb-4">Tour Guide Dashboard</h3>
       <ul className="space-y-4">
-        <li>
-          <button
-            onClick={() => setActiveContent("tourguides")}
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Show Tourguide Details
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => setActiveContent("itineraries")}
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Show Itineraries
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => setActiveContent("activities")}
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Show Activities
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => setActiveContent("addItinerary")}
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Add New Itinerary
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => setActiveContent("changePassword")}
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Change Password
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => setShowMonthlyReport(true)} // Toggle to show monthly report
-            className="text-lg text-blue-400 hover:text-white"
-          >
-            Show Monthly Report
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={fetchReport}
-            className="text-lg text-green-400 hover:text-white"
-          >
-            View Report
-          </button>
-        </li>
-      </ul>
+  <li>
+    <button
+      onClick={() => setActiveContent("tourguides")}
+      className="text-lg text-blue-400 hover:text-white"
+    >
+      Show Tourguide Details
+    </button>
+  </li>
+  <li>
+    <button
+      onClick={() => setActiveContent("itineraries")}
+      className="text-lg text-blue-400 hover:text-white"
+    >
+      Show Itineraries
+    </button>
+  </li>
+  <li>
+    <button
+      onClick={() => setActiveContent("activities")}
+      className="text-lg text-blue-400 hover:text-white"
+    >
+      Show Activities
+    </button>
+  </li>
+  <li>
+    <button
+      onClick={() => setActiveContent("addItinerary")}
+      className="text-lg text-blue-400 hover:text-white"
+    >
+      Add New Itinerary
+    </button>
+  </li>
+  <li>
+    <button
+      onClick={() => setActiveContent("changePassword")}
+      className="text-lg text-blue-400 hover:text-white"
+    >
+      Change Password
+    </button>
+  </li>
+  <li>
+    <button
+      onClick={handleShowRevenue} // New revenue button
+      className="text-lg text-green-400 hover:text-white"
+    >
+      Show Revenue
+    </button>
+  </li>
+</ul>
+
     </div>
 
     {/* Main Content */}
     <div className="w-3/4 p-6">
-      {/* Default Description */}
-      {activeContent === "description" && (
-        <div className="text-center">
-          <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-            Welcome to the Tour Guide Dashboard
-          </h3>
-          <p className="text-lg text-gray-600">
-            Manage your details, itineraries, activities, and account settings.
-            Choose an option from the menu to get started.
-          </p>
-        </div>
-      )}
+  {activeContent === "description" && (
+    <div className="text-center">
+      <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+        Welcome to the Tour Guide Dashboard
+      </h3>
+      <p className="text-lg text-gray-600">
+        Manage your details, itineraries, activities, and account settings.
+        Choose an option from the menu to get started.
+      </p>
+    </div>
+  )}
+
+  {activeContent === "revenue" && (
+    <div className="h-full flex items-center justify-center bg-gray-100 rounded-lg shadow-lg">
+      <h3 className="text-xl font-semibold text-gray-500">
+        Revenue page placeholder
+      </h3>
+    </div>
+  )}
 
       {/* Tourguide Section */}
       {activeContent === "tourguides" && (
@@ -218,19 +253,41 @@ const TourguideSignup = () => {
 
       {/* Itineraries Section */}
       {activeContent === "itineraries" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-            Itinerary Details
-          </h3>
-          {itineraries ? (
-            itineraries.map((itinerary) => (
-              <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
-            ))
-          ) : (
-            <p className="text-gray-500">No itineraries available.</p>
-          )}
+  <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+      Itinerary Details
+    </h3>
+    {itineraries ? (
+      <>
+        {/* Calculate and display totals */}
+        <div className="text-center mb-6 bg-gray-100 p-4 rounded-lg shadow">
+          <p className="text-lg font-bold text-gray-800">
+            Total Revenue: $
+            {itineraries.reduce(
+              (total, itinerary) => total + itinerary.price * itinerary.touristsAttended,
+              0
+            ).toFixed(2)}
+          </p>
+          <p className="text-lg font-bold text-gray-800">
+            Total Tourists Attended:{" "}
+            {itineraries.reduce(
+              (total, itinerary) => total + itinerary.touristsAttended,
+              0
+            )}
+          </p>
         </div>
-      )}
+
+        {/* Render itinerary details */}
+        {itineraries.map((itinerary) => (
+          <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+        ))}
+      </>
+    ) : (
+      <p className="text-gray-500">No itineraries available.</p>
+    )}
+  </div>
+)}
+
 
       {/* Activities Section */}
       {activeContent === "activities" && (

@@ -38,11 +38,17 @@ const activitySchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    touristsAttended: {
+        type: Number,
+        default: 0 // Counter to track the number of tourists
+    },
     tourGuideUsername: {
         type: String, // Use the tour guide's username for linking
         required: true,
         ref: 'Tourguide', // Reference to the Tourguide model
-        },    ratings: [RatingSchema]  // Array of RatingSchema objects
+        },    
+        ratings: [RatingSchema]  // Array of RatingSchema objects
+        
 }, { timestamps: true });
 
 const Activity = mongoose.model('Activity', activitySchema);

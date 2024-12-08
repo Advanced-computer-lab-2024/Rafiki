@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ActivityDetails from "../components/ActivityDetails";
 
 const SalesReport = () => {
   // Dummy sales data
@@ -15,9 +17,26 @@ const SalesReport = () => {
   const [filterDate, setFilterDate] = useState(""); // Specific date
   const [filterMonth, setFilterMonth] = useState(""); // Specific month
   const [filteredData, setFilteredData] = useState(salesData);
+  const [activity, setActivity] = useState([]); // Initialized as an empty array
 
-  // Handle filtering logic
-  const handleFilter = () => {
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await axios.get("/api/ActivityRoute");
+        if (response.status === 200 && Array.isArray(response.data)) {
+          setActivity(response.data);
+        } else {
+          console.error("Unexpected response format:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      }
+    };
+    fetchActivities();
+  }, []);
+
+  // Filtering logic
+  useEffect(() => {
     let filtered = salesData;
 
     // Filter by type
@@ -32,19 +51,21 @@ const SalesReport = () => {
 
     // Filter by month
     if (filterMonth) {
-      const month = new Date(filterMonth).getMonth() + 1; // JS months are 0-indexed
+      const selectedMonth = new Date(filterMonth).getMonth() + 1; // JS months are 0-indexed
       filtered = filtered.filter((item) => {
         const itemMonth = new Date(item.date).getMonth() + 1;
-        return itemMonth === month;
+        return itemMonth === selectedMonth;
       });
     }
 
     setFilteredData(filtered);
-  };
+  }, [filterType, filterDate, filterMonth]); // Runs whenever filters are updated
 
   return (
+    
     <div className="bg-gray-50 p-8 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Sales Report</h2>
+
       {/* Filters Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Filter by Type */}
@@ -60,6 +81,7 @@ const SalesReport = () => {
             <option value="Itinerary">Itinerary</option>
           </select>
         </div>
+
         {/* Filter by Date */}
         <div className="bg-white shadow hover:shadow-lg p-6 rounded-lg transition">
           <label className="block text-sm font-semibold text-gray-700">Filter by Date</label>
@@ -70,6 +92,7 @@ const SalesReport = () => {
             className="mt-2 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
+
         {/* Filter by Month */}
         <div className="bg-white shadow hover:shadow-lg p-6 rounded-lg transition">
           <label className="block text-sm font-semibold text-gray-700">Filter by Month</label>
@@ -81,15 +104,16 @@ const SalesReport = () => {
           />
         </div>
       </div>
-      {/* Apply Filter Button */}
-      <div className="text-center mb-8">
-        <button
-          onClick={handleFilter}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          Apply Filters
-        </button>
-      </div>
+      {activity && activity.length > 0 ? (
+  <div className="activity-container bg-gray-100 p-4 rounded-lg shadow-md">
+    <h3 className="text-lg font-bold text-gray-700 mb-4">Activities123</h3>
+    {activity.map((act) => (
+      <ActivityDetails key={act._id} activity={act} />
+    ))}
+  </div>
+) : (
+  <p className="text-gray-500 text-sm">No activities found.</p>
+)}
 
       {/* Results Section */}
       <div className="bg-white shadow-md rounded-lg p-6">
@@ -98,38 +122,23 @@ const SalesReport = () => {
           <table className="min-w-full divide-y divide-gray-200 table-fixed">
             <thead className="bg-gray-100 sticky top-0">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Type
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Amount
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredData.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-gray-50 transition"
-                >
+                <tr key={item.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.type}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.date}</td>
@@ -143,11 +152,6 @@ const SalesReport = () => {
         ) : (
           <div className="text-center py-10">
             <p className="text-gray-500 text-lg">No results found. Please adjust your filters.</p>
-            <img
-              src="https://via.placeholder.com/200"
-              alt="No results"
-              className="mx-auto mt-4"
-            />
           </div>
         )}
       </div>
