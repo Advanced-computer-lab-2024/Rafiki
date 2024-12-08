@@ -46,7 +46,11 @@ const userSchema = new Schema({
   IsAdvertiser: {
     type: Boolean, // To track if the user is an accepted advertiser
     default: false,
-  }
+  },
+  touristCounter: { 
+    type: Number, 
+    default: 0  // Default value is 0
+}
 
 }, { timestamps: true });
 

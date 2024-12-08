@@ -30,9 +30,9 @@ function UnifiedLoginForUsers() {
 
         if (response.status === 200) {
           // Store user info in localStorage
-          const { Username, _id, role } = response.data;
-          localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id, role }));
-
+          const { tourist } = response.data; // Assuming "tourist" holds seller data
+          localStorage.setItem("loggedinID", tourist._id); // Store seller ID in localStorage
+          localStorage.setItem('loggedinUsername', tourist.Username);
           navigate(redirect);
           return; // Exit once logged in successfully
         }

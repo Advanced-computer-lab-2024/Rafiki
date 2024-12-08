@@ -131,7 +131,7 @@ const AdminSignup = () => {
 
     //   console.log('Updating category with ID:', id, 'and new name:', newName); // Debug log
 
-    //   const response = await fetch(`/api/categoryRoutes/${id}`, {
+    //   const response = await fetch(/api/categoryRoutes/${id}, {
     //       method: 'PUT',
     //       body: JSON.stringify({ name: newName }),
     //       headers: { 'Content-Type': 'application/json' },
@@ -423,6 +423,148 @@ const AdminSignup = () => {
               Manage Tags
             </button>
           </li>
+
+          <li>
+  <button
+    onClick={() => setActiveMenu('CreatePromoCodes')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'CreatePromoCodes' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Create PromoCodes
+  </button>
+</li>
+
+
+
+
+
+
+
+          
+          <li>
+  <button
+    onClick={() => setActiveMenu('governerForm')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'governerForm' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Governer Form
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu('deleteAdmin')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'deleteAdmin' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M9 3V4H4V6H20V4H15V3H9ZM4 8H20V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V8ZM6 10V20H18V10H6ZM9 12H11V18H9V12ZM13 12H15V18H13V12Z" />
+    </svg>
+    Delete Admin
+  </button>
+</li>
+
+          <li>
+  <button
+    onClick={() => setActiveMenu('adminForm')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'adminForm' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Admin Form
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu('catogeryForm')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'catogeryForm' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Create Catogery
+  </button>
+</li>
+
+
+<button
+    onClick={() => setActiveMenu('ProductForm')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'ProductForm' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    create Product
+  </button>
+
+
+
+  <button
+    onClick={() => setActiveMenu('AdminTagForm')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'AdminTagForm' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Create Tag
+  </button>
+
+
+
+
           <li>
             <button
               onClick={() => setActiveMenu('categories')}
@@ -527,7 +669,111 @@ const AdminSignup = () => {
       </div>
   
       {/* Main Content */}
+      
       <div className="w-3/4 p-6 relative">
+
+      {activeMenu === 'CreatePromoCodes' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    <CreatePromoCodes />
+  </div>
+)}
+
+
+
+
+      {activeMenu === 'ProductForm' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    <ProductForm />
+  </div>
+)}
+
+
+
+{activeMenu === 'AdminTagForm' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    <AdminTagForm />
+  </div>
+)}
+
+
+      {activeMenu === 'adminForm' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    <AdminForm />
+  </div>
+)}
+
+{activeMenu === 'catogeryForm' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    <CategoryForm />
+  </div>
+)}
+
+
+
+{activeMenu === 'governerForm' && (
+  <div
+    className="governer-form mx-auto"
+    style={{
+      backgroundColor: 'transparent',
+      backdropFilter: 'blur(8px)',
+      width: 'auto',
+      height: 'auto',
+      marginTop: '2rem',
+      transition: 'opacity 0.3s ease, transform 0.3s ease',
+      opacity: activeMenu === 'governerForm' ? 1 : 0,
+      transform: activeMenu === 'governerForm' ? 'scale(1)' : 'scale(0.9)',
+    }}
+  >
+    <GovernerForm />
+  </div>
+)}
+
+{activeMenu === 'deleteAdmin' && (
+  <div
+    className="delete-admin flex items-center justify-center min-h-screen"
+    style={{
+      backgroundColor: 'transparent', // Transparent so the underlying design can show through
+      backdropFilter: 'blur(10px)',    // Frosted glass effect
+      transition: 'opacity 0.3s ease, transform 0.3s ease',
+      opacity: activeMenu === 'deleteAdmin' ? 1 : 0,
+      transform: activeMenu === 'deleteAdmin' ? 'scale(1)' : 'scale(0.9)',
+    }}
+  >
+    <DeleteAdmin />
+  </div>
+)}
+
+
         {activeMenu === 'tags' && <div className="tags">{<div className="tag">
             {tag.length > 0 ? (
               tag.map((tags) => (
@@ -541,6 +787,8 @@ const AdminSignup = () => {
             ) : (
               <p>No Tags found.</p>
             )}
+
+
           </div>/* Tags content here */}</div>}
         {activeMenu === 'categories' && (
           <div className="categories">{
@@ -593,8 +841,8 @@ const AdminSignup = () => {
            <ComplaintDetails complaint={complaint} key={complaint._id} />
          ))}
        </div>
+       
         )}
-        <CreatePromoCodes/>
       </div>
     </div>
   );

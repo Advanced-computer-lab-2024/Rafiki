@@ -40,7 +40,7 @@ const SellerDashboard = () => {
   
 
   useEffect(() => {
-    const username = localStorage.getItem("sellerUsername"); // Replace with your key
+    const username = localStorage.getItem("loggedinUsername"); // Replace with your key
     if (username) {
       setSellerUsername(username);
     } else {
@@ -51,7 +51,7 @@ const SellerDashboard = () => {
   
 
   const fetchCurrentSeller = async () => {
-    const sellerId = localStorage.getItem("sellerId");
+    const sellerId = localStorage.getItem("loggedinID");
     if (!sellerId) {
       console.error("No seller ID found. Please log in again.");
       return;
@@ -82,14 +82,14 @@ const SellerDashboard = () => {
     <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
   );
 
-  useEffect(() => {
-    const username = localStorage.getItem('sellerUsername'); // Replace with your key
-    if (username) {
-      setSellerUsername(username);
-    } else {
-      console.error('Seller username not found.');
-    }
-  }, []);
+  // useEffect(() => {
+  //   const username = localStorage.getItem('sellerUsername'); // Replace with your key
+  //   if (username) {
+  //     setSellerUsername(username);
+  //   } else {
+  //     console.error('Seller username not found.');
+  //   }
+  // }, []);
  
   const fetchOutOfStockProducts = async () => {
     try {
