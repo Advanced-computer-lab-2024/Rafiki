@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { FaEdit, FaSave, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const ComplaintDetails = ({ complaint }) => {
-  const [showDetails, setShowDetails] = useState(false); // State to toggle full details
-  const [isEditingReply, setIsEditingReply] = useState(false); // Toggle for reply edit mode
-  const [isEditingStatus, setIsEditingStatus] = useState(false); // Toggle for status edit mode
-  const [newReply, setNewReply] = useState( ''); // State for new reply
-  const [newStatus, setNewStatus] = useState( ''); // State for new status
+  const [showDetails, setShowDetails] = useState(false);
+  const [isEditingReply, setIsEditingReply] = useState(false);
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [newReply, setNewReply] = useState("");
+  const [newStatus, setNewStatus] = useState("");
 
   const toggleDetails = () => {
     setShowDetails(!showDetails);
@@ -14,104 +15,159 @@ const ComplaintDetails = ({ complaint }) => {
   const handleReplySubmit = async () => {
     try {
       const response = await fetch(`/api/complaintRoute/${complaint._id}/reply`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ reply: newReply }),
       });
       const updatedComplaint = await response.json();
       if (response.ok) {
-        setIsEditingReply(false); // Close the reply edit mode
-        // Optionally, you can update the complaints state in the parent component if needed
+        setIsEditingReply(false);
+        // Optionally update parent component's complaints state here
       } else {
-        console.error(updatedComplaint.error); // Handle error
+        console.error(updatedComplaint.error);
       }
     } catch (error) {
-      console.error('Failed to update reply:', error);
+      console.error("Failed to update reply:", error);
     }
   };
 
-  // Handle status update
   const handleStatusSubmit = async () => {
     try {
       const response = await fetch(`/api/complaintRoute/${complaint._id}/status`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: newStatus }),
       });
       const updatedComplaint = await response.json();
       if (response.ok) {
-        setIsEditingStatus(false); // Close the status edit mode
-        // Optionally, update the parent component's complaints state
+        setIsEditingStatus(false);
+        // Optionally update parent component's complaints state here
       } else {
-        console.error(updatedComplaint.error); // Handle error
+        console.error(updatedComplaint.error);
       }
     } catch (error) {
-      console.error('Failed to update status:', error);
+      console.error("Failed to update status:", error);
     }
   };
 
-
   return (
-    <div className="workout-details">
-      <h4>{complaint.title}</h4>
-      <p><strong>Date: </strong>{complaint.date}</p>
-      <p><strong>Status: </strong>{complaint.status}</p>
+    <div className="bg-white/80 backdrop-blur-md p-4 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
+      <h4 className="text-lg font-bold text-gray-800">{complaint.title}</h4>
+      <p className="text-sm text-gray-600">
+        <strong>Date:</strong> {complaint.date}
+      </p>
+      <p className="text-sm text-gray-600">
+        <strong>Status:</strong> {complaint.status}
+      </p>
 
-      {/* Button to show more details */}
-      
+      <button
+        onClick={toggleDetails}
+        className="flex items-center mt-2 text-blue-500 hover:text-blue-600"
+      >
+        {showDetails ? (
+          <>
+            <FaChevronUp className="mr-1" />
+            Show Less
+          </>
+        ) : (
+          <>
+            <FaChevronDown className="mr-1" />
+            Show More
+          </>
+        )}
+      </button>
 
-      {/* Conditionally render more details */}
       {showDetails && (
-        <div className="additional-details">
-          <p><strong>Name: </strong>{complaint.username}</p>
-          <p><strong>Description: </strong>{complaint.body}</p>
-          <p><strong>Reply: </strong>{complaint.reply}</p>
+        <div className="mt-4">
+          <p className="text-sm text-gray-600">
+            <strong>Name:</strong> {complaint.username}
+          </p>
+          <p className="text-sm text-gray-600">
+            <strong>Description:</strong> {complaint.body}
+          </p>
+          <p className="text-sm text-gray-600">
+            <strong>Reply:</strong> {complaint.reply || "No reply yet."}
+          </p>
 
-          {/* Edit Reply Section */}
           {isEditingReply ? (
-            <div>
+            <div className="mt-3">
               <textarea
                 value={newReply}
                 onChange={(e) => setNewReply(e.target.value)}
-                rows="4"
+                rows="3"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your reply"
               />
-              <div>
+              <div className="flex space-x-2 mt-2">
+                <button
+                  onClick={handleReplySubmit}
+                  className="flex items-center px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  <FaSave className="mr-1" />
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditingReply(false)}
+                  className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  <FaTimes className="mr-1" />
+                  Cancel
+                </button>
               </div>
-              <button onClick={handleReplySubmit}>Update Reply</button>
-              <button onClick={() => setIsEditingReply(false)}>Cancel</button>
             </div>
           ) : (
-            <button onClick={() => setIsEditingReply(true)}>Edit Reply</button>
+            <button
+              onClick={() => setIsEditingReply(true)}
+              className="flex items-center mt-2 text-blue-500 hover:text-blue-600"
+            >
+              <FaEdit className="mr-1" />
+              Edit Reply
+            </button>
           )}
 
-          {/* Edit Status Section */}
           {isEditingStatus ? (
-            <div>
-              <select value={newStatus}
-               onChange={(e) => setNewStatus(e.target.value)}
-               >
-                <option value="">Select Status</option> {/* Disabled placeholder */}
+            <div className="mt-3">
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Status</option>
                 <option value="resolved">Resolved</option>
                 <option value="pending">Pending</option>
               </select>
-              <div>
-              </div>  
-              <button onClick={handleStatusSubmit}>Update Status</button>
-              <button onClick={() => setIsEditingStatus(false)}>Cancel</button>
+              <div className="flex space-x-2 mt-2">
+                <button
+                  onClick={handleStatusSubmit}
+                  className="flex items-center px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  <FaSave className="mr-1" />
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditingStatus(false)}
+                  className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  <FaTimes className="mr-1" />
+                  Cancel
+                </button>
+              </div>
             </div>
           ) : (
-            <button onClick={() => setIsEditingStatus(true)}>Edit Status</button>
+            <button
+              onClick={() => setIsEditingStatus(true)}
+              className="flex items-center mt-2 text-blue-500 hover:text-blue-600"
+            >
+              <FaEdit className="mr-1" />
+              Edit Status
+            </button>
           )}
         </div>
       )}
-       <button onClick={toggleDetails}>
-        {showDetails ? 'Show Less' : 'Show More'}
-      </button>
     </div>
   );
 };

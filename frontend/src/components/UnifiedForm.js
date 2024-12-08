@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaPhone,
+  FaGlobe,
+  FaBriefcase,
+  FaBirthdayCake,
+  FaCamera,
+  FaFileAlt,
+} from "react-icons/fa";
+import pic from "../pics/pic2.jpg";
 const UnifiedSignupForm = () => {
   const [userType, setUserType] = useState('');
   const [username, setUsername] = useState('');
@@ -128,56 +139,68 @@ const UnifiedSignupForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 p-6">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${pic})`,
+      }}
+    >
       <form
-        className="bg-white rounded-lg shadow-lg p-8 w-full max-w-xl"
+        className="bg-white bg-opacity-90 rounded-lg shadow-2xl p-10 w-full max-w-2xl"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
       >
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
-          Unified Signup
+          Signup
         </h2>
-
+  
         <div className="grid grid-cols-1 gap-6">
-          <div>
-            <label className="block text-gray-700 font-medium">Username</label>
+          {/* Username */}
+          <div className="relative">
+            <FaUser className="absolute left-3 top-3 text-blue-400" />
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Username"
               required
             />
           </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">Email</label>
+  
+          {/* Email */}
+          <div className="relative">
+            <FaEnvelope className="absolute left-3 top-3 text-blue-400" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Email"
               required
             />
           </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">Password</label>
+  
+          {/* Password */}
+          <div className="relative">
+            <FaLock className="absolute left-3 top-3 text-blue-400" />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Password"
               required
             />
           </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">User Type</label>
+  
+          {/* User Type */}
+          <div className="relative">
+            <label className="block font-medium text-gray-700">User Type</label>
             <select
               value={userType}
               onChange={(e) => setUserType(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="">Select user type</option>
@@ -186,143 +209,156 @@ const UnifiedSignupForm = () => {
               <option value="TourGuide">Tour Guide</option>
             </select>
           </div>
-
-          {userType === 'Seller' && (
+  
+          {/* Conditional Fields */}
+          {userType === "Seller" && (
             <>
-              <div>
-                <label className="block text-gray-700 font-medium">Name</label>
+              <div className="relative">
+                <FaUser className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Name"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Description</label>
+  
+              <div className="relative">
+                <FaFileAlt className="absolute left-3 top-3 text-blue-400" />
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Description"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Profile Picture</label>
+  
+              <div className="relative">
+                <FaCamera className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="file"
                   onChange={(e) => setProfilePicture(e.target.files[0])}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg"
                 />
               </div>
             </>
           )}
-
-          {userType === 'Advertiser' && (
+  
+          {userType === "Advertiser" && (
             <>
-              <div>
-                <label className="block text-gray-700 font-medium">Date of Birth</label>
+              <div className="relative">
+                <FaBirthdayCake className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="date"
                   value={dob}
                   onChange={(e) => setDOB(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Job</label>
+  
+              <div className="relative">
+                <FaBriefcase className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="text"
                   value={job}
                   onChange={(e) => setJob(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Job"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Mobile Number</label>
+  
+              <div className="relative">
+                <FaPhone className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="text"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Mobile Number"
                   required
                 />
               </div>
+  
+              <div>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Accept terms and conditions
+                  </span>
+                </label>
+              </div>
             </>
           )}
-
-          {userType === 'TourGuide' && (
+  
+          {userType === "TourGuide" && (
             <>
-              <div>
-                <label className="block text-gray-700 font-medium">Years of Experience</label>
+              <div className="relative">
+                <FaBriefcase className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="text"
                   value={yearsOfExperience}
                   onChange={(e) => setYearsOfExperience(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Years of Experience"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Previous Work</label>
+  
+              <div className="relative">
+                <FaFileAlt className="absolute left-3 top-3 text-blue-400" />
                 <textarea
                   value={previousWork}
                   onChange={(e) => setPreviousWork(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Previous Work"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-medium">Mobile Number</label>
+  
+              <div className="relative">
+                <FaPhone className="absolute left-3 top-3 text-blue-400" />
                 <input
                   type="text"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Mobile Number"
                   required
                 />
               </div>
             </>
           )}
-
-          <div>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mr-2"
-              />
-              <span className="text-gray-700">Accept terms and conditions</span>
-            </label>
-          </div>
         </div>
-
+  
         <button
           type="submit"
-          className="w-full py-3 mt-6 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700"
+          className="w-full py-3 mt-6 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition"
         >
           Sign Up
         </button>
-
-        {error && <div className="text-red-500 mt-4 text-center">{error}</div>}
+  
+        {error && (
+          <div className="text-red-500 mt-4 text-center">{error}</div>
+        )}
         {success && (
           <div className="text-green-500 mt-4 text-center">
-            Signup successful! Redirecting to home page...
+            Signup successful! Redirecting...
           </div>
         )}
       </form>
     </div>
   );
+  
 };
 
 export default UnifiedSignupForm;

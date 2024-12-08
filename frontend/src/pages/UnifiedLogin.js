@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
-import pic from "../pics/pic3.jpg"; // Import the image
+import pic from "../pics/pic3.jpg";
+
 function UnifiedLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +22,11 @@ function UnifiedLogin() {
       });
 
       if (adminResponse.status === 200) {
-        const { tourist } = adminResponse.data; // Assuming "tourist" holds seller data
+          const { tourist } = adminResponse.data; // Assuming "tourist" holds seller data
           localStorage.setItem("govId", tourist._id); // Store seller ID in localStorage
           localStorage.setItem('govUsername', tourist.Username);
           localStorage.setItem('govName', tourist.Name); 
+
         navigate("/adminDashboard");
         return;
       }
@@ -37,6 +39,10 @@ function UnifiedLogin() {
           });
 
           if (governorResponse.status === 200) {
+            // Store user info in localStorage
+            const { Username, _id } = governorResponse.data;
+            localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id }));
+
             navigate("/GovernorDashboard");
             return;
           }
@@ -60,17 +66,17 @@ function UnifiedLogin() {
 
   return (
     <div
-    className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 text-white"
-    style={{
-      backgroundImage: `url(${pic})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-    }}
-  >
+      className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 text-white"
+      style={{
+        backgroundImage: `url(${pic})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <div className="relative z-10 w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
         {/* Header Section */}
         <h1 className="text-3xl font-bold text-blue-600 text-center mb-6">
-          Admin / Governer Login
+          Admin / Governor Login
         </h1>
         <p className="text-sm text-gray-500 text-center mb-4">
           Please enter your credentials to access your dashboard.
@@ -85,7 +91,7 @@ function UnifiedLogin() {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
           {/* Password Input */}
@@ -96,7 +102,7 @@ function UnifiedLogin() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
           {/* Error Message */}

@@ -52,34 +52,38 @@ const ProductDetails = ({ product }) => {
   };
 
   return (
-    <div className="flex justify-center p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xl w-full">
-        <div className="flex justify-center mb-6">
+    <div className="flex justify-center p-4">
+      <div className="bg-white/80 backdrop-blur-md rounded-lg shadow-md p-5 max-w-3xl w-full">
+        {/* Product Image */}
+        <div className="flex justify-center mb-5">
           <img
             src={`/uploads/${product.Picture}`}
             alt={product.Name}
-            className="rounded-lg shadow-md transition-transform transform hover:scale-105 w-full max-h-64 object-cover"
+            className="rounded-lg shadow-md transition-transform transform hover:scale-105 w-full max-h-80 object-cover"
           />
         </div>
-
-        <h4 className="text-2xl font-bold text-gray-800 mb-4">{product.Name}</h4>
-
-        <div className="flex items-center justify-between mb-6">
-          <span className="text-xl font-semibold text-gray-700">
+  
+        {/* Product Name */}
+        <h4 className="text-xl font-semibold text-gray-800 text-center mb-4">{product.Name}</h4>
+  
+        {/* Price and Currency Selector */}
+        <div className="flex items-center justify-between mb-5">
+          <span className="text-lg font-medium text-gray-700">
             {currency} {(parseFloat(finalPrice) * currencyMultiplier).toFixed(2)}
           </span>
           <select
             value={currency}
             onChange={handleCurrencyChange}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            className="border border-gray-300 bg-transparent rounded-lg px-3 py-2 text-sm focus:ring focus:ring-blue-400"
           >
             <option value="USD">USD</option>
             <option value="EGP">EGP</option>
             <option value="EUR">EUR</option>
           </select>
         </div>
-
-        <div className="mb-6">
+  
+        {/* Promo Code */}
+        <div className="mb-5">
           <label
             htmlFor="promoCode"
             className="block text-sm font-medium text-gray-700 mb-2"
@@ -93,21 +97,23 @@ const ProductDetails = ({ product }) => {
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder="Enter promo code"
-              className="flex-grow border border-gray-300 rounded-md px-3 py-2 text-sm"
+              className="flex-grow border border-gray-300 bg-transparent rounded-lg px-3 py-2 text-sm focus:ring focus:ring-blue-400"
             />
             <button
               onClick={validatePromoCode}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition"
             >
               Apply
             </button>
           </div>
         </div>
-
+  
+        {/* Messages */}
         {message && <p className="text-green-600 font-medium mb-4">{message}</p>}
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
-
-        <div className="space-y-2 text-gray-700">
+  
+        {/* Product Details */}
+        <div className="space-y-3 text-sm text-gray-700">
           <p><strong>Description:</strong> {product.Description}</p>
           <p><strong>Seller:</strong> {product.Seller}</p>
           <p><strong>Ratings:</strong> {product.Ratings}</p>
@@ -117,6 +123,7 @@ const ProductDetails = ({ product }) => {
       </div>
     </div>
   );
+  
 };
 
 export default ProductDetails;
