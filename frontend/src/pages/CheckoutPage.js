@@ -21,7 +21,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const stripe = useStripe(); // Use Stripe hook inside the component
   const elements = useElements(); // Use Elements hook inside the component
-
+  const username = localStorage.getItem("username");
   // Fetch the addresses when the component mounts
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -128,6 +128,19 @@ const CheckoutPage = () => {
       }
       // Proceed with wallet payment
       alert('Wallet payment successful!');
+
+      try {
+        const response = await axios.post(`/api/orders/wallet/${username}/`, {
+          amount: totalPrice, // Deducted amount
+        });
+        setTouristWallet(response.data.newBalance); // Update wallet balance state
+        console.log("Wallet balance updated successfully.");
+      } catch (error) {
+        console.error("Error updating wallet balance:", error);
+      }
+
+
+
       await createOrder("Wallet");
       setIsProcessing(false);
       return;
@@ -196,6 +209,7 @@ const CheckoutPage = () => {
   return (
     <div>
       <h2>Checkout Page</h2>
+      <h3>Your Wallet Balance: ${touristWallet.toFixed(2)}</h3> {/* Wallet Balance */}
       <h3>Select Delivery Address</h3>
       {addresses.length > 0 ? (
         <div>
