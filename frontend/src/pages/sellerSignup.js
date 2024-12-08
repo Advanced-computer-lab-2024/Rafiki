@@ -381,84 +381,90 @@ const SellerDashboard = () => {
   
       {/* Main Content */}
       <div className="w-3/4 p-6 relative">
-        {/* Notification Bell and Profile Icon */}
-        <div className="absolute top-4 right-6 flex items-center space-x-6">
-          {/* Notification Bell */}
-          <div className="relative">
-            <button
-              onClick={toggleNotificationDropdown}
-               className="text-black hover:text-yellow-400" 
-            >
-               <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-8 h-8" // Larger size for visibility
-      fill="currentColor" // Fill the icon with the current text color
-      viewBox="0 0 24 24"
-      strokeWidth="2"
-      stroke="none" // Remove the stroke for a solid look
+      <div className="absolute top-4 right-6 flex items-center space-x-6 z-50">
+  {/* Notification Bell */}
+  <div className="relative">
+    <button
+      onClick={() => {
+        toggleNotificationDropdown();
+        if (showProfileDropdown) toggleProfileDropdown(); // Close profile dropdown if open
+      }}
+      className="text-black hover:text-yellow-400 z-50" // Ensure button is always in front
     >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118.5 14.5V11a6.001 6.001 0 00-5-5.917V5a2 2 0 10-4 0v.083A6.001 6.001 0 004.5 11v3.5c0 .415-.162.79-.405 1.095L3 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
-            </button>
-            {showNotificationDropdown && (
-              <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
-                <h4 className="font-bold text-gray-800">Notifications</h4>
-                <ul className="mt-2 space-y-2">
-                  {outOfStockProducts.length > 0 ? (
-                    outOfStockProducts.map((product) => (
-                      <li key={product._id} className="text-gray-700">
-                        {product.Name} is out of stock!
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-gray-500">No notifications</li>
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
-  
-          {/* Profile Icon */}
-          <div className="relative">
-            <button
-              onClick={toggleProfileDropdown}
-              className="text-black hover:text-blue-700"
-            >
-              <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-8 h-8" // Larger size for visibility
-      fill="currentColor" // Fill the icon with the current text color
-      viewBox="0 0 24 24"
-      strokeWidth="2"
-      stroke="none" // Remove the stroke for a solid look
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-8 h-8"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="none"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118.5 14.5V11a6.001 6.001 0 00-5-5.917V5a2 2 0 10-4 0v.083A6.001 6.001 0 004.5 11v3.5c0 .415-.162.79-.405 1.095L3 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+        />
+      </svg>
+    </button>
+    {showNotificationDropdown && (
+      <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-40">
+        <h4 className="font-bold text-gray-800">Notifications</h4>
+        <ul className="mt-2 space-y-2">
+          {outOfStockProducts.length > 0 ? (
+            outOfStockProducts.map((product) => (
+              <li key={product._id} className="text-gray-700">
+                {product.Name} is out of stock!
+              </li>
+            ))
+          ) : (
+            <li className="text-gray-500">No notifications</li>
+          )}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  {/* Profile Icon */}
+  <div className="relative">
+    <button
+      onClick={() => {
+        toggleProfileDropdown();
+        if (showNotificationDropdown) toggleNotificationDropdown(); // Close notification dropdown if open
+      }}
+      className="text-black hover:text-blue-700 z-50" // Ensure button is always in front
     >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 14c2.761 0 5-2.239 5-5S14.761 4 12 4 7 6.239 7 9s2.239 5 5 5zm0 0c-3.866 0-7 3.134-7 7h14c0-3.866-3.134-7-7-7z"
-                />
-              </svg>
-            </button>
-            {showProfileDropdown && (
-              <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4">
-                <h4 className="font-bold text-gray-800">Seller Details</h4>
-                <div className="mt-2 text-gray-700">
-                  {sellers.length > 0 ? (
-                    sellers.map((seller) => (
-                      <SellerDetails key={seller._id} seller={seller} />
-                    ))
-                  ) : (
-                    <p className="text-gray-500">No details found.</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-8 h-8"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="none"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 14c2.761 0 5-2.239 5-5S14.761 4 12 4 7 6.239 7 9s2.239 5 5 5zm0 0c-3.866 0-7 3.134-7 7h14c0-3.866-3.134-7-7-7z"
+        />
+      </svg>
+    </button>
+    {showProfileDropdown && (
+      <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-40">
+        <h4 className="font-bold text-gray-800">Seller Details</h4>
+        <div className="mt-2 text-gray-700">
+          {sellers.length > 0 ? (
+            sellers.map((seller) => (
+              <SellerDetails key={seller._id} seller={seller} />
+            ))
+          ) : (
+            <p className="text-gray-500">No details found.</p>
+          )}
         </div>
+      </div>
+    )}
+  </div>
+</div>
+
   
         {/* Welcome Message */}
         {activeContent === "description" && (

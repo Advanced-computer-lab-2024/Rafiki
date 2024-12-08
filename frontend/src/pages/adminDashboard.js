@@ -1,11 +1,12 @@
 import axios from 'axios';
+import UploadedDocuments from '../components/UploadedDocuments';
 import AdminForm from '../components/adminForm';
 import GovernerForm from '../components/governerForm';
 import DeleteAdmin from '../components/DeleteAdmin';
 import CategoryForm from '../components/categoryForm';
 import { useEffect, useState } from "react";
 import CategoryDetails from "../components/categoryDetails";
-import ProductDetails from "../components/ProductDetails";
+import ProductdetailsForAdmin from "../components/productdetailsForAdmin";
 import AdminTagDetails from '../components/AdminTagDetails';
 import AdminTagForm from '../components/AdminTagForm';
 import ProductForm from '../components/productForm';
@@ -15,7 +16,7 @@ import ComplaintDetails from '../components/complaintDetails';
 import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { useLocation } from 'react-router-dom';
-
+import pic from '../pics/pic3.jpg'
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
   const [isVisible, setIsVisible] = useState(false); // For toggling tags visibility
@@ -46,6 +47,17 @@ const AdminSignup = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
 
+  //const location = useLocation();
+  //const outOfStockProducts = location.state?.outOfStockProducts || [];
+    //         if (response.ok) {
+    //             setCategories(json);
+    //         }
+    //     };
+
+    //     fetchCategories();
+    // }, []);
+
+   
     const handleFileChange = (event) => {
       setSelectedFile(event.target.files[0]);
     };
@@ -356,11 +368,29 @@ const AdminSignup = () => {
   const handleProductClick = () => setIsProductVisible(!isProductVisible);
   const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
   const handleDocumentsClick = () => setIsDocumentsVisible(!isDocumentsVisible);
+  const [activeMenu, setActiveMenu] = useState(null); // Tracks the currently active menu item
+  
+  const handleMenuClick = (menu) => {
+    setActiveMenu(activeMenu === menu ? null : menu); // Toggle current menu or close if already open
+  };
+  const [sellerUsername, setSellerUsername] = useState('');
+  useEffect(() => {
+    const username = localStorage.getItem("adminUsername");
+    console.log("Retrieved username from localStorage:", username); // Debugging
+    if (username) {
+      setSellerUsername(username);
+    } else {
+      console.error("adminUsername not found in localStorage.");
+      setSellerUsername("Guest"); // Default fallback
+    }
+  }, []);
+  
+
   return (
     <div
       className="flex min-h-screen bg-cover bg-center"
       style={{
-        backgroundImage: `url('/path-to-background-image.jpg')`, // Replace with your actual background image URL
+        backgroundImage: `url(${pic})`,// Replace with your actual background image URL
       }}
     >
       {/* Sidebar */}
@@ -368,70 +398,128 @@ const AdminSignup = () => {
         {/* Profile Section */}
         <div className="flex items-center mb-8">
           <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
-            A {/* Replace with admin initials */}
+          {sellerUsername.charAt(0).toUpperCase()}{/* Replace with admin initials */}
           </div>
-          <span className="ml-4 text-lg font-semibold">Hi, Admin</span>
+          <span className="ml-4 text-lg font-semibold">Hi, {sellerUsername}</span>
         </div>
   
         {/* Sidebar Menu */}
         <ul className="space-y-6">
           <li>
             <button
-              onClick={handleClick}
+              onClick={() => setActiveMenu('tags')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'tags' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 2L5 5H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-1l-1-3H6zm0 2h12l.6 2H5.4l.6-2zM4 7h16v11H4V7zm8 2c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z" />
+              </svg>
               Manage Tags
             </button>
           </li>
           <li>
             <button
-              onClick={handleClick2}
+              onClick={() => setActiveMenu('categories')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isVisible2 ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'categories'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 2v2h14V2H5zm14 4H5l-1 14h16l-1-14zM8 8h2v9H8V8zm6 0h2v9h-2V8z" />
+              </svg>
               Manage Categories
             </button>
           </li>
           <li>
             <button
-              onClick={handleProductClick}
+              onClick={() => setActiveMenu('products')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isProductVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'products'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+              </svg>
               Product Details
             </button>
           </li>
           <li>
             <button
-              onClick={handleArchivedClick}
+              onClick={() => setActiveMenu('archived')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isArchivedVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'archived'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h14v2H5v-2z" />
+              </svg>
               Archived Products
             </button>
           </li>
           <li>
             <button
-              onClick={handleDocumentsClick}
+              onClick={() => setActiveMenu('documents')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isDocumentsVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'documents'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M13 2h7v7h-2V5.414l-9.586 9.586-1.414-1.414L16.586 4H13V2zm-9 9H2v11h17v-2H4v-9z" />
+              </svg>
               Uploaded Documents
             </button>
           </li>
           <li>
             <button
-              onClick={() => setIsVisibleComplaints(!isVisibleComplaints)}
+              onClick={() => setActiveMenu('complaints')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                isVisibleComplaints ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+                activeMenu === 'complaints'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
               }`}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a10 10 0 00-3 19.5V22h6v-.5a10 10 0 00-3-19.5zm0 2a8 8 0 014.33 14.4l-.33.26V20h-8v-1.34l-.33-.26A8 8 0 0112 4z" />
+              </svg>
               Complaints
             </button>
           </li>
@@ -440,41 +528,7 @@ const AdminSignup = () => {
   
       {/* Main Content */}
       <div className="w-3/4 p-6 relative">
-        {/* Notification Section */}
-        {showNotification && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-              <button
-                className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                onClick={handleCloseNotification}
-              >
-                &times;
-              </button>
-              <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
-              <ul className="mt-4 space-y-2">
-                {outOfStockProducts.map((product) => (
-                  <li key={product._id} className="text-gray-700">
-                    {product.Name} is out of stock!
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-  
-        {/* User Data */}
-        {totalUsers !== null && newUsersThisMonth !== null ? (
-          <div className="text-right mb-6">
-            <p>Total Users: {totalUsers}</p>
-            <p>New Users This Month: {newUsersThisMonth}</p>
-          </div>
-        ) : (
-          <p className="text-right mb-6">Loading user data...</p>
-        )}
-  
-        {/* Visibility Toggles and Content */}
-        {isVisible && (
-          <div className="tag">
+        {activeMenu === 'tags' && <div className="tags">{<div className="tag">
             {tag.length > 0 ? (
               tag.map((tags) => (
                 <AdminTagDetails
@@ -487,11 +541,10 @@ const AdminSignup = () => {
             ) : (
               <p>No Tags found.</p>
             )}
-          </div>
-        )}
-  
-        {isVisible2 && (
-          <div className="categories">
+          </div>/* Tags content here */}</div>}
+        {activeMenu === 'categories' && (
+          <div className="categories">{
+            <div className="categories">
             {categories.length > 0 ? (
               categories.map((category) => (
                 <CategoryDetails
@@ -504,70 +557,49 @@ const AdminSignup = () => {
             ) : (
               <p>No categories found.</p>
             )}
-          </div>
+          </div>/* Categories content here */}</div>
         )}
-  
-        {isProductVisible && (
-          <div className="products">
+        {activeMenu === 'products' && (
+          <div className="products">{
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
             {products.length > 0 ? (
               products.map((product) => (
-                <ProductDetails product={product} key={product._id} />
+                <ProductdetailsForAdmin product={product} key={product._id} />
               ))
             ) : (
               <p>No products found.</p>
             )}
-          </div>
+          </div>/* Product Details content here */}</div>
         )}
-  
-        {isArchivedVisible && <ArchivedProducts />}
-  
-        {isDocumentsVisible && (
-          <div className="documents">
-            <h2 className="text-xl font-bold mb-4">Uploaded Documents</h2>
-            <input type="file" accept=".pdf" onChange={handleFileChange} />
-            <button
-              onClick={handleUpload}
-              disabled={isUploading}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              {isUploading ? "Uploading..." : "Upload PDF"}
-            </button>
-            {uploadedDocuments.length > 0 ? (
-              uploadedDocuments.map((document) => (
-                <div key={document._id}>
-                  <p>{document.originalname}</p>
-                  <button onClick={() => show(document.filename)}>View PDF</button>
-                  <button
-                    onClick={() => handleDocumentAction(document.originalname, "accept")}
-                    className="text-green-500"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleDocumentAction(document.originalname, "reject")}
-                    className="text-red-500"
-                  >
-                    Reject
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p>No documents uploaded yet.</p>
-            )}
-          </div>
+        {activeMenu === 'archived' && (
+          <div className="archived">{
+            <ArchivedProducts />/* Archived Products content here */}</div>
         )}
-  
-        {isVisibleComplaints && (
-          <div className="complaints">
-            {complaints.map((complaint) => (
-              <ComplaintDetails complaint={complaint} key={complaint._id} />
-            ))}
-          </div>
+       {activeMenu === 'documents' && (
+  <UploadedDocuments
+    handleFileChange={handleFileChange}
+    handleUpload={handleUpload}
+    isUploading={isUploading}
+    uploadedDocuments={uploadedDocuments}
+    handleDocumentAction={handleDocumentAction}
+    show={show}
+    uploadError={uploadError}
+    selectedFile={selectedFile}
+  />
+)}
+        {activeMenu === 'complaints' && (
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+         {complaints.map((complaint) => (
+           <ComplaintDetails complaint={complaint} key={complaint._id} />
+         ))}
+       </div>
+       
         )}
       </div>
     </div>
   );
   
+
 };
 
 
