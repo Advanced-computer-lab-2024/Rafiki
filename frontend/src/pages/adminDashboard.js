@@ -593,8 +593,8 @@ const AdminSignup = () => {
            <ComplaintDetails complaint={complaint} key={complaint._id} />
          ))}
        </div>
-       
         )}
+        <CreatePromoCodes/>
       </div>
     </div>
   );
