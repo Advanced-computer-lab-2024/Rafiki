@@ -91,15 +91,11 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    
       <form
         className="w-full max-w-xl bg-white p-6 rounded-lg shadow-lg space-y-6"
         onSubmit={handleSubmit}
       >
-        <h3 className="text-2xl font-bold text-gray-800 text-center">
-          {existingProduct ? "Update Product" : "Create Product"}
-        </h3>
-
         {/* Name */}
         <div className="flex items-center border rounded-lg px-3 py-2">
           <FaTag className="text-blue-500 mr-3" />
@@ -232,7 +228,7 @@ const ProductForm = ({ existingProduct, onSubmit }) => {
           </div>
         )}
       </form>
-    </div>
+    
   );
 };
 

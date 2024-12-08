@@ -475,8 +475,8 @@ const SellerDashboard = () => {
   
         {/* Revenue Report */}
         {activeContent === "seller" && (
-          <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+            <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">
               Revenue Report
             </h3>
             {sellers.length > 0 ? (
@@ -488,92 +488,103 @@ const SellerDashboard = () => {
             )}
           </div>
         )}
-    
-    {activeContent === "products" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Products</h3>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <ProductDetails key={product._id} product={product} />
-            ))
-          ) : (
-            <p className="text-gray-500">No products found.</p>
-          )}
-        </div>
-      )}
+  
 
-      {/* Archived Products */}
-      {activeContent === "archivedProducts" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Archived Products</h3>
-          <ArchivedProducts />
-        </div>
-      )}
+{activeContent === "products" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-md mx-auto">
+    <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">Products</h3>
+    {products.length > 0 ? (
+      products.map((product) => (
+        <ProductDetails key={product._id} product={product} />
+      ))
+    ) : (
+      <p className="text-gray-500 text-center">No products found.</p>
+    )}
+  </div>
+)}
+
+{/* Archived Products */}
+{activeContent === "archivedProducts" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-md mx-auto">
+    <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">Archived Products</h3>
+    <ArchivedProducts />
+  </div>
+)}
+
 
       {/* Add New Product */}
       {activeContent === "addProduct" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Add New Product</h3>
-          <ProductForm onProductAdded={fetchProducts} />
-        </div>
-      )}
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-md mx-auto">
+    <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">Add New Product</h3>
+    <ProductForm onProductAdded={fetchProducts} />
+  </div>
+)}
 
-      {/* Change Password */}
-      {activeContent === "changePassword" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Change Password</h3>
-          <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
-        </div>
-      )}
+{activeContent === "changePassword" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-md mx-auto">
+    <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">Change Password</h3>
+    <ChangePasswordForm apiEndpoint="/api/sellerRoute/changePassword" />
+  </div>
+)}
 
-      {/* Update Seller */}
-      {activeContent === "updateSeller" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Seller</h3>
-          <UpdateSeller
-            existingTourguide={selectedTourguide}
-            onUpdate={() => setSelectedTourguide(null)}
-          />
-        </div>
-      )}
+{/* Update Seller */}
+{activeContent === "updateSeller" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-md mx-auto">
+    <h3 className="text-xl font-semibold text-gray-700 mb-3 text-center">Update Seller</h3>
+    <UpdateSeller
+      existingTourguide={selectedTourguide}
+      onUpdate={() => setSelectedTourguide(null)}
+    />
+  </div>
+)}
 
       {/* Filter Products */}
       {activeContent === "filterProducts" && (
-        <div className="section-card mb-8 p-6 rounded-lg shadow-lg bg-white">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">My Products</h3>
-          <div className="flex items-center mb-4">
-            <input
-              type="number"
-              placeholder="Min Price"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="border rounded px-3 py-2 mr-4 w-1/2"
-            />
-            <input
-              type="number"
-              placeholder="Max Price"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="border rounded px-3 py-2 mr-4 w-1/2"
-            />
-            <button
-              onClick={filterProducts}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Apply Filter
-            </button>
-          </div>
-          <div className="mt-4">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <ProductDetails key={product._id} product={product} />
-              ))
-            ) : (
-              <p className="text-gray-500">No products match the given criteria.</p>
-            )}
-          </div>
-        </div>
-      )}
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md max-w-5xl mx-auto">
+    <h3 className="text-xl font-semibold text-center mb-4">My Products</h3>
+    
+    {/* Filter Inputs */}
+    <div className="flex items-center mb-5 space-x-3">
+      <input
+        type="number"
+        placeholder="Min Price"
+        value={minPrice}
+        onChange={(e) => setMinPrice(e.target.value)}
+        className="w-full px-3 py-2 rounded-lg bg-transparent border border-gray-600 focus:ring focus:ring-blue-400 text-sm placeholder-gray-400"
+      />
+      <input
+        type="number"
+        placeholder="Max Price"
+        value={maxPrice}
+        onChange={(e) => setMaxPrice(e.target.value)}
+        className="w-full px-3 py-2 rounded-lg bg-transparent border border-gray-600 focus:ring focus:ring-blue-400 text-sm placeholder-gray-400"
+      />
+      <button
+        onClick={filterProducts}
+        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-sm font-medium transition"
+      >
+        Apply
+      </button>
+    </div>
+
+    {/* Filtered Products */}
+    <div className="mt-4 overflow-x-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <ProductDetails key={product._id} product={product} />
+          ))
+        ) : (
+          <p className="text-gray-400 text-center col-span-full">
+            No products match the given criteria.
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   </div>
     );
