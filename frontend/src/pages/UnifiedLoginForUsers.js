@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaUser, FaLock } from "react-icons/fa";
 import pic from "../pics/pic2.jpg";
-   
-
-
 
 function UnifiedLoginForUsers() {
   const [username, setUsername] = useState("");
@@ -17,6 +14,7 @@ function UnifiedLoginForUsers() {
     e.preventDefault();
     setError(null);
 
+    // Define roles, endpoints, and redirects
     const userRoles = [
       { role: "Seller", endpoint: "/api/sellerRoute/login", redirect: "/seller-signup" },
       { role: "Advertiser", endpoint: "/api/AdvertiserRoute/login", redirect: "/advertiser-signup" },
@@ -31,20 +29,16 @@ function UnifiedLoginForUsers() {
         });
 
         if (response.status === 200) {
-          // Store the username in localStorage for future use
-          const { tourist } = response.data; // Assuming "tourist" holds seller data
-          localStorage.setItem("sellerId", tourist._id); // Store seller ID in localStorage
-          localStorage.setItem('sellerUsername', tourist.Username);
-          localStorage.setItem('sellerName', tourist.Name); // Store seller Name
+          // Store user info in localStorage
+          const { Username, _id, role } = response.data;
+          localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id, role }));
+
           navigate(redirect);
-          return;
+          return; // Exit once logged in successfully
         }
-      } catch (error) {
-        if (
-          error.response?.status === 400 ||
-          error.response?.status === 404
-        ) {
-          // If it's a 400 or 404, move on to try the next role
+      } catch (err) {
+        if (err.response?.status === 400 || err.response?.status === 404) {
+          // Move on to the next role if this one fails
           continue;
         } else {
           setError("An error occurred. Please try again.");
@@ -53,7 +47,7 @@ function UnifiedLoginForUsers() {
       }
     }
 
-    // If we tried all roles and none matched, show incorrect credentials error
+    // If all roles fail, show incorrect credentials error
     setError("Incorrect username or password.");
   };
 
