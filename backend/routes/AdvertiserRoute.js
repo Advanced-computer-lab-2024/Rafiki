@@ -6,7 +6,8 @@ const {
   updateAdvertiser,
   changePassword,
   requestAccountDeletion,
-  loginAdvertiser
+  loginAdvertiser,
+  getAdvertiserByUsername
 } = require('../controllers/AdvertiserController');
 const multer = require('multer');
 
@@ -31,6 +32,9 @@ router.put('/:id', updateAdvertiser);
 
 // Route to get a single advertiser by ID
 router.get("/:id", getAdvertiser);
+
+router.get('/username/:username', getAdvertiserByUsername);
+
 
 // Route to get a list of all advertisers
 router.get("/", getAdvertisers);
