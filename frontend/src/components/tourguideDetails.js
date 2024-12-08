@@ -6,7 +6,7 @@ const TourguideDetails = () => {
   const [ratings, setRatings] = useState([]);
   const [error, setError] = useState(null);
 
-  const username = localStorage.getItem("username"); // Retrieve the logged-in username
+  const username = localStorage.getItem("loggedinUsername"); // Retrieve the logged-in username
 
   useEffect(() => {
     const fetchTourguideDetails = async () => {

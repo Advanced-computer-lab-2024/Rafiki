@@ -87,6 +87,25 @@ const getAdvertiser = async (req, res) => {
   }
 };
 
+const getAdvertiserByUsername = async (req, res) => {
+  const { username } = req.params; // Extract `username` from route parameters
+
+  try {
+    // Search for the advertiser by username
+    const advertiser = await AdvertiserModel.findOne({ Username: username });
+
+    if (!advertiser) {
+      return res.status(404).json({ message: 'Advertiser not found.' });
+    }
+
+    // Respond with the advertiser data
+    res.status(200).json(advertiser);
+  } catch (error) {
+    // Handle errors and respond with status 400
+    res.status(400).json({ error: error.message });
+  }
+};
+
 // Controller to get all advertisers
 const getAdvertisers = async (req, res) => {
   try {
@@ -218,5 +237,6 @@ module.exports = {
   updateAdvertiser,
   changePassword,
   requestAccountDeletion,
-  loginAdvertiser
+  loginAdvertiser,
+  getAdvertiserByUsername
 };
