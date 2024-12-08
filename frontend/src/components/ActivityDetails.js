@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { FaLink, FaEnvelope, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaLink, FaEnvelope, FaEdit, FaTrashAlt } from "react-icons/fa";
 
 const ActivityDetails = ({ activity }) => {
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState("USD");
   const [currencyMultiplier, setCurrencyMultiplier] = useState(1);
 
   const copyLinkToClipboard = () => {
     const link = `${window.location.origin}/activities/${activity._id}`;
-    navigator.clipboard.writeText(link)
-      .then(() => alert('Link copied to clipboard!'))
-      .catch(error => console.error("Failed to copy link:", error));
+    navigator.clipboard
+      .writeText(link)
+      .then(() => alert("Link copied to clipboard!"))
+      .catch((error) => console.error("Failed to copy link:", error));
   };
 
   const shareViaEmail = () => {
@@ -22,10 +23,10 @@ const ActivityDetails = ({ activity }) => {
     setCurrency(selectedCurrency);
 
     switch (selectedCurrency) {
-      case 'EGP':
+      case "EGP":
         setCurrencyMultiplier(50);
         break;
-      case 'EUR':
+      case "EUR":
         setCurrencyMultiplier(0.92);
         break;
       default: // USD
@@ -34,43 +35,51 @@ const ActivityDetails = ({ activity }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto mt-6 transform hover:scale-105 hover:shadow-xl hover:bg-gray-50 transition duration-300 ease-in-out">
-      <h4 className="text-3xl font-semibold text-gray-800 mb-4">{activity.name}</h4>
+    <div className="bg-white rounded-xl shadow-lg p-8 max-w-3xl mx-auto mt-8 transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out">
+      {/* Title */}
+      <h4 className="text-4xl font-bold text-gray-800 mb-6 border-b pb-4">
+        {activity.name}
+      </h4>
 
       {/* Image Section */}
-      <img
-        src={activity.pictures}
-        alt={`${activity.name} Image`}
-        className="w-full h-56 object-cover rounded-lg mb-6 shadow-md"
-      />
+      <div className="mb-6">
+        <img
+          src={activity.pictures}
+          alt={`${activity.name} Image`}
+          className="w-full h-64 object-cover rounded-lg shadow-md"
+        />
+      </div>
 
       {/* Activity Details */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6">
         {/* Description */}
-        <div className="text-sm text-gray-700">
-          <strong className="font-semibold">Description:</strong> {activity.description}
+        <div className="text-lg text-gray-700">
+          <strong className="font-semibold block mb-2">Description:</strong>
+          {activity.description}
         </div>
 
         {/* Location */}
-        <div className="text-sm text-gray-700">
-          <strong className="font-semibold">Location:</strong> {activity.location}
+        <div className="text-lg text-gray-700">
+          <strong className="font-semibold block mb-2">Location:</strong>
+          {activity.location}
         </div>
 
         {/* Date */}
-        <div className="text-sm text-gray-700">
-          <strong className="font-semibold">Date:</strong> {activity.date}
+        <div className="text-lg text-gray-700">
+          <strong className="font-semibold block mb-2">Date:</strong>
+          {new Date(activity.date).toLocaleDateString()}
         </div>
 
         {/* Price */}
-        <div className="flex items-center text-sm text-gray-700">
-          <strong className="font-semibold">Price:</strong>
-          <span className="ml-2">
+        <div className="text-lg text-gray-700 flex flex-col">
+          <strong className="font-semibold block mb-2">Price:</strong>
+          <span className="flex items-center">
             {currency} {(parseFloat(activity.price) * currencyMultiplier).toFixed(2)}
           </span>
           <select
             value={currency}
             onChange={handleCurrencyChange}
-            className="ml-4 p-1 bg-gray-100 border border-gray-300 rounded text-sm"
+            className="mt-2 p-2 bg-gray-100 border border-gray-300 rounded text-lg"
           >
             <option value="USD">USD</option>
             <option value="EGP">EGP</option>
@@ -79,17 +88,18 @@ const ActivityDetails = ({ activity }) => {
         </div>
 
         {/* Tag */}
-        <div className="text-sm text-gray-700">
-          <strong className="font-semibold">Tag:</strong> {activity.tag}
+        <div className="text-lg text-gray-700">
+          <strong className="font-semibold block mb-2">Tag:</strong>
+          {activity.tag}
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-4 mt-6">
+      <div className="flex flex-wrap gap-4 mt-8">
         {/* Copy Link Button */}
         <button
           onClick={copyLinkToClipboard}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+          className="flex items-center bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 shadow-md transition duration-300"
         >
           <FaLink className="mr-2" /> Copy Link
         </button>
@@ -97,24 +107,23 @@ const ActivityDetails = ({ activity }) => {
         {/* Share via Email Button */}
         <button
           onClick={shareViaEmail}
-          className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300"
+          className="flex items-center bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 shadow-md transition duration-300"
         >
           <FaEnvelope className="mr-2" /> Share via Email
         </button>
-      </div>
 
-      {/* Edit and Delete Buttons */}
-      <div className="flex space-x-4 mt-4">
+        {/* Edit Button */}
         <button
-          onClick={() => console.log('Edit functionality goes here')}
-          className="flex items-center text-yellow-500 px-4 py-2 rounded-lg hover:bg-yellow-100 transition duration-300"
+          onClick={() => console.log("Edit functionality goes here")}
+          className="flex items-center text-yellow-600 bg-yellow-100 px-5 py-3 rounded-lg hover:bg-yellow-200 shadow-md transition duration-300"
         >
           <FaEdit className="mr-2" /> Edit
         </button>
 
+        {/* Delete Button */}
         <button
-          onClick={() => console.log('Delete functionality goes here')}
-          className="flex items-center text-red-500 px-4 py-2 rounded-lg hover:bg-red-100 transition duration-300"
+          onClick={() => console.log("Delete functionality goes here")}
+          className="flex items-center text-red-600 bg-red-100 px-5 py-3 rounded-lg hover:bg-red-200 shadow-md transition duration-300"
         >
           <FaTrashAlt className="mr-2" /> Delete
         </button>
