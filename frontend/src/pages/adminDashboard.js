@@ -46,17 +46,6 @@ const AdminSignup = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
 
-  //const location = useLocation();
-  //const outOfStockProducts = location.state?.outOfStockProducts || [];
-    //         if (response.ok) {
-    //             setCategories(json);
-    //         }
-    //     };
-
-    //     fetchCategories();
-    // }, []);
-
-   
     const handleFileChange = (event) => {
       setSelectedFile(event.target.files[0]);
     };
@@ -368,241 +357,217 @@ const AdminSignup = () => {
   const handleArchivedClick = () => setIsArchivedVisible(!isArchivedVisible);
   const handleDocumentsClick = () => setIsDocumentsVisible(!isDocumentsVisible);
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-  
-
-        {error && <p style={{ color: 'red', textAlign: 'right' }}>{error}</p>}
-        {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          {/* Pop-up Notification */}
-          {showNotification && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-              <div className="bg-white p-6 rounded shadow-lg w-96 relative">
-                <button
-                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  onClick={handleCloseNotification}
-                >
-                  &times; {/* Close button */}
-                </button>
-                <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
-                <ul className="mt-4 space-y-2">
-                  {outOfStockProducts.map(product => (
-                    <li key={product._id} className="text-gray-700">
-                      {product.Name} is out of stock!
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      {totalUsers !== null && newUsersThisMonth !== null ? (
-        <div style={{ textAlign: 'right' }}>
-          <p>Total Users: {totalUsers}</p>
-          <p>New Users This Month: {newUsersThisMonth}</p>
-        </div>
-      ) : (
-        <p style={{ textAlign: 'right' }}>Loading user data...</p>
-      )}
-    
-
-      {/* Toggle Tags Visibility */}
-      <button onClick={handleClick}>
-        {isVisible ? 'Hide' : 'Show'} Tags
-      </button>
-      {isVisible && (
-        <div className="tag">
-          {tag.length > 0 ? (
-            tag.map(tags => (
-              <AdminTagDetails
-                Tag={tags}
-                key={tags._id}
-                onUpdate={updateTag}
-                onDelete={deleteTag}
-              />
-            ))
-          ) : (
-            <p>No Tags found.</p>
-          )}
-        </div>
-      )}
-      <br />
-
-      {/* Toggle Categories Visibility */}
-      <button onClick={handleClick2}>
-        {isVisible2 ? 'Hide' : 'Show'} Categories
-      </button>
-      {isVisible2 && (
-        <div className="categories">
-          {categories.length > 0 ? (
-            categories.map(category => (
-              <CategoryDetails
-                category={category}
-                key={category._id}
-                onUpdate={updateCategory}
-                onDelete={deleteCategory}
-              />
-            ))
-          ) : (
-            <p>No categories found.</p>
-          )}
-        </div>
-      )}
-
-      <br />
-
-      {/* Toggle Product Details */}
-      <button onClick={handleProductClick}>
-        {isProductVisible ? 'Hide' : 'Show'} Product Details
-      </button>
-      {isProductVisible && (
-        <div className="products">
-          {products.length > 0 ? (
-            products.map(product => (
-              <ProductDetails product={product} key={product._id} />
-            ))
-          ) : (
-            <p>No products found.</p>
-          )}
-        </div>
-      )}
-         <br />
-            {/* Sort by Date */}
-            <button onClick={() => setIsVisibleDateSort(!isVisibleDateSort)}>
-                {isVisibleDateSort ? 'Hide' : 'Sort by Date'}
-            </button>
-            {isVisibleDateSort && (
-                <button onClick={complaintSortbyDtae}>Sort</button>
-            )}
-            {/* Search by Status */}
-            <button onClick={() => setIsVisibleStatusSearch(!isVisibleStatusSearch)}>
-                {isVisibleStatusSearch ? 'Hide' : 'Filter by Status'}
-            </button>
-            {isVisibleStatusSearch && (
-                <div>
-                    <select 
-                      value={status} 
-                      onChange={(e) => setStatus(e.target.value)}
-                    >
-                    <option value="">Select Status</option> {/* Disabled placeholder */}
-                    <option value="resolved">Resolved</option>
-                    <option value="pending">Pending</option>
-                    </select>
-                    <button onClick={complaintStatusFilter}>Search</button>
-                </div>
-            )}
-            <br />
-             {/* View Complaints */}
-             <button onClick={() => setIsVisibleComplaints(!isVisibleComplaints)}>
-                {isVisibleComplaints ? 'Hide' : 'View'} Complaints
-            </button>
-            {isVisibleComplaints && (
-                <div className="complaints">
-                    {complaints && complaints.map(complaint => (
-                        <ComplaintDetails complaint={complaint} key={complaint._id} />
-                    ))}
-                </div>
-            )}
-            <br />
-
-
-
-
-
-
-   
-
-    
-
-
-    <div>
-  <h2>Admin Dashboard - View Uploaded Documents</h2>
-  <button onClick={() => handleDocumentsClick(!isDocumentsVisible)}>
-    {isDocumentsVisible ? 'Hide' : 'View'} Documents
-    <div>
-      <h2>Upload PDF</h2>
-      <input type="file" accept=".pdf" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={isUploading}>
-        {isUploading ? 'Uploading...' : 'Upload PDF'}
-      </button>
-      {uploadError && <p style={{ color: 'red' }}>{uploadError}</p>}
-    </div>
-  </button>
-  {isDocumentsVisible && (
-    <div className="documents">
-      {uploadedDocuments.length > 0 ? (
-        uploadedDocuments.map((document, index) => (
-          <div key={index}>
-            <p>{document.originalname}</p>
-            {/* Button to view PDF */}
-            {document.filename.endsWith('.pdf') && (
-              <button onClick={() => show(document.filename)}>View PDF</button>
-            )}
-           <button onClick={() => handleDocumentAction(document.originalname, 'accept')}>Accept</button>
-           <button onClick={() => handleDocumentAction(document.originalname, 'reject')}>Reject</button>
-            <p>Status: {document.status}</p>
+    <div
+      className="flex min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url('/path-to-background-image.jpg')`, // Replace with your actual background image URL
+      }}
+    >
+      {/* Sidebar */}
+      <div className="w-1/4 bg-gray-900 text-white p-6">
+        {/* Profile Section */}
+        <div className="flex items-center mb-8">
+          <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+            A {/* Replace with admin initials */}
           </div>
-        ))
-      ) : (
-        <p>No documents uploaded yet.</p>
-      )}
-    </div>
-  )}
-
-  {/* View Activities Section */}
-  <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
-    {isVisibleActivities ? 'Hide' : 'Show'} Activities
-  </button>
-  {isVisibleActivities && (
-    <div className="activities">
-      {activities.map(activity => (
-        <div key={activity._id}>
-          <p>{activity.location}</p> {/* Display any activity info */}
-          <button onClick={() => flagActivity(activity._id)}>Flag as Inappropriate</button>
+          <span className="ml-4 text-lg font-semibold">Hi, Admin</span>
         </div>
-      ))}
-    </div>
-  )}
-</div>
-
-
-        
-
-
-
-      <br />
-
-      {/* Toggle Archived Products */}
-      <button onClick={handleArchivedClick}>
-        {isArchivedVisible ? 'Hide' : 'Show'} Archived Products
-      </button>
-      {isArchivedVisible && <ArchivedProducts />}
-
-      <br />
-
-
-      
-      {/* Admin Forms */}
-     
-     
-      <DeleteAdmin />
-      <br />
-      <CategoryForm />
-      <br />
-      <CreatePromoCodes/>
-      <br />
-      <AdminTagForm />
-      <br />
-      <ProductForm />
-      <br/>
-      <AdminChangePassword/>
-      {/* <AdminChangePassword/> */}
+  
+        {/* Sidebar Menu */}
+        <ul className="space-y-6">
+          <li>
+            <button
+              onClick={handleClick}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Manage Tags
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleClick2}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isVisible2 ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Manage Categories
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleProductClick}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isProductVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Product Details
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleArchivedClick}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isArchivedVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Archived Products
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleDocumentsClick}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isDocumentsVisible ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Uploaded Documents
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setIsVisibleComplaints(!isVisibleComplaints)}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                isVisibleComplaints ? "bg-blue-700 text-white" : "text-blue-400 hover:text-white"
+              }`}
+            >
+              Complaints
+            </button>
+          </li>
+        </ul>
+      </div>
+  
+      {/* Main Content */}
+      <div className="w-3/4 p-6 relative">
+        {/* Notification Section */}
+        {showNotification && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded shadow-lg w-96 relative">
+              <button
+                className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                onClick={handleCloseNotification}
+              >
+                &times;
+              </button>
+              <h2 className="text-xl font-bold text-red-700">Out of Stock Products</h2>
+              <ul className="mt-4 space-y-2">
+                {outOfStockProducts.map((product) => (
+                  <li key={product._id} className="text-gray-700">
+                    {product.Name} is out of stock!
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+  
+        {/* User Data */}
+        {totalUsers !== null && newUsersThisMonth !== null ? (
+          <div className="text-right mb-6">
+            <p>Total Users: {totalUsers}</p>
+            <p>New Users This Month: {newUsersThisMonth}</p>
+          </div>
+        ) : (
+          <p className="text-right mb-6">Loading user data...</p>
+        )}
+  
+        {/* Visibility Toggles and Content */}
+        {isVisible && (
+          <div className="tag">
+            {tag.length > 0 ? (
+              tag.map((tags) => (
+                <AdminTagDetails
+                  Tag={tags}
+                  key={tags._id}
+                  onUpdate={updateTag}
+                  onDelete={deleteTag}
+                />
+              ))
+            ) : (
+              <p>No Tags found.</p>
+            )}
+          </div>
+        )}
+  
+        {isVisible2 && (
+          <div className="categories">
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <CategoryDetails
+                  category={category}
+                  key={category._id}
+                  onUpdate={updateCategory}
+                  onDelete={deleteCategory}
+                />
+              ))
+            ) : (
+              <p>No categories found.</p>
+            )}
+          </div>
+        )}
+  
+        {isProductVisible && (
+          <div className="products">
+            {products.length > 0 ? (
+              products.map((product) => (
+                <ProductDetails product={product} key={product._id} />
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </div>
+        )}
+  
+        {isArchivedVisible && <ArchivedProducts />}
+  
+        {isDocumentsVisible && (
+          <div className="documents">
+            <h2 className="text-xl font-bold mb-4">Uploaded Documents</h2>
+            <input type="file" accept=".pdf" onChange={handleFileChange} />
+            <button
+              onClick={handleUpload}
+              disabled={isUploading}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              {isUploading ? "Uploading..." : "Upload PDF"}
+            </button>
+            {uploadedDocuments.length > 0 ? (
+              uploadedDocuments.map((document) => (
+                <div key={document._id}>
+                  <p>{document.originalname}</p>
+                  <button onClick={() => show(document.filename)}>View PDF</button>
+                  <button
+                    onClick={() => handleDocumentAction(document.originalname, "accept")}
+                    className="text-green-500"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleDocumentAction(document.originalname, "reject")}
+                    className="text-red-500"
+                  >
+                    Reject
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p>No documents uploaded yet.</p>
+            )}
+          </div>
+        )}
+  
+        {isVisibleComplaints && (
+          <div className="complaints">
+            {complaints.map((complaint) => (
+              <ComplaintDetails complaint={complaint} key={complaint._id} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
+  
 };
 
 
