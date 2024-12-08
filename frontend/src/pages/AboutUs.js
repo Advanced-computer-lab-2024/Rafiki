@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from "../pics/pic6.jpg"; // Import the image
 
 function AboutUs() {
   return (
@@ -36,11 +37,11 @@ function AboutUs() {
             {/* Team Member 1 */}
             <div className="text-center">
               <img
-                src="/path-to-team-member-1.jpg"
+                src={Image} // Use the imported image here
                 alt="Team Member 1"
                 className="w-40 h-40 mx-auto rounded-full shadow-lg"
               />
-              <h3 className="mt-4 text-xl font-semibold text-gray-800">John Doe</h3>
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">Jota</h3>
               <p className="text-gray-600">Founder & CEO</p>
             </div>
             {/* Team Member 2 */}

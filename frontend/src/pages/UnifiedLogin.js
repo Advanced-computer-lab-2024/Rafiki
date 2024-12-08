@@ -30,6 +30,11 @@ function UnifiedLogin() {
       if (adminResponse.status === 200) {
         const { Username, _id } = adminResponse.data;
         localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id }));
+        // Store user info in localStorage
+        const { admin } = adminResponse.data;
+        localStorage.setItem("loggedinID", admin._id); // Store seller ID in localStorage
+        localStorage.setItem('loggedinUsername', admin.Username);
+
         navigate("/adminDashboard");
         return;
       }
@@ -44,6 +49,11 @@ function UnifiedLogin() {
           if (governorResponse.status === 200) {
             const { Username, _id } = governorResponse.data;
             localStorage.setItem("loggedInUser", JSON.stringify({ username: Username, id: _id }));
+            // Store user info in localStorage
+            const { admin } = governorResponse.data;
+            localStorage.setItem("loggedinID", admin._id); // Store seller ID in localStorage
+            localStorage.setItem('loggedinUsername', admin.Username);
+
             navigate("/GovernorDashboard");
             return;
           }
