@@ -230,7 +230,6 @@ const CheckoutPage = () => {
   return (
     <div>
       <h2>Checkout Page</h2>
-      <h3>Your Wallet Balance: ${touristWallet.toFixed(2)}</h3> {/* Wallet Balance */}
       <h3>Select Delivery Address</h3>
       {addresses.length > 0 ? (
         <div>
