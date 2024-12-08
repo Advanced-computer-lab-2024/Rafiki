@@ -10,7 +10,10 @@ const {
   uploadTourGuidePicture,
   addRatingToTourGuide,
   getTourguideRatings,
-    getTotalTouristsForTourGuide
+    getTotalTouristsForTourGuide,
+    requestOTP,
+    resetPassword,
+    verifyOTP
 } = require('../controllers/tourguideController');
 
 const multer = require('multer'); // Import multer if not already imported
@@ -51,5 +54,9 @@ router.post('/:id/ratings', addRatingToTourGuide); // Add a rating
 router.get('/:id/ratings', getTourguideRatings);   // Get all ratings for a tour guide
 router.get('/:tourGuideId/tourists-total', getTotalTouristsForTourGuide);
 // Add this to your routes configuration
+router.post('/requestOTP', requestOTP); // Sends OTP for password reset
+router.post('/resetPassword', resetPassword); // Resets password after OTP verification
+router.post('/verifyOTP', verifyOTP);  // Verifies OTP
+
 
 module.exports = router;
