@@ -34,40 +34,41 @@ const MuseumDetails = ({ museum }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto mt-6 transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out">
-      <h4 className="text-3xl font-bold text-gray-800 mb-4">{museum.name}</h4>
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl mx-auto mt-10 transform hover:scale-105 hover:shadow-2xl transition duration-300 ease-in-out">
+      <h4 className="text-3xl font-extrabold text-gray-800 mb-6">{museum.name}</h4>
       
       {/* Image Section */}
-      <img src={museum.pictures} alt={`${museum.name} Image`} className="w-full h-64 object-cover rounded-lg mb-6" />
+      <img src={museum.pictures} alt={`${museum.name} Image`} className="w-full h-72 object-cover rounded-lg mb-6 shadow-lg" />
 
-      {/* Flex Container for Museum Details */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
+      {/* Museum Details */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+        
         {/* Description */}
-        <div className="text-sm text-gray-600">
-          <strong className="font-semibold text-gray-800">Description:</strong>
+        <div className="text-sm text-gray-700">
+          <strong className="font-semibold text-gray-900">Description:</strong>
           <p>{museum.description}</p>
         </div>
 
         {/* Location */}
-        <div className="text-sm text-gray-600">
-          <strong className="font-semibold text-gray-800">Location:</strong>
+        <div className="text-sm text-gray-700">
+          <strong className="font-semibold text-gray-900">Location:</strong>
           <p>{museum.location}</p>
         </div>
 
         {/* Opening Hours */}
-        <div className="text-sm text-gray-600">
-          <strong className="font-semibold text-gray-800">Opening Hours:</strong>
+        <div className="text-sm text-gray-700">
+          <strong className="font-semibold text-gray-900">Opening Hours:</strong>
           <p>{museum.openingHours}</p>
         </div>
 
         {/* Ticket Price */}
-        <div className="text-sm text-gray-600">
-          <strong className="font-semibold text-gray-800">Ticket Price:</strong> {currency} {(parseFloat(museum.ticketPrices) * currencyMultiplier).toFixed(2)}
+        <div className="text-sm text-gray-700 flex items-center">
+          <strong className="font-semibold text-gray-900">Ticket Price:</strong>
+          <span className="ml-2">{currency} {(parseFloat(museum.ticketPrices) * currencyMultiplier).toFixed(2)}</span>
           <select
             value={currency}
             onChange={handleCurrencyChange}
-            className="ml-2 p-1 bg-gray-100 border border-gray-300 rounded text-sm"
+            className="ml-4 p-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
           >
             <option value="USD">USD</option>
             <option value="EGP">EGP</option>
@@ -76,8 +77,9 @@ const MuseumDetails = ({ museum }) => {
         </div>
 
         {/* Tag */}
-        <div className="text-sm text-gray-600">
-          <strong className="font-semibold text-gray-800">Tag:</strong> {museum.tag}
+        <div className="text-sm text-gray-700">
+          <strong className="font-semibold text-gray-900">Tag:</strong>
+          <span className="text-gray-600">{museum.tag}</span>
         </div>
       </div>
 
@@ -85,14 +87,14 @@ const MuseumDetails = ({ museum }) => {
       <div className="mt-6 flex space-x-4 justify-start">
         <button
           onClick={copyLinkToClipboard}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+          className="flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
         >
           <FaLink className="mr-2" /> Copy Link
         </button>
 
         <button
           onClick={shareViaEmail}
-          className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
+          className="flex items-center bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105"
         >
           <FaEnvelope className="mr-2" /> Share via Email
         </button>
@@ -102,14 +104,14 @@ const MuseumDetails = ({ museum }) => {
       <div className="mt-6 flex space-x-4 justify-start">
         <button
           onClick={() => console.log('Edit functionality goes here')}
-          className="flex items-center text-yellow-600 bg-yellow-100 px-4 py-2 rounded-lg hover:bg-yellow-200 transition duration-300 transform hover:scale-105"
+          className="flex items-center text-yellow-600 bg-yellow-100 px-6 py-3 rounded-lg hover:bg-yellow-200 transition duration-300 transform hover:scale-105"
         >
           <FaEdit className="mr-2" /> Edit
         </button>
 
         <button
           onClick={() => console.log('Delete functionality goes here')}
-          className="flex items-center text-red-600 bg-red-100 px-4 py-2 rounded-lg hover:bg-red-200 transition duration-300 transform hover:scale-105"
+          className="flex items-center text-red-600 bg-red-100 px-6 py-3 rounded-lg hover:bg-red-200 transition duration-300 transform hover:scale-105"
         >
           <FaTrashAlt className="mr-2" /> Delete
         </button>
