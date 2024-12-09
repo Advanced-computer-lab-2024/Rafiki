@@ -153,9 +153,6 @@ const createAdvertiser = async (req, res) => {
       return res.status(400).json({ error: 'You must accept the terms and conditions.' });
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(Password, 10);
-
     // Handle profile picture
     const profilePicture = req.file ? req.file.path : null;
 
@@ -163,7 +160,7 @@ const createAdvertiser = async (req, res) => {
     const newAdvertiser = await AdvertiserModel.create({
       Username,
       Email,
-      Password: hashedPassword,
+      Password,  // Store the plain-text password directly (no hashing)
       MobileNumber,
       Nationalty,
       DOB,

@@ -8,7 +8,7 @@ import ItineraryDetails from "../components/itineraryDetails";
 import ItineraryForm from "../components/itineraryForm";
 import ActivityDetails from "../components/ActivityDetails";
 import ChangePasswordForm from "../components/ChangePasswordForm";
-import TermsPopup from "../components/TermsPopup";
+// import TermsPopup from "../components/TermsPopup";
 import MonthlyReportDetails from "../components/MonthlyReportDetails"; // adjust based on your structure
 import SalesReport from "../components/SalesReport";
 import { FaUser, FaClipboardList, FaCar, FaKey, FaChartBar, FaTrashAlt } from "react-icons/fa";
@@ -455,7 +455,7 @@ useEffect(() => {
         )}
 
         {/* Terms Popup */}
-        {showPopup && <TermsPopup onAccept={handleAccept} />}
+        {/* {showPopup && <TermsPopup onAccept={handleAccept} />} */}
       </div>
     </div>
   );

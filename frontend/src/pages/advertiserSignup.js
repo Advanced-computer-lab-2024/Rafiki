@@ -13,7 +13,7 @@ import UpdateActivity from "../components/UpdateActivity";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
 import SalesReport from "../components/SalesReport";
-import backgroundImage from "../pics/pic4.jpg";
+import backgroundImage from "../pics/pic3.jpg";
 
 
 

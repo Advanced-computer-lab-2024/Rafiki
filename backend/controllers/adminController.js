@@ -93,11 +93,10 @@ async function sendForgotPasswordOTP(admin, otp) {
         return res.status(404).json({ message: 'Admin not found with this email.' });
       }
   
-      // Hash the new password before saving it
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      // Store the new password directly (without hashing)
+      admin.Password = newPassword;
   
-      // Update the password in the database
-      admin.Password = hashedPassword;
+      // Save the updated password
       await admin.save();
   
       res.status(200).json({ message: 'Password reset successfully.' });
@@ -106,6 +105,7 @@ async function sendForgotPasswordOTP(admin, otp) {
       res.status(500).json({ message: 'Error resetting password.' });
     }
   };
+  
   
   // Function to handle OTP verification
   const verifyOTP = async (req, res) => {
@@ -200,11 +200,10 @@ const resetPasswordG = async (req, res) => {
       return res.status(404).json({ message: 'Governor not found with this email.' });
     }
 
-    // Hash the new password before saving it
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Store the new password directly (without hashing)
+    governor.Password = newPassword;
 
-    // Update the password in the database
-    governor.Password = hashedPassword;
+    // Save the updated password
     await governor.save();
 
     res.status(200).json({ message: 'Password reset successfully.' });
@@ -213,6 +212,7 @@ const resetPasswordG = async (req, res) => {
     res.status(500).json({ message: 'Error resetting password.' });
   }
 };
+
 
 // Function to handle OTP verification for Governor
 const verifyOTPG = async (req, res) => {
