@@ -1029,32 +1029,6 @@ const handleGuideToggle = () => {
     Products
   </button>
 </li>
-<li>
-  <button
-    onClick={() => setActiveMenu("flightSearch")}
-    className={`w-full text-left flex items-center px-4 py-2 rounded ${
-      activeMenu === "flightSearch"
-        ? "bg-blue-700 text-white"
-        : "text-blue-400 hover:text-white"
-    }`}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-6 h-6 mr-3"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M9.75 9L15 4.75m0 0L20.25 9M15 4.75v14.5"
-      />
-    </svg>
-    Search Flights
-  </button>
-</li>
 {/* Sidebar Buttons */}
 
 
@@ -1064,42 +1038,7 @@ const handleGuideToggle = () => {
   {/* Search by Category */}
  
 
-  {/* Filter by Budget */}
- 
-
-  {/* Filter by Date */}
-  
-
-  
-
- 
-    {/* Museums Search */}
-    <li>
-      <button
-        onClick={() => setActiveMenu("museumsSearch")}
-        className={`w-full text-left flex items-center px-4 py-2 rounded ${
-          activeMenu === "museumsSearch"
-            ? "bg-blue-700 text-white"
-            : "text-blue-400 hover:text-white"
-        }`}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6 mr-3"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10 10h4m-2 0v6m0-6a2 2 0 110-4 2 2 0 110 4zm0 10a2 2 0 11-4 0 2 2 0 114 0z"
-          />
-        </svg>
-        Search Museums
-      </button>
-    </li>
+  {/* Filter by Budget */} 
 </ul>
 
 
