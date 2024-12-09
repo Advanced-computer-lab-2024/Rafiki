@@ -37,6 +37,7 @@ const AdminSignup = () => {
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
   const [isVisibleActivities, setIsVisibleActivities] = useState(false);
+  
 
   const [itineraries, setItineraries] = useState(null);
   const [activity, setActivity] = useState(null);
@@ -545,6 +546,18 @@ const AdminSignup = () => {
     Create Catogery
   </button>
 </li>
+
+
+ {/* User Data */}
+ {totalUsers !== null && newUsersThisMonth !== null ? (
+          <div className="text-right mb-6">
+            <p>Total Users: {totalUsers}</p>
+            <p>New Users This Month: {newUsersThisMonth}</p>
+          </div>
+        ) : (
+          <p className="text-right mb-6">Loading user data...</p>
+        )}
+
 
 
 <button
