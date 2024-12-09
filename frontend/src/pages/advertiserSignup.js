@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaUser, FaClipboardList, FaCar, FaKey, FaChartBar, FaTrashAlt } from "react-icons/fa";
 
 // Components
 import AdvertiserDetails from "../components/AdvertiserDetails";
@@ -12,6 +13,7 @@ import UpdateActivity from "../components/UpdateActivity";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import TermsPopup from "../components/TermsPopup";
 import SalesReport from "../components/SalesReport";
+import backgroundImage from "../pics/pic4.jpg";
 
 
 
@@ -148,14 +150,45 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
 
   const navigate = useNavigate();
 
+  const [advertiserUsername, setAdertiserUsername] = useState('');
+
+
+
   useEffect(() => {
-    const fetchAdvertisers = async () => {
-      const response = await fetch("/api/AdvertiserRoute");
-      const json = await response.json();
-      if (response.ok) setAdvertiser(json);
-    };
-    fetchAdvertisers();
+    const username = localStorage.getItem("loggedinUsername"); // Replace with your key
+    if (username) {
+      setAdertiserUsername(username);
+    } else {
+      console.error("advertiser username not found.");
+    }
   }, []);
+
+  
+
+  const fetchCurrentSeller = async () => {
+    const advertiserID = localStorage.getItem("loggedinID");
+    if (!advertiserID) {
+      console.error("No seller ID found. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/AdvertiserRoute/${advertiserID}`);
+      if (response.status === 200) {
+        setAdvertiser([response.data]); // Store only the current seller
+      }
+    } catch (err) {
+      console.error("Error fetching seller details:", err);
+    }
+  };
+
+ 
+  useEffect(() => {
+    fetchCurrentSeller();
+  }, []);
+
+
+  
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -196,80 +229,72 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
   
 
   return (
-    <div className="flex h-screen">
+    <div
+      className="flex h-screen"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       {/* Sidebar Menu */}
-      <div className="w-1/4 bg-gray-800 text-white p-6 h-full">
+      <div className="w-1/4 bg-gray-800 bg-opacity-90 text-white p-6 h-full">
         <h3 className="text-xl font-bold mb-4">Advertiser Dashboard</h3>
         <ul className="space-y-4">
           <li>
-            <button
+          <button
               onClick={() => setActiveContent("details")}
-              className="text-lg text-blue-400 hover:text-white"
+              className="flex items-center text-lg text-blue-400 hover:text-white"
             >
-              Show Advertiser Details
+              <FaUser className="mr-3" /> My Profile
             </button>
           </li>
           <li>
-            <button
+          <button
               onClick={() => setActiveContent("activities")}
-              className="text-lg text-blue-400 hover:text-white"
+              className="flex items-center text-lg text-blue-400 hover:text-white"
             >
-              Show Activities
+              <FaClipboardList className="mr-3" /> My Activities
             </button>
           </li>
           <li>
-            <button
-              onClick={() => setActiveContent("createActivity")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Create Activity
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setActiveContent("updateActivity")}
-              className="text-lg text-blue-400 hover:text-white"
-            >
-              Update Activity
-            </button>
-          </li>
-          <li>
-            <button
+          <button
               onClick={() => setActiveContent("createTransportation")}
-              className="text-lg text-blue-400 hover:text-white"
+              className="flex items-center text-lg text-blue-400 hover:text-white"
             >
-              Create Transportation Ad
+              <FaCar className="mr-3" /> Create Transportation Ad
             </button>
           </li>
           <li>
-            <button
+          <button
               onClick={() => setActiveContent("changePassword")}
-              className="text-lg text-blue-400 hover:text-white"
+              className="flex items-center text-lg text-blue-400 hover:text-white"
             >
-              Change Password
+              <FaKey className="mr-3" /> Change Password
             </button>
           </li>
           <li>
-            <button
-              onClick={handleShowRevenue}
-              className="text-lg text-blue-400 hover:text-white"
+          <button
+              onClick={() => setActiveContent("revenueReport")}
+              className="flex items-center text-lg text-blue-400 hover:text-white"
             >
-              {showRevenue ? "Hide Revenue" : "Show Revenue"}
+              <FaChartBar className="mr-3" /> Revenue Report
             </button>
           </li>
           <li>
-            <button
+          <button
               onClick={handleDeleteAccount}
-              className="text-lg text-red-500 hover:text-red-700"
+              className="flex items-center text-lg text-red-500 hover:text-red-700"
             >
-              Delete Account
+              <FaTrashAlt className="mr-3" /> Delete Account
             </button>
           </li>
         </ul>
       </div>
-
+  
       {/* Main Content */}
-      <div className="w-3/4 p-6">
+      <div className="w-3/4 p-6 overflow-auto bg-opacity-90">
         {activeContent === "description" && (
           <div className="text-center">
             <h3 className="text-3xl font-semibold text-gray-800 mb-6">
@@ -281,21 +306,54 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
             </p>
           </div>
         )}
-
+  
         {activeContent === "details" && (
-          <AdvertiserDetails advertiser={loggedInAdvertiser} />
+          <AdvertiserDetails  advertiser={advertiser} />
         )}
-
+  
         {activeContent === "activities" && (
-          <div>
-            <h3 className="text-2xl font-semibold text-gray-800">Activities</h3>
+          <div className="flex flex-col items-center">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
+            {/* Create Activity and Update Activity Buttons */}
+            <div className="mb-4 flex space-x-4">
+              <button
+                onClick={() => setActiveContent("createActivity")}
+                className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
+              >
+                Create New Activity
+              </button>
+              <button
+                onClick={() => setActiveContent("updateActivity")}
+                className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              >
+                Update Activity
+              </button>
+            </div>
+            {/* List of Activities */}
             {activity &&
               activity.map((act) => (
-                <ActivityDetails key={act._id} activity={act} />
+                <div
+                  key={act._id}
+                  className="border rounded p-4 mb-4 shadow-md bg-white max-w-2xl w-full"
+                >
+                  <ActivityDetails activity={act} />
+                  <div className="mt-2 flex items-center justify-start space-x-4"></div>
+                </div>
               ))}
           </div>
         )}
-
+  
+        {activeContent === "revenueReport" && (
+          <div>
+            <h3 className="text-3xl font-semibold text-gray-800 mb-6">
+              Revenue Report
+            </h3>
+            <div className="bg-white p-8 shadow-lg rounded-lg">
+              <SalesReport />
+            </div>
+          </div>
+        )}
+  
         {activeContent === "createActivity" && <ActivityForm />}
         {activeContent === "updateActivity" && (
           <UpdateActivity
@@ -303,20 +361,19 @@ const AdvertiserSignup = ({ loggedInAdvertiser }) => {
             onUpdate={() => setSelectedActivity(null)}
           />
         )}
-
+  
         {activeContent === "createTransportation" && (
           <CreateTransportationAd
             isVisible={true}
             onClose={() => setActiveContent("description")}
           />
         )}
-                {/* Conditionally Render the Sales Report */}
-                {showRevenue && <SalesReport />}
-
+  
         {activeContent === "changePassword" && <AdvChangePassword />}
       </div>
     </div>
   );
-};
+  
+}  
 
 export default AdvertiserSignup;

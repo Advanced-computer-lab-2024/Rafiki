@@ -37,6 +37,8 @@ router.post('/:username/addAddress', addAddress);
 
 // Route to get all addresses for a tourist
 router.get('/:username/addresses', getAddresses);
+router.post('/requestOTP', requestOTP); // Reset password route after OTP is verified
+
 router.post('/resetPassword', resetPassword); // Reset password route after OTP is verified
 router.post('/verifyOTP', verifyOTP);  // Add route for OTP verification
 

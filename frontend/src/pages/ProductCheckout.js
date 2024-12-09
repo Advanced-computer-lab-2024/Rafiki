@@ -68,6 +68,32 @@ const ProductCheckout = () => {
     fetchData();
   }, [username]);
 
+
+  const handleWalletPayment = async (productPrice) => {
+    try {
+      // Post the wallet payment request to the backend
+      const response = await axios.post(`/api/orders/payproduct/${username}`, {
+        productName,
+        totalPrice: productPrice, // The product price
+      });
+  
+      console.log('Wallet payment successful:', response.data);
+  
+      // Update the wallet balance in the frontend state
+      const updatedBalance = await axios.get(`/api/payments/${username}/wallet`);
+      setTouristWallet(updatedBalance.data.walletBalance); // Update the wallet balance
+      alert('Payment successful!');
+  
+      // Optionally, navigate to orders or a success page
+      navigate('/orders');
+    } catch (error) {
+      console.error('Error during wallet payment:', error);
+      alert('Payment failed. Please try again.');
+    }
+  };
+  
+
+
   // Handle payment method change
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -99,6 +125,18 @@ const ProductCheckout = () => {
       } catch (error) {
         console.error('Error creating order:', error);
       }
+
+      try {
+        // Call the wallet payment handler
+        await handleWalletPayment(totalPrice);
+  
+        setIsProcessing(false);
+      } catch (error) {
+        console.error('Error processing wallet payment:', error);
+        alert('Failed to process payment.');
+        setIsProcessing(false);
+      }
+      
       navigate('/orders'); // Navigate to orders page 
       setIsProcessing(false);
       return;
