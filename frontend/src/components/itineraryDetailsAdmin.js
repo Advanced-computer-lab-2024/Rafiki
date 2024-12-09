@@ -10,9 +10,9 @@ const ItineraryDetails = ({ itinerary }) => {
   const toggleItineraryActiveState = async () => {
     try {
       const response = await fetch(
-        `/api/itineraryRoute/itinerary/${itinerary._id}/toggle-active`,
+        `/api/itineraryRoute/${itinerary._id}/flag`,
         {
-          method: "PUT",
+          method: "GET",
           headers: { "Content-Type": "application/json" },
         }
       );
@@ -171,11 +171,9 @@ const ItineraryDetails = ({ itinerary }) => {
       <div className="flex justify-between items-center">
         <button
           onClick={toggleItineraryActiveState}
-          className={`px-4 py-2 text-white font-bold rounded-md ${
-            isActive ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"
-          }`}
-        >
-          {isActive ? "Deactivate Itinerary" : "Activate Itinerary"}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 font-bold rounded-md hover:bg-gray-300"
+            >
+            Flag Itinerary
         </button>
 
         <div className="flex space-x-4">

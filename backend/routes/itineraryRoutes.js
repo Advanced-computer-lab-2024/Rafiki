@@ -1,6 +1,6 @@
 const express = require('express');
 const { createItinerary, getItinerary, updateItinerary, deleteItinerary, getAllItinerary,getItinerariesSortedByPrice,getItinerariesByBudget,getItinerariesByAvailableDate
-    ,getItinerariesByLanguage,  addRatingToItinerary, getItineraryRatings,toggleItineraryActiveState} = require('../controllers/itineraryController');
+    ,getItinerariesByLanguage,  addRatingToItinerary, getItineraryRatings,toggleItineraryActiveState,sendNotifyFlagged} = require('../controllers/itineraryController');
 const router = express.Router();
 
 router.post('/creatingitinerary', createItinerary);
@@ -14,6 +14,8 @@ router.get('/filterDate/:date', getItinerariesByAvailableDate);
 router.get('/filterLanguage/:language', getItinerariesByLanguage);  
 router.post('/:id/ratings', addRatingToItinerary);
 router.get('/:id/ratings', getItineraryRatings);
+router.get('/:id/flag', sendNotifyFlagged);
+
 
 
 router.put('/itinerary/:id/toggle-active', toggleItineraryActiveState);
