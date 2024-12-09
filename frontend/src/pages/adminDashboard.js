@@ -46,6 +46,41 @@ const AdminSignup = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const dummySalesReports = [
+    { id: 1, name: "Item 1", price: 10, salesDate: "2024-11-01", quantitySold: 100 },
+    { id: 2, name: "Item 2", price: 20, salesDate: "2024-11-02", quantitySold: 50 },
+    { id: 3, name: "Item 3", price: 15, salesDate: "2024-12-01", quantitySold: 200 },
+    { id: 4, name: "Item 4", price: 30, salesDate: "2024-12-05", quantitySold: 75 },
+    // Add more data as necessary
+  ];
+  const [filteredSalesReports, setFilteredSalesReports] = useState(dummySalesReports);
+const [filterItem, setFilterItem] = useState('');
+const [filterDate, setFilterDate] = useState('');
+const [filterMonth, setFilterMonth] = useState('');
+
+// Filter sales reports based on selected criteria
+const filterSalesReports = () => {
+  let filtered = dummySalesReports;
+  
+  if (filterItem) {
+    filtered = filtered.filter(item => item.name.toLowerCase().includes(filterItem.toLowerCase()));
+  }
+  
+  if (filterDate) {
+    filtered = filtered.filter(item => item.salesDate === filterDate);
+  }
+
+  if (filterMonth) {
+    filtered = filtered.filter(item => new Date(item.salesDate).getMonth() + 1 === parseInt(filterMonth));
+  }
+
+  setFilteredSalesReports(filtered);
+};
+
+useEffect(() => {
+  filterSalesReports();
+}, [filterItem, filterDate, filterMonth]);
+
 
   //const location = useLocation();
   //const outOfStockProducts = location.state?.outOfStockProducts || [];
@@ -665,6 +700,24 @@ const AdminSignup = () => {
               Complaints
             </button>
           </li>
+          <li>
+  <button
+    onClick={() => setActiveMenu('salesReports')}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === 'salesReports' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-5 h-5 mr-2"
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+    </svg>
+    Show Revenue
+  </button>
+</li>
         </ul>
       </div>
   
@@ -835,12 +888,74 @@ const AdminSignup = () => {
     selectedFile={selectedFile}
   />
 )}
+{activeMenu === 'salesReports' && (
+  <div
+    className="admin-form p-4 rounded shadow-md"
+    style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
+      backdropFilter: 'blur(10px)', // Frosted glass effect
+    }}
+  >
+    {/* Filter Section */}
+    <div className="mb-4">
+      <input
+        type="text"
+        placeholder="Filter by Item"
+        value={filterItem}
+        onChange={(e) => setFilterItem(e.target.value)}
+        className="p-2 mb-2 border rounded w-full"
+      />
+      <input
+        type="date"
+        value={filterDate}
+        onChange={(e) => setFilterDate(e.target.value)}
+        className="p-2 mb-2 border rounded w-full"
+      />
+      <select
+        value={filterMonth}
+        onChange={(e) => setFilterMonth(e.target.value)}
+        className="p-2 mb-4 border rounded w-full"
+      >
+        <option value="">Select Month</option>
+        {[...Array(12)].map((_, index) => (
+          <option value={index + 1} key={index}>
+            {new Date(0, index).toLocaleString('en-US', { month: 'long' })}
+          </option>
+        ))}
+      </select>
+
+      {/* Display Filtered Sales Reports */}
+      <table className="min-w-full border-collapse">
+        <thead>
+          <tr>
+            <th className="border-b p-2">Item</th>
+            <th className="border-b p-2">Price</th>
+            <th className="border-b p-2">Quantity Sold</th>
+            <th className="border-b p-2">Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredSalesReports.map((item) => (
+            <tr key={item.id}>
+              <td className="border-b p-2">{item.name}</td>
+              <td className="border-b p-2">${item.price}</td>
+              <td className="border-b p-2">{item.quantitySold}</td>
+              <td className="border-b p-2">${item.price * item.quantitySold}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
         {activeMenu === 'complaints' && (
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
          {complaints.map((complaint) => (
            <ComplaintDetails complaint={complaint} key={complaint._id} />
          ))}
        </div>
+       
        
         )}
       </div>
