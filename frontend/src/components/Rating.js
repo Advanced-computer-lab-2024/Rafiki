@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Rating.css'; // Import CSS for styling
 
-const Rating = ({ itemId, onRate }) => {  // Use a generic `itemId` prop
+const Rating = ({ itemId, onRate }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
 
@@ -28,21 +28,25 @@ const Rating = ({ itemId, onRate }) => {  // Use a generic `itemId` prop
                                     checked={rating === index + 1} 
                                     onChange={() => setRating(index + 1)} 
                                     className="star-input"
+                                    aria-label={`Rate ${index + 1} stars`}
                                 />
                                 {index + 1} ⭐
                             </span>
                         ))}
                     </div>
                 </div>
+
                 <div className="comment-input">
                     <label className="comment-label">Comment:</label>
                     <textarea 
                         value={comment} 
                         onChange={(e) => setComment(e.target.value)} 
-                        placeholder="Leave a comment" 
+                        placeholder="Leave a comment..." 
                         className="comment-textarea"
+                        aria-label="Leave a comment"
                     />
                 </div>
+
                 <button type="submit" className="submit-button">Submit</button>
             </form>
         </div>

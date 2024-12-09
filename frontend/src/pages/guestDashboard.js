@@ -46,12 +46,28 @@ const GuestDashboard = () => {
   const [isVisibleCreateTag, setIsVisibleCreateTag] = useState(false);
   const [isVisibleAddMuseum, setIsVisibleAddMuseum] = useState(false);
   const [isVisibleChangePassword, setIsVisibleChangePassword] = useState(false);
+  const [activeContent, setActiveContent] = useState("description"); // Default to show the description
 
     const [loading, setLoading] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
     const handleToggleVisibility = (stateSetter) => {
         stateSetter((prevState) => !prevState);
       };
+
+      useEffect(() => {
+        // Fetch itineraries data from the backend
+        const fetchItineraries = async () => {
+            const response = await fetch('/api/itineraryRoute');
+            const data = await response.json();
+            if (response.ok) {
+                setItineraries(data); // Set the fetched itineraries data
+            } else {
+                console.error("Error fetching itineraries");
+            }
+        };
+
+        fetchItineraries();
+    }, []);
       useEffect(() => {
         const fetchData = async () => {
           try {
@@ -241,13 +257,13 @@ const GuestDashboard = () => {
                         </button>
                     </li>
                     <li>
-                        <button
-                            onClick={() => setIsVisibleItineraries(!isVisibleItineraries)}
-                            className="text-lg text-blue-400 hover:text-white"
-                        >
-                            Show Itineraries
-                        </button>
-                    </li>
+    <button
+        onClick={() => setActiveContent("itineraries")} // Change activeContent to "itineraries"
+        className="text-lg text-blue-400 hover:text-white"
+    >
+        Show Itineraries
+    </button>
+</li>
                     <li>
                         <button
                             onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}
@@ -491,6 +507,19 @@ const GuestDashboard = () => {
                     </button>
                 </div>
             )}
+{activeContent === "itineraries" && (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Itineraries</h3>
+        {/* Render itineraries if available */}
+        {itineraries && itineraries.length > 0 ? (
+            itineraries.map((itinerary) => (
+                <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+            ))
+        ) : (
+            <p className="text-gray-500">No itineraries available.</p>
+        )}
+    </div>
+)}
 
             {/* Itinerary Budget Filter Section */}
             {isVisibleBudgetFilterItinerary && (

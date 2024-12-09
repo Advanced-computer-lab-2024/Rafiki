@@ -12,7 +12,10 @@ const {
     changePassword, 
     uploadSellerPicture, 
     deleteSellerIfAllowed ,
-    loginSeller
+    loginSeller,
+    requestOTP,
+    resetPassword,
+    verifyOTP,
 } = require('../controllers/sellerController');
 
 // Configure multer for file upload
@@ -34,5 +37,8 @@ router.put('/:id', updateSeller);
 router.get('/', getAllSellers);
 router.post('/changePassword', changePassword);
 router.delete('/deleteRequest/:id', deleteSellerIfAllowed); // Fixed the reference here
+router.post('/requestOTP', requestOTP); // Sends OTP for password reset
+router.post('/resetPassword', resetPassword); // Resets password after OTP verification
+router.post('/verifyOTP', verifyOTP);  // Verifies OTP
 
 module.exports = router;

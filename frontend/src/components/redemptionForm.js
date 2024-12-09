@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './RedemptionForm.css'; // Import custom CSS for styling
 
 const RedemptionForm = ({ onClose }) => {
     const [touristUsername, setTouristUsername] = useState('');
@@ -32,23 +33,37 @@ const RedemptionForm = ({ onClose }) => {
     };
 
     return (
-        <div className="redemption-form">
-            <h3>Redeem Points</h3>
-            {message && <p>{message}</p>}
-            <input
-                type="text"
-                placeholder="Username"
-                value={touristUsername}
-                onChange={(e) => setTouristUsername(e.target.value)}
-            />
-            <input
-                type="number"
-                placeholder="Points to redeem"
-                value={pointsToRedeem}
-                onChange={(e) => setPointsToRedeem(e.target.value)}
-            />
-            <button onClick={handleRedeemPoints}>Redeem</button>
-            <button onClick={onClose}>Close</button>
+        <div className="redemption-form-container">
+            <div className="redemption-form">
+                <h3 className="form-title">Redeem Points</h3>
+                {message && <p className="message">{message}</p>}
+                <div className="input-group">
+                    <label htmlFor="touristUsername" className="input-label">Username:</label>
+                    <input
+                        id="touristUsername"
+                        type="text"
+                        className="input-field"
+                        placeholder="Enter your username"
+                        value={touristUsername}
+                        onChange={(e) => setTouristUsername(e.target.value)}
+                    />
+                </div>
+                <div className="input-group">
+                    <label htmlFor="pointsToRedeem" className="input-label">Points to Redeem:</label>
+                    <input
+                        id="pointsToRedeem"
+                        type="number"
+                        className="input-field"
+                        placeholder="Enter points"
+                        value={pointsToRedeem}
+                        onChange={(e) => setPointsToRedeem(e.target.value)}
+                    />
+                </div>
+                <div className="form-buttons">
+                    <button className="redeem-button" onClick={handleRedeemPoints}>Redeem</button>
+                    <button className="close-button" onClick={onClose}>Close</button>
+                </div>
+            </div>
         </div>
     );
 };

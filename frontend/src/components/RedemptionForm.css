@@ -1,0 +1,91 @@
+/* Container */
+.redemption-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2); /* Transparent overlay */
+}
+
+.redemption-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.form-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.message {
+    font-size: 1em;
+    color: green;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.redeem-button, .close-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 48%;
+}
+
+.redeem-button {
+    background-color: #4A90E2;
+}
+
+.redeem-button:hover {
+    background-color: #357ABD;
+}
+
+.close-button {
+    background-color: #E74C3C;
+}
+
+.close-button:hover {
+    background-color: #C0392B;
+}

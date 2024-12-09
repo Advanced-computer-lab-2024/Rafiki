@@ -375,7 +375,7 @@ const AdminSignup = () => {
   };
   const [sellerUsername, setSellerUsername] = useState('');
   useEffect(() => {
-    const username = localStorage.getItem("adminUsername");
+    const username = localStorage.getItem("loggedinUsername");
     console.log("Retrieved username from localStorage:", username); // Debugging
     if (username) {
       setSellerUsername(username);
@@ -384,7 +384,7 @@ const AdminSignup = () => {
       setSellerUsername("Guest"); // Default fallback
     }
   }, []);
-  
+
 
   return (
     <div
