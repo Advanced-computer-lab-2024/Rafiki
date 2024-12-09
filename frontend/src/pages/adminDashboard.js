@@ -33,6 +33,7 @@ const AdminSignup = () => {
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
   const [isVisibleActivities, setIsVisibleActivities] = useState(false);
+  
 
   const [complaints, setComplaints] = useState(null); 
   const [isVisibleComplaints, setIsVisibleComplaints] = useState(false);
@@ -405,6 +406,40 @@ const AdminSignup = () => {
   
         {/* Sidebar Menu */}
         <ul className="space-y-6">
+        <li>
+    <div className="w-full px-4 py-2 rounded bg-blue-100">
+      <div className="flex items-center mb-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-5 h-5 mr-2 text-blue-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 14c4 0 6-2 6-6 0-3-2-5-5-5s-5 2-5 5c0 1.5 0.7 2.8 1.8 3.6a4.8 4.8 0 0 1 2.2-.6zM12 2a4 4 0 1 0 0 8 4 4 0 1 0 0-8zm0 18c-5 0-8-2 0-6s0 6 0 6z"
+          />
+        </svg>
+        <p className="text-lg font-semibold text-blue-600">User Data</p>
+      </div>
+      <div className="text-sm text-gray-600">
+        {totalUsers !== null && newUsersThisMonth !== null ? (
+          <div className="space-y-1">
+            <p>Total Users: <span className="font-medium">{totalUsers}</span></p>
+            <p>New Users This Month: <span className="font-medium">{newUsersThisMonth}</span></p>
+          </div>
+        ) : (
+          <p className="text-gray-400">Loading user data...</p>
+        )}
+      </div>
+    </div>
+  </li>
+
+
+
           <li>
             <button
               onClick={() => setActiveMenu('tags')}
@@ -524,6 +559,10 @@ const AdminSignup = () => {
     Create Catogery
   </button>
 </li>
+
+
+
+
 
 
 <button

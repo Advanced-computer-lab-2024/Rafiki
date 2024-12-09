@@ -2,6 +2,8 @@ const Activity = require('../models/activity');
 const nodemailer=require('nodemailer');
 const Notification=require('../models/notification');
 const Tourist=require('../models/Tourist');
+const Advertiser = require('../models/Advertiser');
+
 
 // Create an Activity
 const createActivity = async (req, res) => {
@@ -17,6 +19,7 @@ const createActivity = async (req, res) => {
             specialDiscounts, 
             isBookingOpen,
          tourGuideUsername,
+
         });
         res.status(201).json(activity);
     } catch (error) {
@@ -69,6 +72,41 @@ const notifyUsers = async (activityId) => {
     }
 };
 
+
+const sendNotifyFlagged = async (req, res) => {
+    const { id } = req.params; // Extract itinerary ID from request parameters
+    try {
+      // Find the itinerary by ID
+      const activity = await Activity.findById(id);
+  
+      if (!activity) {
+        return res.status(404).json({ message: "Itinerary not found." });
+      }
+  
+      // Check if the logged-in tour guide is authorized to view this itinerary
+  
+      // Find the associated tour guide by ID
+      const advertiser = await Advertiser.findOne({ Username: activity.tourGuideUsername });
+      if (!advertiser) {
+        return res.status(404).json({ message: "Tour guide not found." });
+      }
+  
+      // Construct the email subject and message
+      const subject = `Alert: Flagged Itinerary/Event - ${activity.name || activity.location}`;
+      const message = `Dear ${advertiser.Username},\n\nWe would like to inform you that your activity at ${
+        activity.location || activity.pickupLocation
+      } on ${
+        activity.date || activity.availableDates[0]
+      } has been flagged as inappropriate by the admin.\n\nPlease review the details and take the necessary actions. If you believe this is an error, you may contact our support team for further assistance.\n\nThank you for your cooperation.\n\nBest regards,\nRafiki`;
+  
+      // Send notification email
+      sendNotificationEmail(advertiser.Email, subject, message);
+  
+      res.status(200).json({ message: "Notification sent successfully.", activity });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Use the email service you're working with
     auth: {
@@ -287,4 +325,5 @@ module.exports = {
     getActivityRatings,
     notifyUsers,
     getActivityPriceById,
+    sendNotifyFlagged
 };
