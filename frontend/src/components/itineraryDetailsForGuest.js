@@ -262,29 +262,9 @@ const cancelItineraryBooking = async () => {
 
                 {/* Payment and booking actions */}
                 <div className="flex flex-wrap gap-4 mb-4">
-                    <button
-                        onClick={() => handlePaymentClickItinerary(itinerary)}
-                        className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
-                    >
-                        <FaDollarSign className="mr-2" /> Pay for Itinerary
-                    </button>
-
-                    <button
-                        onClick={bookItinerary}
-                        className="flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-                    >
-                        <FaPen className="mr-2" /> Book Itinerary
-                    </button>
-
-                    <button
-                        onClick={cancelItineraryBooking}
-                        disabled={!isCancelable}
-                        className={`flex items-center bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition ${
-                            !isCancelable ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
-                    >
-                        <FaUndo className="mr-2" /> Cancel Booking
-                    </button>
+                   
+                
+                    
                 </div>
 
                 {isPaymentVisible && (
@@ -309,13 +289,7 @@ const cancelItineraryBooking = async () => {
                         <FaClipboard className="mr-2" /> Copy Itinerary Link
                     </button>
 
-                    <button
-                        onClick={attendItinerary}
-                        className="flex items-center bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition"
-                    >
-                        <FaRegCheckCircle className="mr-2" /> Attend Itinerary
-                    </button>
-
+                 
                     <button
                         onClick={shareViaEmail}
                         className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
