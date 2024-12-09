@@ -17,10 +17,6 @@ import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { useLocation } from 'react-router-dom';
 import pic from '../pics/pic3.jpg'
-import ItineraryDetails from "../components/itineraryDetailsAdmin";
-import ActivityDetails from "../components/ActivityDetailsAdmin";
-
-
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
   const [isVisible, setIsVisible] = useState(false); // For toggling tags visibility
@@ -39,9 +35,6 @@ const AdminSignup = () => {
   const [isVisibleActivities, setIsVisibleActivities] = useState(false);
   
 
-  const [itineraries, setItineraries] = useState(null);
-  const [activity, setActivity] = useState(null);
-
   const [complaints, setComplaints] = useState(null); 
   const [isVisibleComplaints, setIsVisibleComplaints] = useState(false);
   const [isVisibleStatusSearch, setIsVisibleStatusSearch] = useState(false);
@@ -54,41 +47,6 @@ const AdminSignup = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
-  const dummySalesReports = [
-    { id: 1, name: "Item 1", price: 10, salesDate: "2024-11-01", quantitySold: 100 },
-    { id: 2, name: "Item 2", price: 20, salesDate: "2024-11-02", quantitySold: 50 },
-    { id: 3, name: "Item 3", price: 15, salesDate: "2024-12-01", quantitySold: 200 },
-    { id: 4, name: "Item 4", price: 30, salesDate: "2024-12-05", quantitySold: 75 },
-    // Add more data as necessary
-  ];
-  const [filteredSalesReports, setFilteredSalesReports] = useState(dummySalesReports);
-const [filterItem, setFilterItem] = useState('');
-const [filterDate, setFilterDate] = useState('');
-const [filterMonth, setFilterMonth] = useState('');
-
-// Filter sales reports based on selected criteria
-const filterSalesReports = () => {
-  let filtered = dummySalesReports;
-  
-  if (filterItem) {
-    filtered = filtered.filter(item => item.name.toLowerCase().includes(filterItem.toLowerCase()));
-  }
-  
-  if (filterDate) {
-    filtered = filtered.filter(item => item.salesDate === filterDate);
-  }
-
-  if (filterMonth) {
-    filtered = filtered.filter(item => new Date(item.salesDate).getMonth() + 1 === parseInt(filterMonth));
-  }
-
-  setFilteredSalesReports(filtered);
-};
-
-useEffect(() => {
-  filterSalesReports();
-}, [filterItem, filterDate, filterMonth]);
-
 
   //const location = useLocation();
   //const outOfStockProducts = location.state?.outOfStockProducts || [];
@@ -134,21 +92,8 @@ useEffect(() => {
         setIsUploading(false);
       }
     };
-
-    const fetchItineraries = async () => {
-      const response = await fetch("/api/itineraryRoute");
-      const json = await response.json();
-      if (response.ok) setItineraries(json);
-    };
   
-    useEffect(() => {
-      const fetchActivities = async () => {
-        const response = await fetch("/api/ActivityRoute");
-        const json = await response.json();
-        if (response.ok) setActivity(json);
-      };
-      fetchActivities();
-    }, []);
+
 
     const fetchOutOfStockProducts = async () => {
       try {
@@ -171,7 +116,6 @@ useEffect(() => {
   
     useEffect(() => {
       fetchOutOfStockProducts();
-      fetchItineraries();
     }, []);
   
     // Close the pop-up
@@ -462,6 +406,40 @@ useEffect(() => {
   
         {/* Sidebar Menu */}
         <ul className="space-y-6">
+        <li>
+    <div className="w-full px-4 py-2 rounded bg-blue-100">
+      <div className="flex items-center mb-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-5 h-5 mr-2 text-blue-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 14c4 0 6-2 6-6 0-3-2-5-5-5s-5 2-5 5c0 1.5 0.7 2.8 1.8 3.6a4.8 4.8 0 0 1 2.2-.6zM12 2a4 4 0 1 0 0 8 4 4 0 1 0 0-8zm0 18c-5 0-8-2 0-6s0 6 0 6z"
+          />
+        </svg>
+        <p className="text-lg font-semibold text-blue-600">User Data</p>
+      </div>
+      <div className="text-sm text-gray-600">
+        {totalUsers !== null && newUsersThisMonth !== null ? (
+          <div className="space-y-1">
+            <p>Total Users: <span className="font-medium">{totalUsers}</span></p>
+            <p>New Users This Month: <span className="font-medium">{newUsersThisMonth}</span></p>
+          </div>
+        ) : (
+          <p className="text-gray-400">Loading user data...</p>
+        )}
+      </div>
+    </div>
+  </li>
+
+
+
           <li>
             <button
               onClick={() => setActiveMenu('tags')}
@@ -583,15 +561,7 @@ useEffect(() => {
 </li>
 
 
- {/* User Data */}
- {totalUsers !== null && newUsersThisMonth !== null ? (
-          <div className="text-right mb-6">
-            <p>Total Users: {totalUsers}</p>
-            <p>New Users This Month: {newUsersThisMonth}</p>
-          </div>
-        ) : (
-          <p className="text-right mb-6">Loading user data...</p>
-        )}
+
 
 
 
@@ -676,46 +646,6 @@ useEffect(() => {
           </li>
           <li>
             <button
-              onClick={() => setActiveMenu('itineraries')}
-              className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                activeMenu === 'itineraries'
-                  ? 'bg-blue-700 text-white'
-                  : 'text-blue-400 hover:text-white'
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 mr-2"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
-              </svg>
-              Itineraries Details
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setActiveMenu('activities')}
-              className={`w-full text-left flex items-center px-4 py-2 rounded ${
-                activeMenu === 'activities'
-                  ? 'bg-blue-700 text-white'
-                  : 'text-blue-400 hover:text-white'
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 mr-2"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
-              </svg>
-              Activities Details
-            </button>
-          </li>
-          <li>
-            <button
               onClick={() => setActiveMenu('archived')}
               className={`w-full text-left flex items-center px-4 py-2 rounded ${
                 activeMenu === 'archived'
@@ -774,24 +704,6 @@ useEffect(() => {
               Complaints
             </button>
           </li>
-          <li>
-  <button
-    onClick={() => setActiveMenu('salesReports')}
-    className={`w-full text-left flex items-center px-4 py-2 rounded ${
-      activeMenu === 'salesReports' ? 'bg-blue-700 text-white' : 'text-blue-400 hover:text-white'
-    }`}
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5 mr-2"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
-    </svg>
-    Show Revenue
-  </button>
-</li>
         </ul>
       </div>
   
@@ -946,45 +858,6 @@ useEffect(() => {
             )}
           </div>/* Product Details content here */}</div>
         )}
-
-
-                {/* Itineraries Section */}
-                {activeMenu === "itineraries" && (
-  <div className="bg-white p-6 rounded-lg shadow-lg">
-    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-      Itineraries
-    </h3>
-    {/* Show Itineraries */}
-    {itineraries ? (
-      <>
-        {itineraries.map((itinerary) => (
-          <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
-        ))}
-      </>
-    ) : (
-      <p className="text-gray-500">No itineraries available.</p>
-    )}
-  </div>
-)}
-  
-        {activeMenu === "activities" && (
-          <div className="flex flex-col items-center">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
-            {/* List of Activities */}
-            {activity &&
-              activity.map((act) => (
-                <div
-                  key={act._id}
-                  className="border rounded p-4 mb-4 shadow-md bg-white max-w-2xl w-full"
-                >
-                  <ActivityDetails activity={act} />
-                  <div className="mt-2 flex items-center justify-start space-x-4"></div>
-                </div>
-              ))}
-          </div>
-        )}
-
-
         {activeMenu === 'archived' && (
           <div className="archived">{
             <ArchivedProducts />/* Archived Products content here */}</div>
@@ -1001,67 +874,6 @@ useEffect(() => {
     selectedFile={selectedFile}
   />
 )}
-{activeMenu === 'salesReports' && (
-  <div
-    className="admin-form p-4 rounded shadow-md"
-    style={{
-      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
-      backdropFilter: 'blur(10px)', // Frosted glass effect
-    }}
-  >
-    {/* Filter Section */}
-    <div className="mb-4">
-      <input
-        type="text"
-        placeholder="Filter by Item"
-        value={filterItem}
-        onChange={(e) => setFilterItem(e.target.value)}
-        className="p-2 mb-2 border rounded w-full"
-      />
-      <input
-        type="date"
-        value={filterDate}
-        onChange={(e) => setFilterDate(e.target.value)}
-        className="p-2 mb-2 border rounded w-full"
-      />
-      <select
-        value={filterMonth}
-        onChange={(e) => setFilterMonth(e.target.value)}
-        className="p-2 mb-4 border rounded w-full"
-      >
-        <option value="">Select Month</option>
-        {[...Array(12)].map((_, index) => (
-          <option value={index + 1} key={index}>
-            {new Date(0, index).toLocaleString('en-US', { month: 'long' })}
-          </option>
-        ))}
-      </select>
-
-      {/* Display Filtered Sales Reports */}
-      <table className="min-w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="border-b p-2">Item</th>
-            <th className="border-b p-2">Price</th>
-            <th className="border-b p-2">Quantity Sold</th>
-            <th className="border-b p-2">Revenue</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSalesReports.map((item) => (
-            <tr key={item.id}>
-              <td className="border-b p-2">{item.name}</td>
-              <td className="border-b p-2">${item.price}</td>
-              <td className="border-b p-2">{item.quantitySold}</td>
-              <td className="border-b p-2">${item.price * item.quantitySold}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-)}
-
         {activeMenu === 'complaints' && (
          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
          {complaints.map((complaint) => (
@@ -1069,11 +881,7 @@ useEffect(() => {
          ))}
        </div>
        
-       
         )}
-
-
-        
       </div>
     </div>
   );
