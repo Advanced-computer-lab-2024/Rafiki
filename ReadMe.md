@@ -12,8 +12,8 @@ The inspiration behind **Rafiki** stems from the desire to make travel more acce
 ## Build Status
 - Provide the current status of the project (e.g., "Complete," "In Progress," "Needs Improvement").
 - Include any notable issues or bugs not covered elsewhere in the README.
-Current Status: Complete
-No Current Bugs
+Current Status:Needs Improvement (Some requirements are not done yet)
+Bugs found such as some edit and delete buttons are not functioning properly and some filters are not working properly
 
 ## Code Style
 
