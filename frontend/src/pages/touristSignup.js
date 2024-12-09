@@ -809,6 +809,11 @@ const handleGuideToggle = () => {
         }
     };
 
+
+    const handleNavigation = () => {
+      navigate("/orders");  // Navigate to the Orders page
+    };
+
     // Increase item amount
     const handleIncreaseAmount = async (productId) => {
         try {
@@ -1333,7 +1338,7 @@ const handleGuideToggle = () => {
 
 <li>
   <button
-    onClick={() => setActiveMenu("cart")}
+ onClick={handleNavigation}
     className={`w-full text-left flex items-center px-4 py-2 rounded ${
       activeMenu === "cart"
         ? "bg-blue-700 text-white"
@@ -1350,7 +1355,7 @@ const handleGuideToggle = () => {
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18M9 3L5 15h14l-4-12H9z" />
     </svg>
-    Cart
+    Orders
   </button>
 </li>
 
