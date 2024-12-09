@@ -17,6 +17,7 @@ import PastActivities from "../components/PastActivities";
 import PastItineraries from "../components/PastItineraries";
 import { useLocation, Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import pic from '../pics/pic3.jpg'
 
 
 // componentsf
@@ -116,7 +117,7 @@ const handleGuideToggle = () => {
     const [isVisibleItineraryBookmark, setIsVisibleItineraryBookmark] = useState(false);
     const [bookmarkusername, setbookmarkUsername] = useState("");
     const [username, setUsername] = useState('');
-    
+   
     //address
     const [newAddress, setNewAddress] = useState({
         street: '',
@@ -688,33 +689,6 @@ const handleGuideToggle = () => {
         }
     };
 
-    const requestNotification = async (username, activityId) => {
-        if (!username) {
-            console.error('Username is missing!');
-            alert('Failed to request notification. Username is missing.');
-            return;
-        }
-    
-        try {
-            const response = await fetch('/api/bookmarkRoute/request', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, activityId }),
-            });
-            const data = await response.json();
-    
-            if (response.ok) {
-                alert(data.message);
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-            console.error('Error requesting notification:', error);
-            alert('Failed to request notification.');
-        }
-    };
-    
-
     // Fetch activities with filters
     const fetchProducts = async () => {
         const response = await fetch('/api/productsRoute'); // Adjust the endpoint as necessary
@@ -765,7 +739,6 @@ const handleGuideToggle = () => {
             // Check if the response is successful
             if (response.ok) {
                 alert("Product purchased successfully!");
-                navigate('/ProductCheckout');
             } else {
                 alert("Failed to purchase product.");
             }
@@ -882,17 +855,17 @@ const handleGuideToggle = () => {
           alert("All address fields are required!");
           return;
         }
-    
+   
         try {
           const username = localStorage.getItem('username'); // Assuming username is stored in localStorage
-    
+   
           // Make the POST request to add the address
           const response = await axios.post(`/api/TouristRoute/${username}/addAddress`, newAddress);
-    
+   
           // Check if the request was successful
           if (response.status === 200) {
             alert("Address added successfully!");
-            
+           
             // Update the address list after adding the new address
             setAddresses(response.data.addresses); // Assuming the response contains the updated list of addresses
             setNewAddress({ street: '', city: '', postalCode: '' }); // Clear the form fields
@@ -902,738 +875,1730 @@ const handleGuideToggle = () => {
           setError("There was an error adding the address.");
         }
       };
-    
+   
 
     // Navigate to checkout page
     const handleCheckout = () => {
         navigate('/checkout', { state: { addresses } });  // Use navigate() instead of history.push
     };
 
-    const handleOrder=()=>{
-        navigate('/orders')
-    }
+   
 
-
+    const [activeMenu, setActiveMenu] = useState("seller");
 
 
 
 
 
     return (
-        <div>
-            <h2>Tourist Dashboard</h2>
-            <button
-  onClick={handleGuideToggle}
-  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
->
-  {isGuideVisible ? 'Hide Vacation Guide' : 'View Vacation Guide'}
-</button>
-{isGuideVisible && (
-  <div className="bg-gray-100 border border-gray-300 rounded p-4 mt-4">
-    <h3 className="text-xl font-bold mb-3">Step-by-Step Vacation Guide</h3>
-    <ol className="list-decimal ml-6">
-      <li>Login to your account.</li>
-      <li>Explore available activities, itineraries, and accommodations.</li>
-      <li>Add your favorite activities to your cart.</li>
-      <li>Confirm your bookings and make payments.</li>
-      <li>Check your email for booking confirmations.</li>
-      <li>Enjoy your vacation!</li>
-    </ol>
-    <div className="mt-4">
-      <h4 className="text-lg font-semibold">Demo: How to Use the System</h4>
-      <p className="mt-2 text-gray-700">
-        Use the navigation bar to access various sections. Browse itineraries or activities, add them to your cart, and confirm your bookings through the checkout process. If you need assistance, contact support via the help section.
-      </p>
+        <div
+          className="flex min-h-screen bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${pic})`, // Replace with your actual background image URL
+          }}
+        >
+          {/* Sidebar */}
+          <div className="w-1/4 bg-gray-900 text-white p-6">
+            {/* Profile Section */}
+            <div className="flex items-center mb-8">
+              <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"></div>
+              <span className="ml-4 text-lg font-semibold">Hi, </span>
+            </div>
+     
+            {/* Sidebar Menu */}
+            <ul className="space-y-6">
+              <li>
+                <button
+                  onClick={() => setActiveMenu("activities")}
+                  className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                    activeMenu === "activities"
+                      ? "bg-blue-700 text-white"
+                      : "text-blue-400 hover:text-white"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 mr-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12h6m2 0a2 2 0 10-4 0 2 2 0 014 0zM4 6h16M4 18h16"
+                    />
+                  </svg>
+                  Activities
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveMenu("museums")}
+                  className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                    activeMenu === "museums"
+                      ? "bg-blue-700 text-white"
+                      : "text-blue-400 hover:text-white"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 mr-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12h6M4 6h16M4 18h16"
+                    />
+                  </svg>
+                  Museums
+                </button>
+              </li>
+              <li>
+  <button
+    onClick={() => setActiveMenu("itineraries")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "itineraries"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M3 16h18M3 12h18" />
+    </svg>
+    Itineraries
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu("pastItineraries")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "pastItineraries"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6M4 6h16M4 18h16" />
+    </svg>
+    Past Itineraries
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("bookmarkDetails")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "bookmarkDetails"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 12h14m-7 4h7" />
+    </svg>
+    Bookmark Details
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("wishlistDetails")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "wishlistDetails"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M3 16h18M3 12h18" />
+    </svg>
+    Wishlist Details
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu("tourguides")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "tourguides"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m2 0a2 2 0 10-4 0 2 2 0 014 0zM4 6h16M4 18h16" />
+    </svg>
+    Tour Guides
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("upcomingActivities")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "upcomingActivities"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m2 0a2 2 0 10-4 0 2 2 0 014 0zM4 6h16M4 18h16" />
+    </svg>
+    Upcoming Activities
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("upcomingItineraries")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "upcomingItineraries"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6M4 6h16M4 18h16" />
+    </svg>
+    Upcoming Itineraries
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("pastActivities")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "pastActivities"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6M4 6h16M4 18h16" />
+    </svg>
+    Past Activities
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("updateTourist")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "updateTourist"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Update Tourist
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("complaint")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "complaint"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Complaint
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu("products")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "products"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h18M3 16h18M3 12h18" />
+    </svg>
+    Products
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("redeemPoints")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "redeemPoints"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12h6M4 6h16M4 18h16"
+      />
+    </svg>
+    Redeem Points
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("addAddress")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "addAddress"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M5 8h14M5 12h14m-7 4h7"
+      />
+    </svg>
+    Add New Address
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu("existingAddresses")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "existingAddresses"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Existing Addresses
+  </button>
+</li>
+
+<li>
+  <button
+    onClick={() => setActiveMenu("cart")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "cart"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18M9 3L5 15h14l-4-12H9z" />
+    </svg>
+    Cart
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("flightSearch")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "flightSearch"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.75 9L15 4.75m0 0L20.25 9M15 4.75v14.5"
+      />
+    </svg>
+    Search Flights
+  </button>
+</li>
+
+
+
+<li>
+  <button
+    onClick={() => setActiveMenu("cart")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "cart"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h18M9 3L5 15h14l-4-12H9z" />
+    </svg>
+    Cart
+  </button>
+</li>
+
+{/* Sidebar Buttons */}
+<li>
+  <button
+    onClick={() => setActiveMenu("sortByPrice")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "sortByPrice"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Sort Itineraries by Price
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("viewItineraries")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "viewItineraries"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    View Itineraries
+  </button>
+</li>
+<li>
+  <button
+    onClick={() => setActiveMenu("popups")}
+    className={`w-full text-left flex items-center px-4 py-2 rounded ${
+      activeMenu === "popups"
+        ? "bg-blue-700 text-white"
+        : "text-blue-400 hover:text-white"
+    }`}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6 mr-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    Manage Popups
+  </button>
+</li>
+
+
+<ul className="space-y-6">
+  {/* Existing Buttons */}
+ 
+  {/* Search by Category */}
+ 
+
+  {/* Filter by Budget */}
+ 
+
+  {/* Filter by Date */}
+  <li>
+      <button
+        onClick={() => setActiveMenu("budgetFilter")}
+        className={`w-full text-left flex items-center px-4 py-2 rounded ${
+          activeMenu === "budgetFilter"
+            ? "bg-blue-700 text-white"
+            : "text-blue-400 hover:text-white"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-6 h-6 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 21h18M9 21V3m6 0v18m-6-4h6"
+          />
+        </svg>
+        Filter by Budget
+      </button>
+    </li>
+
+    {/* Date Filter */}
+    <li>
+      <button
+        onClick={() => setActiveMenu("dateFilter")}
+        className={`w-full text-left flex items-center px-4 py-2 rounded ${
+          activeMenu === "dateFilter"
+            ? "bg-blue-700 text-white"
+            : "text-blue-400 hover:text-white"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-6 h-6 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 12h14m-7-7v14"
+          />
+        </svg>
+        Filter by Date
+      </button>
+    </li>
+
+    {/* Price Sort */}
+    <li>
+      <button
+        onClick={() => setActiveMenu("priceSort")}
+        className={`w-full text-left flex items-center px-4 py-2 rounded ${
+          activeMenu === "priceSort"
+            ? "bg-blue-700 text-white"
+            : "text-blue-400 hover:text-white"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-6 h-6 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M6 9h12m-6 6h6"
+          />
+        </svg>
+        Sort by Price
+      </button>
+    </li>
+
+    {/* Museums Search */}
+    <li>
+      <button
+        onClick={() => setActiveMenu("museumsSearch")}
+        className={`w-full text-left flex items-center px-4 py-2 rounded ${
+          activeMenu === "museumsSearch"
+            ? "bg-blue-700 text-white"
+            : "text-blue-400 hover:text-white"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-6 h-6 mr-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 10h4m-2 0v6m0-6a2 2 0 110-4 2 2 0 110 4zm0 10a2 2 0 11-4 0 2 2 0 114 0z"
+          />
+        </svg>
+        Search Museums
+      </button>
+    </li>
+</ul>
+
+
+            </ul>
+          </div>
+     
+          {/* Main Content */}
+          <div className="w-3/4 p-6">
+       {/* Itinerary Filters */}
+{/* Category Search */}
+<div className="mb-6">
+ 
+   
+  {isVisibleCategorySearch && (
+    <div className="mt-3">
+      <input
+        type="text"
+        placeholder="Enter Category"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        onClick={handleCategorySearch}
+        className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Search
+      </button>
+    </div>
+  )}
+</div>
+
+{/* Budget Filter */}
+{activeMenu === "budgetFilter" && (
+    <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+      <h3 className="text-2xl font-semibold text-gray-700 mb-4 text-center">Filter by Budget</h3>
+      <div className="mt-3">
+        <input
+          type="number"
+          placeholder="Enter Budget"
+          value={budget}
+          onChange={(e) => setBudget(e.target.value)}
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleBudgetFilter}
+          className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Apply Filter
+        </button>
+      </div>
+    </div>
+  )}
+
+  {/* Date Filter */}
+  {activeMenu === "dateFilter" && (
+    <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+      <h3 className="text-2xl font-semibold text-gray-700 mb-4 text-center">Filter by Date</h3>
+      <div className="mt-3">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onClick={handleDateFilter}
+          className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Apply Filter
+        </button>
+      </div>
+    </div>
+  )}
+
+  {/* Price Sort */}
+  {activeMenu === "priceSort" && (
+    <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+      <h3 className="text-2xl font-semibold text-gray-700 mb-4 text-center">Sort by Price</h3>
+      <button
+        onClick={handleSortByPrice}
+        className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Sort
+      </button>
+    </div>
+  )}
+
+  {/* Museums Search */}
+ 
+
+{activeMenu === "itineraryFilter" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-4 text-center">
+      Filter Itineraries
+    </h3>
+
+    {/* Budget Filter */}
+    <div className="mb-4">
+      <button
+        onClick={() => setIsVisibleBudgetFilterItinerary(!isVisibleBudgetFilterItinerary)}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        {isVisibleBudgetFilterItinerary ? "Hide Budget Filter" : "Filter by Budget"}
+      </button>
+      {isVisibleBudgetFilterItinerary && (
+        <div className="mt-2">
+          <input
+            type="number"
+            placeholder="Enter Budget"
+            value={budgetItinerary}
+            onChange={(e) => setBudgetItinerary(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={itineraryBudgetFilter}
+            className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Apply Filter
+          </button>
+        </div>
+      )}
+    </div>
+
+    {/* Date Filter */}
+    <div className="mb-4">
+      <button
+        onClick={() => setIsVisibleDateFilterItinerary(!isVisibleDateFilterItinerary)}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        {isVisibleDateFilterItinerary ? "Hide Date Filter" : "Filter by Date"}
+      </button>
+      {isVisibleDateFilterItinerary && (
+        <div className="mt-2">
+          <input
+            type="date"
+            value={dateItinerary}
+            onChange={(e) => setDateItinerary(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={itineraryDateFilter}
+            className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Apply Filter
+          </button>
+        </div>
+      )}
+    </div>
+
+    {/* Language Filter */}
+    <div>
+      <button
+        onClick={() => setIsVisibleLanguageFilter(!isVisibleLanguageFilter)}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        {isVisibleLanguageFilter ? "Hide Language Filter" : "Filter by Language"}
+      </button>
+      {isVisibleLanguageFilter && (
+        <div className="mt-2">
+          <input
+            type="text"
+            placeholder="Enter Language"
+            value={languageItinerary}
+            onChange={(e) => setLanguageItinerary(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={itineraryLanguageFilter}
+            className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Apply Filter
+          </button>
+        </div>
+      )}
     </div>
   </div>
 )}
 
-            {/* Display promo code if available */}
-            {promoCode && (
-                <div className="mt-6 bg-green-100 p-4 rounded shadow-lg">
-                    <h3 className="text-lg font-bold text-green-700">🎉 Happy Birthday!</h3>
-                    <p className="text-green-700">Here's your special promo code:</p>
-                    <p className="text-green-900 font-bold text-xl">{promoCode.code}</p>
-                    <p className="text-green-700">Enjoy a {promoCode.discount}% discount!</p>
-                </div>
-            )}
-            <button onClick={handleClick}>
-                {isVisible ? 'Hide' : 'Show'} Tourist Details
-            </button>
-            {isVisible && (
-                <div className="workouts">
-                    {tourists && tourists.map(tourist => (
-                        <div key={tourist._id}>
-                            <TouristDetails tourist={tourist} />
-                            <button onClick={() => toggleRedemptionForm(tourist)}>Redeem Points</button>
-                            <button onClick={() => handleUpdate(tourist)}>Update</button>
-                        </div>
-                    ))}
-                </div>
-            )}
-            <button onClick={() => toggleVisibility('tourguides')}>
-                {visibleSections.tourguides ? 'Hide' : 'Show'} Tourguide Details
-            </button>
-            {visibleSections.tourguides && (
-                <div className="tourguides">
-                    {tourguides && tourguides.map(tourguide => (
-                        <div key={tourguide._id}>
-                            <TourguideDetails tourguide={tourguide} />
+{activeMenu === "sortByPrice" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Sort Itineraries by Price
+    </h3>
+    <button
+      onClick={ItinerarySortByPrice}
+      className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Sort by Price
+    </button>
+  </div>
+)}
+{/* View Itineraries */}
+{activeMenu === "viewItineraries" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Itineraries
+    </h3>
+    {isVisibleItineraries ? (
+      <div>
+        {/* Render your itineraries here */}
+        <button
+          onClick={() => setIsVisibleItineraries(false)}
+          className="w-full mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          Hide Itineraries
+        </button>
+      </div>
+    ) : (
+      <button
+        onClick={() => setIsVisibleItineraries(true)}
+        className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        View Itineraries
+      </button>
+    )}
+  </div>
+)}
+{/* Manage Popups */}
+{activeMenu === "popups" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Manage Popups
+    </h3>
+    <div className="space-y-4">
+      {isHotelPopupVisible && (
+        <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />
+      )}
+      {isFlightPopupVisible && (
+        <FlightPopup flights={flightPopupData} onClose={hideFlightPopup} />
+      )}
+      {isTransportationPopupVisible && (
+        <TransportationPopup
+          transportation={transportationData}
+          onClose={hideTransportationPopup}
+        />
+      )}
+    </div>
+  </div>
+)}
 
-                            {/* Rate Button for Each Tour Guide */}
-                            <button onClick={() => handleRateTourGuide(tourguide._id)}>Rate</button>
+{/* Flight Search Form */}
+{activeMenu === "flightSearch" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Search for Flights
+    </h3>
+    <form onSubmit={handleSearchForFlight} className="grid gap-4">
+      <div>
+        <label className="block text-gray-600 font-medium mb-1">
+          Origin Location Code
+        </label>
+        <input
+          type="text"
+          value={flightData.originLocationCode}
+          onChange={(e) =>
+            setFlightData({ ...flightData, originLocationCode: e.target.value })
+          }
+          placeholder="Enter Origin Location Code"
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-600 font-medium mb-1">
+          Destination Location Code
+        </label>
+        <input
+          type="text"
+          value={flightData.destinationLocationCode}
+          onChange={(e) =>
+            setFlightData({ ...flightData, destinationLocationCode: e.target.value })
+          }
+          placeholder="Enter Destination Location Code"
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-600 font-medium mb-1">
+          Departure Date
+        </label>
+        <input
+          type="date"
+          value={flightData.departureDateTimeRange.date}
+          onChange={(e) =>
+            setFlightData({
+              ...flightData,
+              departureDateTimeRange: {
+                ...flightData.departureDateTimeRange,
+                date: e.target.value,
+              },
+            })
+          }
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-600 font-medium mb-1">
+          Departure Time
+        </label>
+        <input
+          type="time"
+          value={flightData.departureDateTimeRange.time}
+          onChange={(e) =>
+            setFlightData({
+              ...flightData,
+              departureDateTimeRange: {
+                ...flightData.departureDateTimeRange,
+                time: e.target.value,
+              },
+            })
+          }
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <label className="block text-gray-600 font-medium mb-1">
+          Number of Passengers
+        </label>
+        <input
+          type="number"
+          value={flightData.travelers.length}
+          onChange={(e) => {
+            const numTravelers = parseInt(e.target.value) || 0;
+            const newTravelers = Array(numTravelers).fill({ name: "" });
+            setFlightData({ ...flightData, travelers: newTravelers });
+          }}
+          placeholder="Enter Number of Passengers"
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <h4 className="text-lg font-semibold text-gray-600">Passenger Details</h4>
+        <ul className="space-y-2">
+          {flightData.travelers.map((passenger, index) => (
+            <li key={index} className="flex items-center space-x-3">
+              <span className="text-gray-600">{`Passenger ${index + 1}`}</span>
+              <input
+                type="text"
+                value={passenger.name}
+                onChange={(e) =>
+                  setFlightData({
+                    ...flightData,
+                    travelers: flightData.travelers.map((p, i) =>
+                      i === index ? { ...p, name: e.target.value } : p
+                    ),
+                  })
+                }
+                placeholder="Enter Passenger Name"
+                className="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        type="submit"
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Book Flight
+      </button>
+    </form>
+  </div>
+)}
 
-                            {/* Display Existing Ratings */}
-                            <div>
-                                <h5>Existing Ratings:</h5>
-                                {tourguide.ratings && tourguide.ratings.length > 0 ? (
-                                    tourguide.ratings.map((entry, index) => (
-                                        <p key={index}>
-                                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                                        </p>
-                                    ))
-                                ) : (
-                                    <p>No ratings available for this tour guide.</p>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
 
-            {/* Render RedemptionForm if visible */}
-            {isRedemptionVisible && selectedTourist && (
-                <RedemptionForm
-                    tourist={selectedTourist}
-                    onClose={() => setIsRedemptionVisible(false)}
-                />
-            )}
+{activeMenu === "cart" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Your Cart
+    </h3>
 
-            <button onClick={handleProductClick}>
-                {isProductVisible ? 'Hide' : 'Show'} Product Details
-            </button>
-            {isProductVisible && (
-                <div className="products">
-                    {products.length > 0 ? (
-                        products.map((product) => (
-                            <div key={product._id} className="product-item">
-                                <ProductDetails product={product} />
-                                <input
-                                    type="text"
-                                    placeholder="Enter Username"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                />
+    {/* Name Input */}
+    <div className="mb-4">
+      <input
+        type="text"
+        placeholder="Enter your name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        onClick={handleShowCart}
+        className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Show Cart
+      </button>
+    </div>
 
-                                <button type="button" onClick={() => handleAddToCart(product._id, username)}>
-                                    Add to cart
-                                </button>
+    {/* Cart Items */}
+    {cartItems.length > 0 ? (
+      <div className="space-y-4">
+        {cartItems.map((item) => (
+          <div
+            key={item._id}
+            className="p-4 border rounded shadow-md bg-gray-100 hover:bg-gray-200 transition"
+          >
+            <p className="text-lg font-medium text-gray-700">
+              {item.product.Name} - ${item.product.Price} (Amount: {item.amount})
+            </p>
+            <div className="flex space-x-2 mt-2">
+              <button
+                onClick={() => handleIncreaseAmount(item.product._id)}
+                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              >
+                +
+              </button>
+              <button
+                onClick={() => handleDecreaseAmount(item.product._id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                -
+              </button>
+              <button
+                onClick={() => handleRemoveItem(item.product._id, item.amount)}
+                className="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-center text-gray-500">No items in the cart.</p>
+    )}
 
-                                <button onClick={() => purchaseProduct(product._id)}>Purchase This Product</button>
-                                <button onClick={() => handleRateProductButtonClick(product._id)}>
-                                    {visibleRating[product._id] ? "Hide Rating" : "Rate"}
-                                </button>
+    {/* Checkout Button */}
+    <button
+      onClick={handleCheckout}
+      className="w-full mt-6 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+    >
+      Proceed to Checkout
+    </button>
+  </div>
+)}
 
-                                {visibleRating[product._id] && (
-                                    <Rating
-                                        itemId={product._id}
-                                        onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
-                                    />
-                                )}
 
-                                {/* Existing Ratings Section */}
-                                <h5>Existing Ratings:</h5>
-                                {(ratings[product._id] || []).map((entry, index) => (
-                                    <p key={index}>
-                                        <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                                    </p>
-                                ))}
 
-                                <div>
-                                    {/* Toggle Button */}
-                                    <button onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}>
-                                        {isVisibleSearchWishlist ? 'Hide' : 'Add to Wishlist by Username'}
-                                    </button>
+{activeMenu === "cart" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Your Cart
+    </h3>
 
-                                    {/* Input Field and Search Button */}
-                                    {isVisibleSearchWishlist && (
-                                        <div>
-                                            <input
-                                                type="text"
-                                                placeholder="Enter Username"
-                                                value={Wishlistusername}
-                                                onChange={(e) => setWishlistUsername(e.target.value)}
-                                            />
-                                            <button onClick={() => addProductToWishlist(Wishlistusername, product._id)}>
-                                                Add to Wishlist
-                                            </button> </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No products found.</p>
-                    )}
-                </div>
-            )}
+    {/* Name Input */}
+    <div className="mb-4">
+      <input
+        type="text"
+        placeholder="Enter your name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        onClick={handleShowCart}
+        className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Show Cart
+      </button>
+    </div>
 
-            <UpcomingActivities touristId={touristId} />
-            <UpcomingItineraries touristId={touristId} />
-            <PastActivities touristId={touristId} />
-            <PastItineraries touristId={touristId} />
-            <BookmarkDetails />
-            <WishlistDetails />
-            <div></div>
-            <UpdateTourist existingTourguide={selectedTourguide} onUpdate={() => setSelectedTourguide(null)} />
-            <h4>Complaint:</h4>
-            <ComplainCreateForm />
+    {/* Cart Items */}
+    {cartItems.length > 0 ? (
+      <div className="space-y-4">
+        {cartItems.map((item) => (
+          <div
+            key={item._id}
+            className="p-4 border rounded shadow-md bg-gray-100 hover:bg-gray-200 transition"
+          >
+            <p className="text-lg font-medium text-gray-700">
+              {item.product.Name} - ${item.product.Price} (Amount: {item.amount})
+            </p>
+            <div className="flex space-x-2 mt-2">
+              <button
+                onClick={() => handleIncreaseAmount(item.product._id)}
+                className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              >
+                +
+              </button>
+              <button
+                onClick={() => handleDecreaseAmount(item.product._id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                -
+              </button>
+              <button
+                onClick={() => handleRemoveItem(item.product._id, item.amount)}
+                className="px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-center text-gray-500">No items in the cart.</p>
+    )}
 
-            <button
-                  onClick={() => handleOrder()}
-                  
-                >
-                  My Orders
-                </button>
+    {/* Checkout Button */}
+    <button
+      onClick={handleCheckout}
+      className="w-full mt-6 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+    >
+      Proceed to Checkout
+    </button>
+  </div>
+)}
 
+{/* Existing Addresses */}
+{activeMenu === "existingAddresses" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Existing Addresses
+    </h3>
+
+    {addresses.length === 0 ? (
+      <p className="text-center text-gray-500">
+        No addresses added yet. Start by adding a new address above.
+      </p>
+    ) : (
+      <ul className="space-y-4">
+        {addresses.map((address, index) => (
+          <li
+            key={index}
+            className="flex justify-between items-center p-4 bg-gray-100 rounded shadow-md hover:bg-gray-200 transition"
+          >
+            {/* Address Details */}
             <div>
-          
-            <h3>Add New Address</h3>
-            <input
-                type="text"
-                name="street"
-                placeholder="Street"
-                value={newAddress.street}
-                onChange={handleInputChange}
-            />
-            <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={newAddress.city}
-                onChange={handleInputChange}
-            />
-            <input
-                type="text"
-                name="postalCode"
-                placeholder="Postal Code"
-                value={newAddress.postalCode}
-                onChange={handleInputChange}
-            />
-            <button onClick={handleAddAddress}>Add Address</button>
-
-            <h3>Existing Addresses</h3>
-            <ul>
-                {addresses.length === 0 ? (
-                    <p>No addresses added yet.</p>
-                ) : (
-                    addresses.map((address, index) => (
-                        <li key={index}>
-                            {address.street}, {address.city}, {address.postalCode}
-                        </li>
-                    ))
-                )}
-            </ul>
-
-            {/* <button onClick={handleCheckout}>Go to Checkout</button> */}
-        </div>
-    
-
-
-
-
-
-
-            <h4>Activities:</h4>
-
-            <div>
-                <button onClick={() => setIsCartVisible(!isCartVisible)}>
-                    {isCartVisible ? 'Hide' : 'Show'} Cart
-                </button>
-
-                {isCartVisible && (
-                    <div className="cart">
-                        <input
-                            type="text"
-                            placeholder="Enter name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <button onClick={handleShowCart}>Show Cart</button>
-
-                        {cartItems.length > 0 ? (
-                            <div className="cart-items">
-                                {cartItems.map((item) => (
-                                    <div key={item._id} className="cart-item">
-                                        <p>{item.product.Name} - ${item.product.Price} (Amount: {item.amount})</p>
-                                        <button onClick={() => handleIncreaseAmount(item.product._id)}>+</button>
-                                        <button onClick={() => handleDecreaseAmount(item.product._id)}>-</button>
-                                        <button onClick={() => handleRemoveItem(item.product._id, item.amount)}>Remove</button>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>No items in cart.</p>
-                        )}
-
-                        { /* this button must redirect us to checkout page */}
-                        <button onClick={handleCheckout}> Checkout</button>
-                    </div>
-                )}
+              <p className="text-lg font-medium text-gray-700">{address.street}</p>
+              <p className="text-sm text-gray-500">
+                {address.city}, {address.postalCode}
+              </p>
             </div>
 
-            {/* Search for transportaion */}
+            {/* Action Buttons */}
+           
+           
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
 
-            <button onClick={handleSearchForTransportation}>
-                Show All transportaion
+
+
+{activeMenu === "redeemPoints" && isRedemptionVisible && selectedTourist && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Redeem Points
+    </h3>
+    <RedemptionForm
+      tourist={selectedTourist}
+      onClose={() => setIsRedemptionVisible(false)}
+    />
+  </div>
+)}
+
+{/* Add New Address */}
+{activeMenu === "addAddress" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Add New Address
+    </h3>
+    <form className="grid gap-4">
+      <input
+        type="text"
+        name="street"
+        placeholder="Street"
+        value={newAddress.street}
+        onChange={handleInputChange}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <input
+        type="text"
+        name="city"
+        placeholder="City"
+        value={newAddress.city}
+        onChange={handleInputChange}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <input
+        type="text"
+        name="postalCode"
+        placeholder="Postal Code"
+        value={newAddress.postalCode}
+        onChange={handleInputChange}
+        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        onClick={handleAddAddress}
+        type="button"
+        className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Add Address
+      </button>
+    </form>
+  </div>
+)}
+
+{activeMenu === "pastItineraries" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Past Itineraries
+    </h3>
+    <PastItineraries touristId={touristId} />
+  </div>
+)}
+
+{/* Bookmark Details */}
+{activeMenu === "bookmarkDetails" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Bookmark Details
+    </h3>
+    <BookmarkDetails />
+  </div>
+)}
+
+{/* Wishlist Details */}
+{activeMenu === "wishlistDetails" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Wishlist Details
+    </h3>
+    <WishlistDetails />
+  </div>
+)}
+
+
+
+{activeMenu === "upcomingActivities" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Upcoming Activities
+    </h3>
+    <UpcomingActivities touristId={touristId} />
+  </div>
+)}
+
+{/* Upcoming Itineraries */}
+{activeMenu === "upcomingItineraries" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Upcoming Itineraries
+    </h3>
+    <UpcomingItineraries touristId={touristId} />
+  </div>
+)}
+
+{/* Past Activities */}
+{activeMenu === "pastActivities" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Past Activities
+    </h3>
+    <PastActivities touristId={touristId} />
+  </div>
+)}
+
+{/* Update Tourist */}
+{activeMenu === "updateTourist" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Update Tourist
+    </h3>
+    <UpdateTourist
+      existingTourguide={selectedTourguide}
+      onUpdate={() => setSelectedTourguide(null)}
+    />
+  </div>
+)}
+
+{/* Complaint */}
+{activeMenu === "complaint" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Complaint
+    </h3>
+    <ComplainCreateForm />
+  </div>
+)}
+
+
+            {activeMenu === "tourguides" && (
+  <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+    <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+      Tour Guides
+    </h3>
+
+    {tourguides && tourguides.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {tourguides.map((tourguide) => (
+          <div
+            key={tourguide._id}
+            className="p-4 border rounded shadow-md bg-white hover:shadow-lg transition-shadow"
+          >
+            {/* Tour Guide Details */}
+            <TourguideDetails tourguide={tourguide} />
+
+            {/* Rate Button */}
+            <button
+              onClick={() => handleRateTourGuide(tourguide._id)}
+              className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Rate
             </button>
 
-            {/* Search For flight */}
-            <button onClick={() => setSearchByFlightVisible(!searchByFlightVisible)}>
-                Search for a Flight
-            </button>
-
-            {searchByFlightVisible && (
-                <form onSubmit={handleSearchForFlight}>
-                    <input
-                        type="text"
-                        value={flightData.originLocationCode}
-                        onChange={(e) => setFlightData({ ...flightData, originLocationCode: e.target.value })}
-                        placeholder="Origin Location Code"
-                    />
-                    <input
-                        type="text"
-                        value={flightData.destinationLocationCode}
-                        onChange={(e) => setFlightData({ ...flightData, destinationLocationCode: e.target.value })}
-                        placeholder="Destination Location Code"
-                    />
-                    <input
-                        type="text"
-                        value={flightData.departureDateTimeRange.date}
-                        onChange={(e) =>
-                            setFlightData({
-                                ...flightData,
-                                departureDateTimeRange: {
-                                    ...flightData.departureDateTimeRange,
-                                    date: e.target.value
-                                }
-                            })
-                        }
-                        placeholder="Departure Date (YYYY-MM-DD)"
-                    />
-                    <input
-                        type="text"
-                        value={flightData.departureDateTimeRange.time}
-                        onChange={(e) =>
-                            setFlightData({
-                                ...flightData,
-                                departureDateTimeRange: {
-                                    ...flightData.departureDateTimeRange,
-                                    time: e.target.value
-                                }
-                            })
-                        }
-                        placeholder="Departure Time (HH:MM:SS)"
-                    />
-                    <input
-                        type="number"
-                        value={flightData.travelers.length}
-                        onChange={(e) => {
-                            const numTravelers = parseInt(e.target.value) || 0;
-                            const newTravelers = Array(numTravelers).fill({ name: '' });
-                            setFlightData({ ...flightData, travelers: newTravelers });
-                        }}
-                        placeholder="Number of Passengers"
-                    />
-                    <ul>
-                        {flightData.travelers.map((passenger, index) => (
-                            <li key={index}>
-                                <input
-                                    type="text"
-                                    value={passenger.name}
-                                    onChange={(e) =>
-                                        setFlightData({
-                                            ...flightData,
-                                            travelers: flightData.travelers.map((p, i) =>
-                                                i === index ? { ...p, name: e.target.value } : p
-                                            )
-                                        })
-                                    }
-                                    placeholder={`Passenger ${index + 1} Name`}
-                                />
-                            </li>
-                        ))}
-                    </ul>
-                    <button type="submit">Book Flight</button>
-                </form>
-            )}
-
-            {/* Search For a Hotel */}
-            <button onClick={() => setSearchForAHotelByCity(!searchForAHotelByCity)}>
-                Search for a Hotel
-            </button>
-
-            {searchForAHotelByCity && (
-                <form onSubmit={handleHotelSearch}>
-                    <input
-                        type="text"
-                        placeholder="Enter City"
-                        value={CityName}
-                        onChange={(e) => setCityName(e.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
-            )}
-            <div></div>
-            {/* Search by Tag */}
-            <button onClick={() => setIsVisibleTagSearch(!isVisibleTagSearch)}>
-                {isVisibleTagSearch ? 'Hide Search' : 'Search by Tag'}
-            </button>
-            {isVisibleTagSearch && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Enter Tag"
-                        value={tag}
-                        onChange={(e) => setTag(e.target.value)}
-                    />
-                    <button onClick={handleTagSearch}>Search</button>
-                </div>
-            )}
-
-            {/* Search by Category */}
-            <button onClick={() => setIsVisibleCategorySearch(!isVisibleCategorySearch)}>
-                {isVisibleCategorySearch ? 'Hide' : 'Search by Category'}
-            </button>
-            {isVisibleCategorySearch && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Enter Category"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                    />
-                    <button onClick={handleCategorySearch}>Search</button>
-                </div>
-            )}
-
-            {/* Filter by Budget */}
-            <button onClick={() => setIsVisibleBudgetFilter(!isVisibleBudgetFilter)}>
-                {isVisibleBudgetFilter ? 'Hide' : 'Filter by Budget'}
-            </button>
-            {isVisibleBudgetFilter && (
-                <div>
-                    <input
-                        type="number"
-                        placeholder="Enter Budget"
-                        value={budget}
-                        onChange={(e) => setBudget(e.target.value)}
-                    />
-                    <button onClick={handleBudgetFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Filter by Date */}
-            <button onClick={() => setIsVisibleDateFilter(!isVisibleDateFilter)}>
-                {isVisibleDateFilter ? 'Hide' : 'Filter by Date'}
-            </button>
-            {isVisibleDateFilter && (
-                <div>
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                    />
-                    <button onClick={handleDateFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Sort by Price */}
-            <button onClick={() => setIsVisiblePriceSort(!isVisiblePriceSort)}>
-                {isVisiblePriceSort ? 'Hide' : 'Sort by Price'}
-            </button>
-            {isVisiblePriceSort && (
-                <button onClick={handleSortByPrice}>Sort</button>
-            )}
-            <br />
-            {/* View Activities */}
-            <button onClick={() => setIsVisibleActivities(!isVisibleActivities)}>
-                {isVisibleActivities ? 'Hide' : 'View'} Activities
-            </button>
-
-            {/* {isVisibleActivities && (
-                <div className="activities">
-                    {activities && activities.map(activity => (
-                        <ActivityDetails activity={activity} key={activity._id} />
-                    ))}
-                </div>
-            )} */}
-
-
-            {isVisibleActivities && (
-                <div className="activities">
-                    {visibleActivities.map(activity => (
-                        <div key={activity._id}>
-                            <ActivityDetails activity={activity} />
-                            <button onClick={() => handleRateButtonClick(activity._id)}>
-                                {visibleRating[activity._id] ? "Hide Rating" : "Rate"}
-                            </button>
-                            {visibleRating[activity._id] && (
-                                <Rating
-                                    itemId={activity._id}
-                                    onRate={(id, rating, comment) => handleRateActivity(id, rating, comment)}
-                                />
-                            )}
-
-                            <div>
-                                <h5>Existing Ratings:</h5>
-                                {activity.ratings && activity.ratings.length > 0 ? (
-                                    activity.ratings.map((entry, index) => (
-                                        <p key={index}>
-                                            <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                                        </p>
-                                    ))
-                                ) : (
-                                    <p>No ratings available for this Activity.</p>
-                                )}
-                            </div>
-                            {/* Toggle Button */}
-                            <button onClick={() => setIsVisibleActivityBookmark(!isVisibleActivityBookmark)}>
-                                {isVisibleActivityBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-                            </button>
-                          
-                            {/* Input Field and Search Button */}
-                            {isVisibleActivityBookmark && (
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Username"
-                                        value={bookmarkusername}
-                                        onChange={(e) => setbookmarkUsername(e.target.value)}
-                                    />
-                                    <button onClick={() => addItemToBookmark(bookmarkusername, activity._id, 'Activities')}>
-                                        Add to Bookmark
-                                    </button> </div>
-                            )}
-                              {!activity.isBookingOpen  && (
-                            <div>
-                                <button onClick={() => requestNotification(bookmarkusername, activity._id)}>
-                                  Request to be Notified
-                                 </button>
-                                </div>
-                                )}
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            <br />
-            <h4>Museums:</h4>
-
-            {/* Search by Name */}
-            <button onClick={() => setIsVisibleSearchMuseums(!isVisibleSearchMuseums)}>
-                {isVisibleSearchMuseums ? 'Hide' : 'Search by Name'}
-            </button>
-            {isVisibleSearchMuseums && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Enter Name"
-                        value={nameMuseum}
-                        onChange={(e) => setNameMuseum(e.target.value)}
-                    />
-                    <button onClick={museumNameSearch}>Search</button>
-                </div>
-            )}
-            {/* Search by Tag */}
-            <button onClick={() => setIsVisibleTagSearchMuseums(!isVisibleTagSearchMuseums)}>
-                {isVisibleTagSearchMuseums ? 'Hide Search' : 'Search by Tag'}
-            </button>
-            {isVisibleTagSearchMuseums && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Enter Tag"
-                        value={tagMuseum}
-                        onChange={(e) => setTagMuseum(e.target.value)}
-                    />
-                    <button onClick={museumTagSearch}>Search</button>
-                </div>
-            )}
-            <br />
-            {/* View Museums */}
-            <button onClick={() => setIsVisibleMuseums(!isVisibleMuseums)}>
-                {isVisibleMuseums ? 'Hide' : 'View'} Museums
-            </button>
-
-            {isVisibleMuseums && (
-                <div className="museums">
-                    {museums && museums.map(museum => (
-                        <div key={museum._id}>
-                            <MuseumDetails museum={museum} />
-                            <div>
-                                {/* Toggle Button */}
-                                <button onClick={() => setIsVisibleMuseumBookmark(!isVisibleMuseumBookmark)}>
-                                    {isVisibleMuseumBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-                                </button>
-
-                                {/* Input Field and Search Button */}
-                                {isVisibleMuseumBookmark && (
-                                    <div>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Username"
-                                            value={bookmarkusername}
-                                            onChange={(e) => setbookmarkUsername(e.target.value)}
-                                        />
-                                        <button onClick={() => addItemToBookmark(bookmarkusername, museum._id, 'Museums')}>
-                                            Add to Bookmark
-                                        </button> </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            <br />
-            <h4>Itineraries:</h4>
-
-            {/* Filter by Budget */}
-            <button onClick={() => setIsVisibleBudgetFilterItinerary(!isVisibleBudgetFilterItinerary)}>
-                {isVisibleBudgetFilterItinerary ? 'Hide' : 'Filter by Budget'}
-            </button>
-            {isVisibleBudgetFilterItinerary && (
-                <div>
-                    <input
-                        type="number"
-                        placeholder="Enter Budget"
-                        value={budgetItinerary}
-                        onChange={(e) => setBudgetItinerary(e.target.value)}
-                    />
-                    <button onClick={itineraryBudgetFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Filter by Date */}
-            <button onClick={() => setIsVisibleDateFilterItinerary(!isVisibleDateFilterItinerary)}>
-                {isVisibleDateFilterItinerary ? 'Hide' : 'Filter by Date'}
-            </button>
-            {isVisibleDateFilterItinerary && (
-                <div>
-                    <input
-                        type="date"
-                        value={dateItinerary}
-                        onChange={(e) => setDateItinerary(e.target.value)}
-                    />
-                    <button onClick={itineraryDateFilter}>Filter</button>
-                </div>
-            )}
-            {/* Filter by Language */}
-            <button onClick={() => setIsVisibleLanguageFilter(!isVisibleLanguageFilter)}>
-                {isVisibleLanguageFilter ? 'Hide' : 'Filter by Language'}
-            </button>
-            {isVisibleLanguageFilter && (
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Enter Language"
-                        value={languageItinerary}
-                        onChange={(e) => setLanguageItinerary(e.target.value)}
-                    />
-                    <button onClick={itineraryLanguageFilter}>Filter</button>
-                </div>
-            )}
-
-            {/* Sort by Price */}
-            <button onClick={() => setIsVisiblePriceSortItinerary(!isVisiblePriceSortItinerary)}>
-                {isVisiblePriceSortItinerary ? 'Hide' : 'Sort by Price'}
-            </button>
-            {isVisiblePriceSortItinerary && (
-                <button onClick={ItinerarySortByPrice}>Sort</button>
-            )}
-            <br />
-            {/* View Itienary */}
-            <button onClick={() => setIsVisibleItineraries(!isVisibleItineraries)}>
-                {isVisibleItineraries ? 'Hide' : 'View'} Itineraries
-            </button>
-
-            {isVisibleItineraries && (
-                <div className="Itineraries">
-                    {itineraries && itineraries.map(itinerary => (
-                        <div key={itinerary._id}>
-                            <ItineraryDetails itinerary={itinerary} />
-                            <button onClick={() => handleRateButtonClick1(itinerary._id)}>
-                                {visibleRating[itinerary._id] ? "Hide Rating" : "Rate"}
-                            </button>
-                            {visibleRating[itinerary._id] && (
-                                <Rating
-                                    itemId={itinerary._id} // Ensure this prop is set correctly
-                                    onRate={(id, rating, comment) => handleRateItinerary(id, rating, comment)}
-                                />
-
-                            )}
-
-                            <div>
-                                {itinerary.active ? (
-                                    <div>
-                                        {/* Display Existing Ratings */}
-                                        <h5>Existing Ratings:</h5>
-                                        {itinerary.ratings && itinerary.ratings.length > 0 ? ( // Check if ratings exist
-                                            itinerary.ratings.map((entry, index) => (
-                                                <p key={index}>
-                                                    <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
-                                                </p>
-                                            ))
-                                        ) : (
-                                            <p>No ratings available for this Itinerary.</p>
-                                        )}
-
-                                        {/* Toggle Button for Bookmarking */}
-                                        <div>
-                                            <button onClick={() => setIsVisibleItineraryBookmark(!isVisibleItineraryBookmark)}>
-                                                {isVisibleItineraryBookmark ? 'Hide' : 'Add to Bookmark by Username'}
-                                            </button>
-
-                                            {/* Input Field and Add to Bookmark Button */}
-                                            {isVisibleItineraryBookmark && (
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Enter Username"
-                                                        value={bookmarkusername}
-                                                        onChange={(e) => setbookmarkUsername(e.target.value)} // Set username
-                                                    />
-                                                    <button
-                                                        onClick={() => {
-                                                            if (bookmarkusername.trim() !== "") {
-                                                                addItemToBookmark(bookmarkusername, itinerary._id, 'Itineraries');
-                                                            } else {
-                                                                alert("Please enter a username.");
-                                                            }
-                                                        }}
-                                                    >
-                                                        Add to Bookmark
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ) : null}
-
-                            </div>
-
-
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            <TouristChangePassword />
-            {isHotelPopupVisible && <HotelPopup hotels={hotelsData} onClose={hideHotelPopup} />}
-            {isFlightPopupVisible && <FlightPopup flights={flightPopupData} onClose={hideFlightPopup} />}
-            {isTransportationPopupVisible && <TransportationPopup transportation={transportationData} onClose={hideTransportationPopup} />}
+            {/* Existing Ratings */}
+            <div className="mt-3">
+              <h5 className="text-lg font-semibold text-gray-600">
+                Existing Ratings:
+              </h5>
+              {tourguide.ratings && tourguide.ratings.length > 0 ? (
+                tourguide.ratings.map((entry, index) => (
+                  <p key={index} className="text-sm text-gray-500">
+                    <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No ratings available for this tour guide.
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+        ) : (
+            <p className="text-center text-gray-500">
+              No tour guides available at the moment.
+            </p>
+          )}
         </div>
-    );
-};
-
-export default TouristSignup;
+      )}
+      
+      
+      
+                  {activeMenu === "products" && (
+        <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+          <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+            Products
+          </h3>
+      
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {products.map((product) => (
+                <div
+                  key={product._id}
+                  className="p-4 border rounded shadow-md bg-white hover:shadow-lg transition-shadow"
+                >
+                  {/* Product Details */}
+                  <ProductDetails product={product} />
+      
+                  {/* Add to Cart */}
+                  <input
+                    type="text"
+                    placeholder="Enter Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full px-3 py-2 border rounded focus:outline-none mt-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(product._id, username)}
+                    className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Add to Cart
+                  </button>
+      
+                  {/* Purchase Product */}
+                  <button
+                    onClick={() => purchaseProduct(product._id)}
+                    className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    Purchase This Product
+                  </button>
+      
+                  {/* Rate Product */}
+                  <button
+                    onClick={() => handleRateProductButtonClick(product._id)}
+                    className="w-full mt-2 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                  >
+                    {visibleRating[product._id] ? "Hide Rating" : "Rate"}
+                  </button>
+      
+                  {/* Rating Form */}
+                  {visibleRating[product._id] && (
+                    <div className="mt-2">
+                      <Rating
+                        itemId={product._id}
+                        onRate={(id, rating, comment) => handleRateProduct(id, rating, comment)}
+                      />
+                    </div>
+                  )}
+      
+                  {/* Existing Ratings */}
+                  <div className="mt-3">
+                    <h5 className="text-lg font-semibold text-gray-600">
+                      Existing Ratings:
+                    </h5>
+                    {ratings[product._id] && ratings[product._id].length > 0 ? (
+                      ratings[product._id].map((entry, index) => (
+                        <p key={index} className="text-sm text-gray-500">
+                          <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No ratings available for this product.</p>
+                    )}
+                  </div>
+      
+                  {/* Wishlist Section */}
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setIsVisibleSearchWishlist(!isVisibleSearchWishlist)}
+                      className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                    >
+                      {isVisibleSearchWishlist ? "Hide Wishlist" : "Add to Wishlist"}
+                    </button>
+      
+                    {isVisibleSearchWishlist && (
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          placeholder="Enter Username"
+                          value={Wishlistusername}
+                          onChange={(e) => setWishlistUsername(e.target.value)}
+                          className="w-full px-3 py-2 border rounded focus:outline-none"
+                        />
+                        <button
+                          onClick={() => {
+                            if (Wishlistusername.trim() !== "") {
+                              addProductToWishlist(Wishlistusername, product._id);
+                            } else {
+                              alert("Please enter a username.");
+                            }
+                          }}
+                          className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Add to Wishlist
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No products found.</p>
+          )}
+        </div>
+      )}
+      
+      
+      
+                  {activeMenu === "itineraries" && (
+        <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+          <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+            Itineraries
+          </h3>
+      
+          {itineraries && itineraries.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {itineraries.map((itinerary) => (
+                <div
+                  key={itinerary._id}
+                  className="p-4 border rounded shadow-md bg-white hover:shadow-lg transition-shadow"
+                >
+                  {/* Itinerary Details */}
+                  <ItineraryDetails itinerary={itinerary} />
+      
+                  {/* Rate Button */}
+                  <button
+                    onClick={() => handleRateButtonClick1(itinerary._id)}
+                    className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    {visibleRating[itinerary._id] ? "Hide Rating" : "Rate"}
+                  </button>
+      
+                  {/* Rating Form */}
+                  {visibleRating[itinerary._id] && (
+                    <div className="mt-2">
+                      <Rating
+                        itemId={itinerary._id}
+                        onRate={(id, rating, comment) => handleRateItinerary(id, rating, comment)}
+                      />
+                    </div>
+                  )}
+      
+                  {/* Existing Ratings */}
+                  <div className="mt-3">
+                    <h5 className="text-lg font-semibold text-gray-600">
+                      Existing Ratings:
+                    </h5>
+                    {itinerary.ratings && itinerary.ratings.length > 0 ? (
+                      itinerary.ratings.map((entry, index) => (
+                        <p key={index} className="text-sm text-gray-500">
+                          <strong>{entry.name}</strong>: {entry.rating} - {entry.comment}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No ratings available for this Itinerary.</p>
+                    )}
+                  </div>
+      
+                  {/* Bookmark Section */}
+                  {itinerary.active && (
+                    <div className="mt-4">
+                      <button
+                        onClick={() =>
+                          setIsVisibleItineraryBookmark(!isVisibleItineraryBookmark)
+                        }
+                        className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                      >
+                        {isVisibleItineraryBookmark ? "Hide Bookmark" : "Add to Bookmark"}
+                      </button>
+      
+                      {isVisibleItineraryBookmark && (
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            placeholder="Enter Username"
+                            value={bookmarkusername}
+                            onChange={(e) => setbookmarkUsername(e.target.value)}
+                            className="w-full px-3 py-2 border rounded focus:outline-none"
+                          />
+                          <button
+                            onClick={() => {
+                              if (bookmarkusername.trim() !== "") {
+                                addItemToBookmark(bookmarkusername, itinerary._id, "Itineraries");
+                              } else {
+                                alert("Please enter a username.");
+                              }
+                            }}
+                            className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Add to Bookmark
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">
+              No itineraries available at the moment.
+            </p>
+          )}
+        </div>
+      )}
+      
+                  {activeMenu === "activities" && (
+                    <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+                      <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+                        Activities
+                      </h3>
+            
+                      {visibleActivities.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {visibleActivities.map((activity) => (
+                            <div
+                              key={activity._id}
+                              className="p-4 border rounded shadow-md bg-white"
+                            >
+                              {/* Activity Details */}
+                              <ActivityDetails activity={activity} />
+            
+                              {/* Rate Button */}
+                              <button
+                                onClick={() => handleRateButtonClick(activity._id)}
+                                className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                              >
+                                {visibleRating[activity._id] ? "Hide Rating" : "Rate"}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-gray-500">
+                          No activities available at the moment.
+                        </p>
+                      )}
+                    </div>
+                  )}
+            
+                  {/* Museums Section */}
+                  {activeMenu === "museums" && (
+                    <div className="section-card mb-6 p-4 rounded-lg shadow-md bg-white/60 backdrop-blur-md">
+                      <h3 className="text-2xl font-semibold text-gray-700 mb-3 text-center">
+                        Museums
+                      </h3>
+            
+                      {museums.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {museums.map((museum) => (
+                            <div
+                              key={museum._id}
+                              className="p-4 border rounded shadow-md bg-white"
+                            >
+                              {/* Museum Details */}
+                              <MuseumDetails museum={museum} />
+            
+                              {/* Bookmark Button */}
+                              <button
+                                onClick={() =>
+                                  setIsVisibleMuseumBookmark(!isVisibleMuseumBookmark)
+                                }
+                                className="w-full mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                              >
+                                {isVisibleMuseumBookmark
+                                  ? "Hide Bookmark"
+                                  : "Add to Bookmark"}
+                              </button>
+            
+                              {isVisibleMuseumBookmark && (
+                                <div className="mt-2">
+                                  <input
+                                    type="text"
+                                    placeholder="Enter Username"
+                                    value={bookmarkusername}
+                                    onChange={(e) => setbookmarkUsername(e.target.value)}
+                                    className="w-full px-3 py-2 border rounded focus:outline-none"
+                                  />
+                                  <button
+                                    onClick={() =>
+                                      addItemToBookmark(
+                                        bookmarkusername,
+                                        museum._id,
+                                        "Museums"
+                                      )
+                                    }
+                                    className="w-full mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                  >
+                                    Add to Bookmark
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-gray-500">
+                          No museums available at the moment.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+            
+            
+      };
+      
+      export default TouristSignup;
