@@ -33,11 +33,11 @@ This structure ensures the project remains organized and maintainable as it grow
 
 Here are some snapshots of the **Rafiki** platform:
 
-![Home Page](./screenshots/home-page.png)
+![Home Page](./frontend/src/screenshots/Screenshot%20(5).png)
 
 ![Guest Dashboard Page](./frontend/src/screenshots/a.png)
 
-![Tourist Dashboard Page](./screenshots/booking-page.png)
+![Tourist Dashboard Page](./frontend/src/screenshots/Screenshot%20(6).png)
 
 ![Seller Page](./frontend/src/screenshots/iii.png)
 

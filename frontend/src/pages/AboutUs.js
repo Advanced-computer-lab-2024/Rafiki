@@ -1,5 +1,11 @@
 import React from 'react';
-import Image from "../pics/pic6.jpg"; // Import the image
+import Image from "../pics/joee.jpg"; // Import the image
+import Image1 from "../pics/yehia.jpeg"; // Import the image
+import Image2 from "../pics/niazy.jpeg"; // Import the image
+import Image3 from "../pics/basil.jpeg"; // Import the image
+import Image4 from "../pics/omar.jpeg"; // Import the image
+import Image5 from "../pics/h.jpeg"; // Import the image
+import GroupImage from "../pics/grp1.jpg"; // Import the larger group photo
 
 function AboutUs() {
   return (
@@ -12,9 +18,8 @@ function AboutUs() {
             Your one-stop solution for discovering, exploring, and planning unforgettable adventures.
           </p>
         </div>
-
-        {/* Mission Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16">
+ {/* Mission Section */}
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16">
           <img
             src="/path-to-your-mission-image.jpg"
             alt="Our Mission"
@@ -29,12 +34,31 @@ function AboutUs() {
             </p>
           </div>
         </div>
+         {/* Main Group Photo Section */}
+         <div className="text-center mb-16">
+          <img
+            src={GroupImage} // Group image for the team
+            alt="Our Team"
+            className="mx-auto w-3/4 md:w-1/2 h-auto rounded-lg shadow-lg object-cover"
+          />
+        </div>
+
 
         {/* Team Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-semibold text-gray-800 text-center mb-10">Meet the Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Team Member 1 */}
+            <div className="text-center">
+              <img
+                src={Image2} // Use the imported image here
+                alt="Team Member 1"
+                className="w-40 h-40 mx-auto rounded-full shadow-lg"
+              />
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">Niazy</h3>
+              <p className="text-gray-600">Founder & CEO</p>
+            </div>
+            {/* Team Member 2 */}
             <div className="text-center">
               <img
                 src={Image} // Use the imported image here
@@ -44,25 +68,42 @@ function AboutUs() {
               <h3 className="mt-4 text-xl font-semibold text-gray-800">Jota</h3>
               <p className="text-gray-600">Founder & CEO</p>
             </div>
-            {/* Team Member 2 */}
-            <div className="text-center">
-              <img
-                src="/path-to-team-member-2.jpg"
-                alt="Team Member 2"
-                className="w-40 h-40 mx-auto rounded-full shadow-lg"
-              />
-              <h3 className="mt-4 text-xl font-semibold text-gray-800">Jane Smith</h3>
-              <p className="text-gray-600">Chief Marketing Officer</p>
-            </div>
             {/* Team Member 3 */}
             <div className="text-center">
               <img
-                src="/path-to-team-member-3.jpg"
-                alt="Team Member 3"
+                src={Image1} // Use the imported image here
+                alt="Team Member 1"
                 className="w-40 h-40 mx-auto rounded-full shadow-lg"
               />
-              <h3 className="mt-4 text-xl font-semibold text-gray-800">Mike Johnson</h3>
-              <p className="text-gray-600">Lead Developer</p>
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">Yehia</h3>
+              <p className="text-gray-600">Founder & CEO</p>
+            </div>
+            <div className="text-center">
+              <img
+                src={Image5} // Use the imported image here
+                alt="Team Member 1"
+                className="w-40 h-40 mx-auto rounded-full shadow-lg"
+              />
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">H</h3>
+              <p className="text-gray-600">Founder & CEO</p>
+            </div>
+            <div className="text-center">
+              <img
+                src={Image4} // Use the imported image here
+                alt="Team Member 1"
+                className="w-40 h-40 mx-auto rounded-full shadow-lg"
+              />
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">Omar</h3>
+              <p className="text-gray-600">Founder & CEO</p>
+            </div>
+            <div className="text-center">
+              <img
+                src={Image3} // Use the imported image here
+                alt="Team Member 1"
+                className="w-40 h-40 mx-auto rounded-full shadow-lg"
+              />
+              <h3 className="mt-4 text-xl font-semibold text-gray-800">Basil</h3>
+              <p className="text-gray-600">Founder & CEO</p>
             </div>
           </div>
         </div>

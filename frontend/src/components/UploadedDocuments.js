@@ -18,7 +18,7 @@ const UploadedDocuments = ({
       </h2>
 
       {/* File Upload Section */}
-      <div className="flex items-center space-x-4 mb-6">
+      {/* <div className="flex items-center space-x-4 mb-6">
         <input
           type="file"
           accept=".pdf"
@@ -36,7 +36,7 @@ const UploadedDocuments = ({
         >
           {isUploading ? "Uploading..." : "Upload PDF"}
         </button>
-      </div>
+      </div> */}
 
       {/* Upload Error or Success */}
       {uploadError && (

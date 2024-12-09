@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PaymentForm from '../components/paymentForm';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-
+import { FaClipboard, FaEnvelope, FaRegCheckCircle, FaDollarSign, FaPen, FaUndo } from 'react-icons/fa';
 
 const ActivityDetails = ({ activity }) => {
     const [isPaymentVisible, setIsPaymentVisible] = useState(false);
@@ -267,53 +267,114 @@ const ActivityDetails = ({ activity }) => {
     
 
     return (
-        <div className="workout-details">
-            <h4>Activity Details</h4>
-            <p><strong>Date: </strong>{activity.date}</p>
-            <p><strong>Time: </strong>{activity.time}</p>
-            <p><strong>Location: </strong> {activity.location}</p>
-            <p><strong>Price: </strong>
-                {currency} {(activity.price * currencyMultiplier).toFixed(2)}
-                <select value={currency} onChange={handleCurrencyChange} style={{ marginLeft: '10px' }}>
-                    <option value="USD">USD</option>
-                    <option value="EGP">EGP</option>
-                    <option value="EUR">EUR</option>
-                </select>
-            </p>
-            <p><strong>Category: </strong>{activity.category}</p>
-            <p><strong>Tags: </strong>{activity.tags}</p>
-            <p><strong>Special Discounts: </strong>{activity.specialDiscounts}</p>
-            <p><strong>Booking Open: </strong>{activity.isBookingOpen ? 'Yes' : 'No'}</p>
-
-            <button onClick={copyLinkToClipboard}>Copy Activity Link</button>
-            <button onClick={shareViaEmail}>Share via Email</button>
-            <button onClick={attendActivity}>Attend This Activity</button>
-            <button onClick={handlePaymentClickActivity}>Pay for this Activity</button>
+        <div className="workout-details p-6 bg-white rounded-lg shadow-lg">
+            <h4 className="text-2xl font-semibold text-gray-800 mb-4">Activity Details</h4>
             
+            {/* Display activity details */}
+            <div className="text-gray-700 mb-4 space-y-2">
+                <p><strong>Date:</strong> {activity.date}</p>
+                <p><strong>Time:</strong> {activity.time}</p>
+                <p><strong>Location:</strong> {activity.location}</p>
+                <p><strong>Price:</strong> 
+                    {currency} {(activity.price * currencyMultiplier).toFixed(2)}
+                    <select 
+                        value={currency} 
+                        onChange={handleCurrencyChange} 
+                        className="ml-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="USD">USD</option>
+                        <option value="EGP">EGP</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+                </p>
+                <p><strong>Category:</strong> {activity.category}</p>
+                <p><strong>Tags:</strong> {activity.tags}</p>
+                <p><strong>Special Discounts:</strong> {activity.specialDiscounts}</p>
+                <p><strong>Booking Open:</strong> {activity.isBookingOpen ? 'Yes' : 'No'}</p>
+            </div>
+    
+            {/* Action buttons */}
+            <div className="space-y-3">
+                <div className="flex gap-2">
+                    <button
+                        onClick={copyLinkToClipboard}
+                        className="flex items-center gap-2 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition"
+                    >
+                        <FaClipboard /> Copy Link
+                    </button>
+                    <button
+                        onClick={shareViaEmail}
+                        className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                    >
+                        <FaEnvelope /> Share via Email
+                    </button>
+                </div>
+    
+                <div className="flex gap-2">
+                    <button
+                        onClick={attendActivity}
+                        className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition"
+                    >
+                        <FaRegCheckCircle /> Attend Activity
+                    </button>
+                    <button
+                        onClick={handlePaymentClickActivity}
+                        className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                    >
+                        <FaDollarSign /> Pay for Activity
+                    </button>
+                </div>
+            </div>
+    
             {isPaymentVisible && (
-                <PaymentForm 
-                    price={(selectedActivity.price * currencyMultiplier).toFixed(2)} 
-                    tourists={tourists} 
-                    paymentType="Activity" 
+                <PaymentForm
+                    price={(selectedActivity.price * currencyMultiplier).toFixed(2)}
+                    tourists={tourists}
+                    paymentType="Activity"
                     referenceId={activity._id}
                 />
             )}
-
-            <button onClick={bookActivity}>Book Activity</button>
-            <button onClick={cancelActivityBooking} disabled={!isCancelable}>
-                Cancel Booking
-            </button>
-
+    
+            {/* Booking and cancellation buttons */}
+            <div className="mt-4 flex gap-2">
+                <button
+                    onClick={bookActivity}
+                    className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                >
+                    <FaPen /> Book Activity
+                </button>
+                <button
+                    onClick={cancelActivityBooking}
+                    disabled={!isCancelable}
+                    className={`flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition ${
+                        !isCancelable ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                >
+                    <FaUndo /> Cancel Booking
+                </button>
+            </div>
+    
+            {/* Wallet balance */}
             {walletBalance !== null && (
-    <p><strong>Updated Wallet Balance: </strong>{walletBalance}</p>
-)}
-
-            {error && <p className="error">{error}</p>}
+                <p className="mt-4 text-gray-700">
+                    <strong>Updated Wallet Balance:</strong> {walletBalance}
+                </p>
+            )}
+    
+            {/* Error message */}
+            {error && (
+                <p className="text-red-600 mt-4">
+                    <strong>Error:</strong> {error}
+                </p>
+            )}
+    
+            {/* Cancellation restriction message */}
             {!isCancelable && (
-                <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
+                <p className="text-red-500 mt-4">
+                    Booking cancellation is only allowed more than 48 hours in advance.
+                </p>
             )}
         </div>
     );
-};
-
+}    
 export default ActivityDetails;

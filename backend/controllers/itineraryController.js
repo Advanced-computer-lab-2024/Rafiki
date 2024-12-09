@@ -66,7 +66,9 @@ const sendNotifyFlagged = async (req, res) => {
       if (!itinerary) {
         return res.status(404).json({ message: "Itinerary not found." });
       }
-  
+      itinerary.flagged=true;
+      await itinerary.save();
+
       // Check if the logged-in tour guide is authorized to view this itinerary
       if (req.tourguide && itinerary.tourGuideId.toString() !== req.tourguide.id) {
         return res.status(403).json({ message: "Unauthorized access." });

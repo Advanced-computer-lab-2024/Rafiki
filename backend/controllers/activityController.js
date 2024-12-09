@@ -78,11 +78,15 @@ const sendNotifyFlagged = async (req, res) => {
     try {
       // Find the itinerary by ID
       const activity = await Activity.findById(id);
-  
+        
+
       if (!activity) {
         return res.status(404).json({ message: "Itinerary not found." });
       }
   
+    activity.flagged=true;
+    await activity.save();
+
       // Check if the logged-in tour guide is authorized to view this itinerary
   
       // Find the associated tour guide by ID

@@ -58,6 +58,10 @@ const itinerarySchema = new Schema({
         type: Boolean,
         default: true, // Initializes with true
     },
+    flagged:{
+        type: Boolean, // Use the tour guide's username for linking
+        default: false
+    },
     touristsAttended: {
         type: Number,
         default: 0 // Counter to track the number of tourists

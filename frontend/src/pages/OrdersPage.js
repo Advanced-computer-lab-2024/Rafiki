@@ -63,53 +63,78 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="order-history">
-      <h2>Order History</h2>
-       {/* Display the wallet balance */}
-       <div>
-        <h3>Wallet Balance: ${walletBalance}</h3>
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Order History</h2>
+
+      {/* Wallet Balance */}
+      <div className="bg-gray-100 p-4 rounded-lg mb-6">
+        <h3 className="text-lg font-semibold text-gray-800">Wallet Balance</h3>
+        <p className="text-xl text-green-600">${walletBalance}</p>
       </div>
 
-      <div>
-        <h3>Current Orders</h3>
+      {/* Current Orders */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Current Orders</h3>
         {currentOrders.length > 0 ? (
-          <ul>
+          <ul className="space-y-4">
             {currentOrders.map((order) => (
-              <li key={order._id}>
-                <strong>{order.productName}</strong> - ${order.price}
-                <p>Status: {order.status}</p>
-                <p>Date: {new Date(order.date).toLocaleDateString()}</p>
+              <li
+                key={order._id}
+                className="bg-gray-50 p-4 rounded-lg shadow-md flex justify-between items-center"
+              >
+                <div>
+                  <strong className="text-lg text-gray-800">{order.productName}</strong>
+                  <p className="text-gray-600">Price: ${order.price}</p>
+                  <p className={`text-sm ${order.status === 'Cancelled' ? 'text-red-500' : 'text-yellow-500'}`}>
+                    Status: {order.status}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Date: {new Date(order.date).toLocaleDateString()}
+                  </p>
+                </div>
                 <button
                   onClick={() => handleCancelOrder(order._id)}
-                  disabled={order.status === "Cancelled"}
+                  disabled={order.status === 'Cancelled' }
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400"
                 >
-                  Cancel Order
                 </button>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No current orders</p>
+          <p className="text-gray-500">No current orders.</p>
         )}
       </div>
 
+      {/* Past Orders */}
       <div>
-        <h3>Past Orders</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Past Orders</h3>
         {pastOrders.length > 0 ? (
-          <ul>
+          <ul className="space-y-4">
             {pastOrders.map((order) => (
-              <li key={order._id}>
-                <strong>{order.productName}</strong> - ${order.price}
-                <p>Status: {order.status}</p>
-                <p>Date: {new Date(order.date).toLocaleDateString()}</p>
+              <li
+                key={order._id}
+                className="bg-gray-50 p-4 rounded-lg shadow-md flex justify-between items-center"
+              >
+                <div>
+                  <strong className="text-lg text-gray-800">{order.productName}</strong>
+                  <p className="text-gray-600">Price: ${order.price}</p>
+                  <p className={`text-sm ${order.status === 'Cancelled' ? 'text-red-500' : 'text-green-500'}`}>
+                    Status: {order.status}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Date: {new Date(order.date).toLocaleDateString()}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No past orders</p>
+          <p className="text-gray-500">No past orders.</p>
         )}
       </div>
     </div>
   );
 };
+
 export default OrderHistory;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PaymentForm from '../components/paymentForm';
+import { FaDollarSign, FaClipboard, FaEnvelope, FaRegCheckCircle, FaTimesCircle, FaPen, FaUndo } from 'react-icons/fa';
 
 const ItineraryDetails = ({ itinerary }) => {
   const [isPaymentVisible, setIsPaymentVisible] = useState(false);
@@ -227,62 +228,111 @@ const cancelItineraryBooking = async () => {
   };
 
   return (
-    <div className="workout-details">
-       {itinerary.active ? (
-      <>
-      <h4>{itinerary.tourGuideUsername}</h4>
-      <p><strong>Activities: </strong>{itinerary.activities}</p>
-      <p><strong>Locations: </strong>{itinerary.locations}</p>
-      <p><strong>Timeline: </strong>{itinerary.timeline}</p>
-      <p><strong>Duration: </strong>{itinerary.duration}</p>
-      <p><strong>Language: </strong>{itinerary.language}</p>
-      <p><strong>Price: </strong>
-        {currency} {(parseFloat(itinerary.price) * currencyMultiplier).toFixed(2)}
-        <select value={currency} onChange={handleCurrencyChange} style={{ marginLeft: '10px' }}>
-          <option value="USD">USD</option>
-          <option value="EGP">EGP</option>
-          <option value="EUR">EUR</option>
-        </select>
-      </p>
-      <p><strong>Available Dates: </strong>{itinerary.availableDates}</p>
-      <p><strong>Accessibility: </strong>{itinerary.accessibility}</p>
-      <p><strong>Pickup Location: </strong>{itinerary.pickupLocation}</p>
-      <p><strong>Drop Off Location: </strong>{itinerary.dropOffLocation}</p>
-      <p>{itinerary.createdAt}</p>
-      <button onClick={() => handlePaymentClickItinerary(itinerary)}>
-        Pay for this Itinerary
-      </button>
-      {isPaymentVisible && (
-                <PaymentForm 
-                    price={(selectedItinerary.price * currencyMultiplier).toFixed(2)} 
-                    tourists={tourists} 
-                    paymentType="Itinerary" 
-                    referenceId={itinerary._id}
-                />
-            )}
-      {/* Increment and Decrement Buttons */}
-      <button onClick={bookItinerary}>Book Itinerary</button>
-      <button onClick={cancelItineraryBooking} disabled={!isCancelable}>
-                Cancel Booking
-            </button>
+    <div className="workout-details p-6 bg-white rounded-lg shadow-md">
+        {itinerary.active ? (
+            <>
+                <h4 className="text-2xl font-semibold text-gray-800 mb-4">{itinerary.tourGuideUsername}</h4>
 
-            {walletBalance !== null && (
-    <p><strong>Updated Wallet Balance: </strong>{walletBalance}</p>
-)}
-      
-      <button onClick={copyLinkToClipboard}>Copy Itienary Link</button>
-      <button onClick={attendItinerary}>Attend This Itinerary</button>
-      <button onClick={shareViaEmail}>Share via Email</button>
-      {error && <p className="error">{error}</p>}
-      {!isCancelable && (
-        <p className="error">Booking cancellation is only allowed more than 48 hours in advance.</p>
-      )}
-        </>
-    ) : (
-      <p>This itinerary is no longer active.</p>
-    )}
+                {/* Display itinerary details */}
+                <div className="text-gray-700 mb-4">
+                    <p><strong>Activities:</strong> {itinerary.activities}</p>
+                    <p><strong>Locations:</strong> {itinerary.locations}</p>
+                    <p><strong>Timeline:</strong> {itinerary.timeline}</p>
+                    <p><strong>Duration:</strong> {itinerary.duration} hours</p>
+                    <p><strong>Language:</strong> {itinerary.language}</p>
+                    <p><strong>Price:</strong> {currency} {(parseFloat(itinerary.price) * currencyMultiplier).toFixed(2)}</p>
+                    <p><strong>Available Dates:</strong> {itinerary.availableDates}</p>
+                    <p><strong>Accessibility:</strong> {itinerary.accessibility}</p>
+                    <p><strong>Pickup Location:</strong> {itinerary.pickupLocation}</p>
+                    <p><strong>Drop Off Location:</strong> {itinerary.dropOffLocation}</p>
+                </div>
+
+                {/* Currency selection */}
+                <div className="mb-4">
+                    <select
+                        value={currency}
+                        onChange={handleCurrencyChange}
+                        className="p-2 border rounded-md"
+                    >
+                        <option value="USD">USD</option>
+                        <option value="EGP">EGP</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+                </div>
+
+                {/* Payment and booking actions */}
+                <div className="flex flex-wrap gap-4 mb-4">
+                    <button
+                        onClick={() => handlePaymentClickItinerary(itinerary)}
+                        className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                    >
+                        <FaDollarSign className="mr-2" /> Pay for Itinerary
+                    </button>
+
+                    <button
+                        onClick={bookItinerary}
+                        className="flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                    >
+                        <FaPen className="mr-2" /> Book Itinerary
+                    </button>
+
+                    <button
+                        onClick={cancelItineraryBooking}
+                        disabled={!isCancelable}
+                        className={`flex items-center bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition ${
+                            !isCancelable ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                    >
+                        <FaUndo className="mr-2" /> Cancel Booking
+                    </button>
+                </div>
+
+                {isPaymentVisible && (
+                    <PaymentForm
+                        price={(selectedItinerary.price * currencyMultiplier).toFixed(2)}
+                        tourists={tourists}
+                        paymentType="Itinerary"
+                        referenceId={itinerary._id}
+                    />
+                )}
+
+                {walletBalance !== null && (
+                    <p className="mt-4"><strong>Updated Wallet Balance:</strong> {walletBalance}</p>
+                )}
+
+                {/* Copy, attend, and share actions */}
+                <div className="flex flex-wrap gap-4 mt-4">
+                    <button
+                        onClick={copyLinkToClipboard}
+                        className="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition"
+                    >
+                        <FaClipboard className="mr-2" /> Copy Itinerary Link
+                    </button>
+
+                    <button
+                        onClick={attendItinerary}
+                        className="flex items-center bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition"
+                    >
+                        <FaRegCheckCircle className="mr-2" /> Attend Itinerary
+                    </button>
+
+                    <button
+                        onClick={shareViaEmail}
+                        className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                    >
+                        <FaEnvelope className="mr-2" /> Share via Email
+                    </button>
+                </div>
+
+                {error && <p className="error text-red-600 mt-4">{error}</p>}
+                {!isCancelable && (
+                    <p className="text-red-500 mt-4">Booking cancellation is only allowed more than 48 hours in advance.</p>
+                )}
+            </>
+        ) : (
+            <p className="text-gray-500">This itinerary is no longer active.</p>
+        )}
     </div>
-  );
-};
-
+);
+}
 export default ItineraryDetails;
