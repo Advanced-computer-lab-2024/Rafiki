@@ -12,7 +12,8 @@ const {
     getActivitiesByDate,
     getActivitiesSortedByPrice,
     addRatingToActivity,
-    getActivityRatings
+    getActivityRatings,
+    getActivityPriceById,
 } = require('../controllers/activityController');
 
 // Define routes here
@@ -28,5 +29,7 @@ router.get('/filterDate/:date', getActivitiesByDate);
 router.get('/sort/price', getActivitiesSortedByPrice);
 router.post('/:id/ratings', addRatingToActivity);
 router.get('/:id/ratings', getActivityRatings);
+router.get('/price/:activityId',getActivityPriceById)
+
 
 module.exports = router;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PaymentForm from '../components/paymentForm';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+
 
 const ActivityDetails = ({ activity }) => {
     const [isPaymentVisible, setIsPaymentVisible] = useState(false);
@@ -11,6 +13,8 @@ const ActivityDetails = ({ activity }) => {
     const [error, setError] = useState(null);
     const [isCancelable, setIsCancelable] = useState(false);
     const [walletBalance, setWalletBalance] = useState(null);
+    const navigate = useNavigate();
+
 
     const touristId = '672fb758a2012fa8bfb34028'; // Fixed ID for the tourist
 
@@ -256,9 +260,11 @@ const ActivityDetails = ({ activity }) => {
     };
 
     const handlePaymentClickActivity = () => {
-        setSelectedActivity(activity);
-        setIsPaymentVisible(prev => !prev);
+        setSelectedActivity(activity);  // Store the selected activity
+        setIsPaymentVisible(prev => !prev);  // Toggle payment visibility
+        navigate(`/ActivityCheckout/${activity._id}`);  // Navigate with the activity ID in the URL
     };
+    
 
     return (
         <div className="workout-details">
