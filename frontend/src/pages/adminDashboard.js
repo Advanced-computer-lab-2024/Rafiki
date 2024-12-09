@@ -17,6 +17,10 @@ import CreatePromoCodes from '../components/promoCodeCreateForm'
 import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { useLocation } from 'react-router-dom';
 import pic from '../pics/pic3.jpg'
+import ItineraryDetails from "../components/itineraryDetailsAdmin";
+import ActivityDetails from "../components/ActivityDetailsAdmin";
+
+
 const AdminSignup = () => {
   const [categories, setCategories] = useState([]); // Initialize categories
   const [isVisible, setIsVisible] = useState(false); // For toggling tags visibility
@@ -33,6 +37,10 @@ const AdminSignup = () => {
   const [activities, setActivities] = useState([]);
   const { flagActivity } = useFlaggedActivities(); // State to store flagged activity IDs
   const [isVisibleActivities, setIsVisibleActivities] = useState(false);
+  
+
+  const [itineraries, setItineraries] = useState(null);
+  const [activity, setActivity] = useState(null);
 
   const [complaints, setComplaints] = useState(null); 
   const [isVisibleComplaints, setIsVisibleComplaints] = useState(false);
@@ -126,8 +134,21 @@ useEffect(() => {
         setIsUploading(false);
       }
     };
-  
 
+    const fetchItineraries = async () => {
+      const response = await fetch("/api/itineraryRoute");
+      const json = await response.json();
+      if (response.ok) setItineraries(json);
+    };
+  
+    useEffect(() => {
+      const fetchActivities = async () => {
+        const response = await fetch("/api/ActivityRoute");
+        const json = await response.json();
+        if (response.ok) setActivity(json);
+      };
+      fetchActivities();
+    }, []);
 
     const fetchOutOfStockProducts = async () => {
       try {
@@ -150,6 +171,7 @@ useEffect(() => {
   
     useEffect(() => {
       fetchOutOfStockProducts();
+      fetchItineraries();
     }, []);
   
     // Close the pop-up
@@ -561,6 +583,18 @@ useEffect(() => {
 </li>
 
 
+ {/* User Data */}
+ {totalUsers !== null && newUsersThisMonth !== null ? (
+          <div className="text-right mb-6">
+            <p>Total Users: {totalUsers}</p>
+            <p>New Users This Month: {newUsersThisMonth}</p>
+          </div>
+        ) : (
+          <p className="text-right mb-6">Loading user data...</p>
+        )}
+
+
+
 <button
     onClick={() => setActiveMenu('ProductForm')}
     className={`w-full text-left flex items-center px-4 py-2 rounded ${
@@ -638,6 +672,46 @@ useEffect(() => {
                 <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
               </svg>
               Product Details
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('itineraries')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'itineraries'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+              </svg>
+              Itineraries Details
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveMenu('activities')}
+              className={`w-full text-left flex items-center px-4 py-2 rounded ${
+                activeMenu === 'activities'
+                  ? 'bg-blue-700 text-white'
+                  : 'text-blue-400 hover:text-white'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2a2 2 0 00-2 2v1H5v2h14V5h-5V4a2 2 0 00-2-2zM4 10v10h16V10H4zm2 2h4v6H6v-6zm6 0h4v6h-4v-6z" />
+              </svg>
+              Activities Details
             </button>
           </li>
           <li>
@@ -872,6 +946,45 @@ useEffect(() => {
             )}
           </div>/* Product Details content here */}</div>
         )}
+
+
+                {/* Itineraries Section */}
+                {activeMenu === "itineraries" && (
+  <div className="bg-white p-6 rounded-lg shadow-lg">
+    <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+      Itineraries
+    </h3>
+    {/* Show Itineraries */}
+    {itineraries ? (
+      <>
+        {itineraries.map((itinerary) => (
+          <ItineraryDetails key={itinerary._id} itinerary={itinerary} />
+        ))}
+      </>
+    ) : (
+      <p className="text-gray-500">No itineraries available.</p>
+    )}
+  </div>
+)}
+  
+        {activeMenu === "activities" && (
+          <div className="flex flex-col items-center">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Activities</h3>
+            {/* List of Activities */}
+            {activity &&
+              activity.map((act) => (
+                <div
+                  key={act._id}
+                  className="border rounded p-4 mb-4 shadow-md bg-white max-w-2xl w-full"
+                >
+                  <ActivityDetails activity={act} />
+                  <div className="mt-2 flex items-center justify-start space-x-4"></div>
+                </div>
+              ))}
+          </div>
+        )}
+
+
         {activeMenu === 'archived' && (
           <div className="archived">{
             <ArchivedProducts />/* Archived Products content here */}</div>
@@ -958,6 +1071,9 @@ useEffect(() => {
        
        
         )}
+
+
+        
       </div>
     </div>
   );

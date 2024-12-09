@@ -45,9 +45,8 @@ const activitySchema = new mongoose.Schema({
     tourGuideUsername: {
         type: String, // Use the tour guide's username for linking
         required: true,
-        ref: 'Tourguide', // Reference to the Tourguide model
         },    
-        ratings: [RatingSchema]  // Array of RatingSchema objects
+    ratings: [RatingSchema]  // Array of RatingSchema objects
         
 }, { timestamps: true });
 

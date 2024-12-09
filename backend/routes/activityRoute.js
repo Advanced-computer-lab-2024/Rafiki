@@ -14,6 +14,7 @@ const {
     addRatingToActivity,
     getActivityRatings,
     getActivityPriceById,
+    sendNotifyFlagged
 } = require('../controllers/activityController');
 
 // Define routes here
@@ -30,6 +31,7 @@ router.get('/sort/price', getActivitiesSortedByPrice);
 router.post('/:id/ratings', addRatingToActivity);
 router.get('/:id/ratings', getActivityRatings);
 router.get('/price/:activityId',getActivityPriceById)
+router.get('/:id/flag', sendNotifyFlagged);
 
 
 module.exports = router;

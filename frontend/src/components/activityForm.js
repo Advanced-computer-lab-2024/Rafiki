@@ -196,7 +196,7 @@ const ActivityForm = () => {
 
                 {/* Tour Guide Username (input field for the username of the tour guide) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Tour Guide Username:</label>
+            <label className="block text-sm font-medium text-gray-700">Advertiser Username:</label>
             <input
               type="text"
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
