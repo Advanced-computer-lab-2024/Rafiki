@@ -13,6 +13,11 @@ import MonthlyReportDetails from "../components/MonthlyReportDetails"; // adjust
 import SalesReport from "../components/SalesReport";
 import { FaUser, FaClipboardList, FaCar, FaKey, FaChartBar, FaTrashAlt } from "react-icons/fa";
 import backgroundImage from "../pics/pic5.jpg";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TourguideSignup = () => {
   const [showRevenue, setShowRevenue] = useState(false);
@@ -39,38 +44,28 @@ const TourguideSignup = () => {
   const [filterValue, setFilterValue] = useState("");
   const [filteredRevenue, setFilteredRevenue] = useState(0);
   const [filteredTourists, setFilteredTourists] = useState(0);
-  
+  const [pieChartData, setPieChartData] = useState(null);
+
   const filterRevenue = (filterType, value) => {
     if (!itineraries) return;
-  
+
     let filtered = itineraries;
-  
+
     if (filterType === "itinerary" && value) {
-      filtered = itineraries.filter((itinerary) =>
-        itinerary.name.toLowerCase().includes(value.toLowerCase())
-      );
+        filtered = itineraries.filter((itinerary) =>
+            itinerary.name.toLowerCase().includes(value.toLowerCase())
+        );
     } else if (filterType === "date" && value) {
-      filtered = itineraries.filter((itinerary) => itinerary.date === value);
+        filtered = itineraries.filter((itinerary) => itinerary.date === value);
     } else if (filterType === "month" && value) {
-      filtered = itineraries.filter(
-        (itinerary) =>
-          new Date(itinerary.date).getMonth() === parseInt(value) - 1
-      );
+        filtered = itineraries.filter(
+            (itinerary) => new Date(itinerary.date).getMonth() === parseInt(value) - 1
+        );
     }
-  
-    const revenue = filtered.reduce(
-      (total, itinerary) => total + itinerary.price * itinerary.touristsAttended,
-      0
-    );
-    const tourists = filtered.reduce(
-      (total, itinerary) => total + itinerary.touristsAttended,
-      0
-    );
-  
-    setFilteredRevenue(revenue);
-    setFilteredTourists(tourists);
-  };
-  
+
+    setFilteredItineraries(filtered);
+};
+
 
   const username = localStorage.getItem("loggedinUsername"); // Get the logged-in username
 
@@ -82,7 +77,11 @@ const TourguideSignup = () => {
       } catch (err) {
         console.error("Error fetching tour guide details:", err);
       }
+      setPieChartData(dummyPieChartData); // Set dummy data
+
     };
+
+    
 
     const fetchItineraries = async () => {
       const response = await fetch("/api/itineraryRoute");
@@ -101,6 +100,17 @@ const TourguideSignup = () => {
     fetchActivities();
   }, [username]);
 
+ // Dummy data for the pie chart
+ const dummyPieChartData = {
+  labels: ["Itinerary 1", "Itinerary 2", "Itinerary 3"], // Static labels
+  datasets: [
+    {
+      data: [500, 300, 200], // Static data (revenue values)
+      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Custom colors
+      hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Hover effect colors
+    },
+  ],
+};
 
   const handleAccept = async () => {
     try {
@@ -111,6 +121,35 @@ const TourguideSignup = () => {
       alert("Failed to accept terms. Please try again.");
     }
   };
+
+  useEffect(() => {
+    setPieChartData({
+        labels: ['Revenue', 'Other'],
+        datasets: [
+            {
+                data: [filteredRevenue, 100 - filteredRevenue],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB']
+            }
+        ]
+    });
+}, [filteredRevenue]);  // This will update the pie chart whenever filteredRevenue changes
+
+
+useEffect(() => {
+  // Fetch tourguide, itineraries, and activities on mount
+  axios.get('/api/tourguide')  // Replace with actual API endpoint
+      .then(response => setTourguide(response.data))
+      .catch(error => console.error("Error fetching tourguide data:", error));
+
+  axios.get('/api/itineraries')  // Replace with actual API endpoint
+      .then(response => setItineraries(response.data))
+      .catch(error => console.error("Error fetching itineraries:", error));
+
+  axios.get('/api/activities')  // Replace with actual API endpoint
+      .then(response => setActivities(response.data))
+      .catch(error => console.error("Error fetching activities:", error));
+}, []);
 
   const fetchReport = async () => {
     try {
@@ -265,6 +304,19 @@ const TourguideSignup = () => {
                     )}
                   </p>
                 </div>
+                {/* Dummy Pie Chart */}
+<div className="bg-gray-100 p-2 rounded-lg shadow mb-3 w-1/3 mx-auto">
+  <h4 className="text-sm font-semibold text-gray-800 mb-2">
+    Revenue Breakdown by Itinerary
+  </h4>
+  {/* Ensure pieChartData is available and correctly structured */}
+  {pieChartData ? (
+    <Pie data={pieChartData} />
+  ) : (
+    <p>Loading chart...</p> // Graceful loading state for the chart
+  )}
+</div>
+
   </div>
 )}
 
