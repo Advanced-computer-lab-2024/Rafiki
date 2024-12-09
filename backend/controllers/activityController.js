@@ -255,6 +255,22 @@ const getActivityRatings = async (req, res) => {
     }
 };
 
+// Controller to get activity price by ID
+const getActivityPriceById = async (req, res) => {
+    const { activityId } = req.params;
+    try {
+      const activity = await Activity.findById(activityId); // Assuming you are using MongoDB
+      if (!activity) {
+        return res.status(404).json({ message: "Activity not found" });
+      }
+      res.status(200).json({ price: activity.price });
+    } catch (error) {
+      console.error("Error fetching activity data:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
+
 // Export all controller functions
 module.exports = { 
     createActivity, 
@@ -269,5 +285,6 @@ module.exports = {
     getActivitiesSortedByPrice,
     addRatingToActivity,
     getActivityRatings,
-    notifyUsers
+    notifyUsers,
+    getActivityPriceById,
 };

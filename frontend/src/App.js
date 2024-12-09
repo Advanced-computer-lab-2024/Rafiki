@@ -41,6 +41,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import ProductCheckout from './pages/ProductCheckout';
 import OrdersPage from './pages/OrdersPage';
 import UnifiedForm from './components/UnifiedForm';
+import ActivityCheckout from './pages/ActivityCheckout';
+
 const stripePromise = loadStripe('pk_test_51QRh7PGXzdUVHQQyCc38J2ratksFl7JpemgvdwUsHiLvByX2SND0SJCAIVsz1vMa339b0H5UVaOeISZt01lI7mjl00H8NkPXgw');
 
 
@@ -69,6 +71,15 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/signup-paths" element={<SignupPaths />} />
               <Route path="/tourist-signup" element={<TouristSignup />} />
+              <Route
+        path="/ActivityCheckout/:activityId"
+        element={
+          <Elements stripe={stripePromise}>
+            <ActivityCheckout />
+          </Elements>
+        }
+      />
+
               <Route
   path="/advertiser-signup"
   element={<AdvertiserSignup loggedInAdvertiser={loggedInAdvertiser} />}
