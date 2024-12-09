@@ -18,7 +18,7 @@ import { useFlaggedActivities } from '../FlaggedActivitiesContext';
 import { useLocation } from 'react-router-dom';
 import pic from '../pics/pic3.jpg'
 import ItineraryDetails from "../components/itineraryDetailsAdmin";
-import ActivityDetails from "../components/ActivityDetails";
+import ActivityDetails from "../components/ActivityDetailsAdmin";
 
 
 const AdminSignup = () => {

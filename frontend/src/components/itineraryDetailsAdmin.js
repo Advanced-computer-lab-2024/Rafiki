@@ -17,11 +17,7 @@ const ItineraryDetails = ({ itinerary }) => {
         }
       );
 
-      if (response.ok) {
-        setIsActive((prevState) => !prevState);
-      } else {
-        console.error("Failed to toggle active state.");
-      }
+      
     } catch (error) {
       console.error("Error toggling active state:", error);
     }
